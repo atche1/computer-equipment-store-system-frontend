@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin - Categories</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 16px; }
+    .toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; }
+    th { background-color: #f5f5f5; }
+    .pager { display: flex; gap: 10px; align-items: center; margin-top: 12px; }
+    .muted { color: #666; }
+    a.button { padding: 6px 10px; border: 1px solid #ccc; border-radius: 6px; text-decoration: none; }
+    a.button.disabled { pointer-events: none; opacity: 0.5; }
+  </style>
+</head>
+<body>
+
+<h1>Categories</h1>
+
+<form class="toolbar" method="get" th:action="@{/categories}">
+  <label>
+    Search:
+    <input type="text" name="q" placeholder="name..." th:value="${q}">
+  </label>
+
+  <label>
+    Size:
+    <select name="size">
+      <option th:selected="${size == 5}" value="5">5</option>
+      <option th:selected="${size == 10}" value="10">10</option>
+      <option th:selected="${size == 20}" value="20">20</option>
+    </select>
+  </label>
+
+  <!-- keep sort -->
+  <input type="hidden" name="sort" th:value="${sort}" />
+  <!-- reset to first page on new search -->
+  <input type="hidden" name="page" value="0" />
+
+  <button type="submit">Apply</button>
+</form>
+
+<table>
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Slug</th>
+    <th>Active</th>
+  </tr>
+  </thead>
+  <tbody>
+
+  <tr th:if="${#lists.isEmpty(categories)}">
+    <td colspan="4" class="muted">No categories found.</td>
+  </tr>
+
+  <tr th:each="category : ${categories}">
+    <td th:text="${category.id}"></td>
+    <td th:text="${category.name}"></td>
+    <td th:text="${category.slug}"></td>
+    <td th:text="${category.active}"></td>
+  </tr>
+
+  </tbody>
+</table>
+
+<div class="pager" th:if="${page != null}">
+  <a class="button"
+     th:classappend="${page.first} ? ' disabled' : ''"
+     th:href="@{/categories(q=${q}, page=${page.number - 1}, size=${size}, sort=${sort})}">
+    Prev
+  </a>
+
+  <span class="muted">
+    Page <span th:text="${page.number + 1}">1</span> / <span th:text="${page.totalPages}">1</span>
+    • Total: <span th:text="${page.totalElements}">0</span>
+  </span>
+
+  <a class="button"
+     th:classappend="${page.last} ? ' disabled' : ''"
+     th:href="@{/categories(q=${q}, page=${page.number + 1}, size=${size}, sort=${sort})}">
+    Next
+  </a>
+</div>
+
+</body>
+</html>
