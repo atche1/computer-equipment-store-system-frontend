@@ -19,7 +19,7 @@ public interface CategoryClient {
     @GetMapping("/{id}")
     CategoryResponse getById(@PathVariable Long id);
     @GetMapping
-    PageResponse<CategoryResponse> search(
+    PageResponse<CategoryResponse> getAll(
             @RequestParam(required = false) String q,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
