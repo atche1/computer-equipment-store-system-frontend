@@ -103,7 +103,10 @@ public class CategoryController {
             return "categories/edit-category";
         }
     }
-
-
+    @PostMapping("/delete-category/{id}")
+    public String deleteCategory(@PathVariable Long id) {
+        categoryClient.delete(id);
+        return "redirect:/categories";
+    }
 
 }

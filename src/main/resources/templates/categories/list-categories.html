@@ -210,11 +210,24 @@
                 </td>
 
                 <td class="text-end pe-3">
-                  <a class="btn btn-sm btn-outline-primary rounded-pill-btn"
-                     th:href="@{/edit-category/{id}(id=${category.id})}">
-                    Edit
-                  </a>
+                  <div class="d-inline-flex gap-2">
+                    <a class="btn btn-sm btn-outline-primary rounded-pill-btn"
+                       th:href="@{/edit-category/{id}(id=${category.id})}">
+                      Edit
+                    </a>
+
+                    <form th:action="@{/delete-category/{id}(id=${category.id})}"
+                          method="post"
+                          class="d-inline"
+                          onsubmit="return confirm('Сигурна ли си, че искаш да изтриеш тази категория?');">
+                      <button type="submit"
+                              class="btn btn-sm btn-outline-danger rounded-pill-btn">
+                        Delete
+                      </button>
+                    </form>
+                  </div>
                 </td>
+
               </tr>
 
               </tbody>
