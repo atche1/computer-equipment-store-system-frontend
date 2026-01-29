@@ -1,5 +1,6 @@
 package com.school.ppmg.computer_equipment_store_system_client.config;
 
+import com.school.ppmg.computer_equipment_store_system_client.exceptions.ApiConflictException;
 import feign.Logger;
 import feign.RequestInterceptor;
 import feign.codec.ErrorDecoder;
@@ -44,6 +45,7 @@ public class AppConfig {
             case 401 -> new RuntimeException("Unauthorized");
             case 403 -> new RuntimeException("Forbidden");
             case 404 -> new RuntimeException("Not found");
+            case 409 -> new ApiConflictException("Category already exists (duplicate slug/name).");
             case 500 -> new RuntimeException("Backend error");
             default -> new RuntimeException("Feign error: " + response.status());
         };
