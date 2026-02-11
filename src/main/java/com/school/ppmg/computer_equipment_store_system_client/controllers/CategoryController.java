@@ -22,6 +22,7 @@ public class CategoryController {
     @GetMapping("/categories")
     public String categoriesPage(
             @RequestParam(required = false) String q,
+            @RequestParam(required = false) Boolean isActive,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String sort,
@@ -32,12 +33,13 @@ public class CategoryController {
         }
 
         PageResponse<CategoryResponse> result =
-                categoryClient.getAll(q, page, size, sort);
+                categoryClient.getAll(q, isActive, page, size, sort);
 
         model.addAttribute("page", result);
         model.addAttribute("categories", result.getContent());
 
         model.addAttribute("q", q);
+        model.addAttribute("isActive", isActive);
         model.addAttribute("sort", sort);
         model.addAttribute("size", size);
 

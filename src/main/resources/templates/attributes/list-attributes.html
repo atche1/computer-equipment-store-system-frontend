@@ -128,8 +128,8 @@
                 <div class="card-body">
                     <form class="row g-2 align-items-end" method="get" th:action="@{/attributes}">
 
-                        <!-- Search -->
-                        <div class="col-12 col-md-4">
+                        <!-- Search (wide) -->
+                        <div class="col-12 col-lg-5">
                             <label class="form-label mb-1">Search</label>
                             <div class="search-wrap">
                                 <span class="search-icon">🔎</span>
@@ -142,7 +142,7 @@
                         </div>
 
                         <!-- Data type -->
-                        <div class="col-12 col-md-3">
+                        <div class="col-12 col-lg-2">
                             <label class="form-label mb-1">Data type</label>
                             <select class="form-select rounded-pill-btn" name="dataType">
                                 <option value="" th:selected="${dataType == null}">All</option>
@@ -155,7 +155,7 @@
                         </div>
 
                         <!-- Filterable -->
-                        <div class="col-12 col-md-2">
+                        <div class="col-12 col-lg-1">
                             <label class="form-label mb-1">Filterable</label>
                             <select class="form-select rounded-pill-btn" name="filterable">
                                 <option value="" th:selected="${filterable == null}">All</option>
@@ -165,7 +165,7 @@
                         </div>
 
                         <!-- Unit -->
-                        <div class="col-12 col-md-1">
+                        <div class="col-12 col-lg-1">
                             <label class="form-label mb-1">Unit</label>
                             <input class="form-control rounded-pill-btn"
                                    type="text"
@@ -175,7 +175,7 @@
                         </div>
 
                         <!-- Size -->
-                        <div class="col-12 col-md-1">
+                        <div class="col-12 col-lg-1">
                             <label class="form-label mb-1">Size</label>
                             <select class="form-select rounded-pill-btn" name="size">
                                 <option th:selected="${size == 5}" value="5">5</option>
@@ -187,17 +187,23 @@
                         <input type="hidden" name="sort" th:value="${sort}" />
                         <input type="hidden" name="page" value="0" />
 
-                        <!-- Apply -->
-                        <div class="col-12 col-md-1">
-                            <button type="submit"
-                                    class="btn btn-outline-primary rounded-pill-btn w-100">
-                                Apply
-                            </button>
+                        <!-- Buttons (right column like the screenshot) -->
+                        <div class="col-12 col-lg-2">
+                            <div class="d-grid gap-2">
+                                <button type="submit"
+                                        class="btn btn-outline-primary rounded-pill-btn">
+                                    Apply
+                                </button>
+                                <a class="btn btn-outline-secondary rounded-pill-btn"
+                                   th:href="@{/attributes}">
+                                    Reset
+                                </a>
+                            </div>
                         </div>
 
-                        <!-- Total -->
-                        <div class="col-12 text-md-end">
-                            <div class="text-secondary small mt-2">
+                        <!-- Total (bottom-right) -->
+                        <div class="col-12 text-lg-end">
+                            <div class="text-secondary small mt-1">
                                 Total:
                                 <strong th:text="${page != null ? page.totalElements : #lists.size(attributes)}">0</strong>
                             </div>
