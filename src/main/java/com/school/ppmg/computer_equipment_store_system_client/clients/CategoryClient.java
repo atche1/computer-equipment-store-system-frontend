@@ -8,7 +8,6 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.print.Pageable;
 import java.util.List;
 
 @FeignClient(name = "computer-equipment-store-system-api-categories",url = "${backend.api.base-url}/api/categories")
@@ -18,9 +17,11 @@ public interface CategoryClient {
     CategoryResponse create(@Valid @RequestBody CategoryRequest request) ;
     @GetMapping("/{id}")
     CategoryResponse getById(@PathVariable Long id);
+
     @GetMapping
     PageResponse<CategoryResponse> getAll(
             @RequestParam(required = false) String q,
+            @RequestParam(required = false) Boolean isActive,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String sort

@@ -90,6 +90,7 @@
 
       <nav class="nav flex-column gap-1">
         <a class="nav-link active" th:href="@{/categories}">Categories</a>
+        <a class="nav-link" th:href="@{/attributes}">Attributes</a>
         <a class="nav-link" href="#">Products</a>
         <a class="nav-link" href="#">Orders</a>
         <a class="nav-link" href="#">Customers</a>
@@ -126,6 +127,8 @@
       <div class="card mb-3">
         <div class="card-body">
           <form class="row g-2 align-items-end" method="get" th:action="@{/categories}">
+
+            <!-- Search -->
             <div class="col-12 col-md-6">
               <label class="form-label mb-1">Search</label>
               <div class="search-wrap">
@@ -138,6 +141,17 @@
               </div>
             </div>
 
+            <!-- Status -->
+            <div class="col-12 col-md-2">
+              <label class="form-label mb-1">Status</label>
+              <select class="form-select rounded-pill-btn" name="isActive">
+                <option th:selected="${isActive == null}" value="">All</option>
+                <option th:selected="${isActive != null and isActive}" value="true">Active</option>
+                <option th:selected="${isActive != null and !isActive}" value="false">Inactive</option>
+              </select>
+            </div>
+
+            <!-- Size -->
             <div class="col-12 col-md-2">
               <label class="form-label mb-1">Size</label>
               <select class="form-select rounded-pill-btn" name="size">
@@ -147,22 +161,32 @@
               </select>
             </div>
 
+            <!-- Keep sort + reset page when applying filters -->
             <input type="hidden" name="sort" th:value="${sort}" />
             <input type="hidden" name="page" value="0" />
 
+            <!-- Buttons -->
             <div class="col-12 col-md-2">
-              <button type="submit"
-                      class="btn btn-outline-primary rounded-pill-btn w-100">
-                Apply
-              </button>
+              <div class="d-grid gap-2">
+                <button type="submit"
+                        class="btn btn-outline-primary rounded-pill-btn">
+                  Apply
+                </button>
+                <a class="btn btn-outline-secondary rounded-pill-btn"
+                   th:href="@{/categories}">
+                  Reset
+                </a>
+              </div>
             </div>
 
-            <div class="col-12 col-md-2 text-md-end">
+            <!-- Total -->
+            <div class="col-12 col-md-12 text-md-end">
               <div class="text-secondary small">
                 Total:
                 <strong th:text="${page != null ? page.totalElements : #lists.size(categories)}">0</strong>
               </div>
             </div>
+
           </form>
         </div>
       </div>
@@ -249,13 +273,13 @@
             <div class="d-flex gap-2">
               <a class="btn btn-outline-secondary rounded-pill-btn"
                  th:classappend="${page.first} ? ' disabled' : ''"
-                 th:href="@{/categories(q=${q}, page=${page.number - 1}, size=${size}, sort=${sort})}">
+                 th:href="@{/categories(q=${q}, isActive=${isActive}, page=${page.number - 1}, size=${size}, sort=${sort})}">
                 ← Prev
               </a>
 
               <a class="btn btn-outline-secondary rounded-pill-btn"
                  th:classappend="${page.last} ? ' disabled' : ''"
-                 th:href="@{/categories(q=${q}, page=${page.number + 1}, size=${size}, sort=${sort})}">
+                 th:href="@{/categories(q=${q}, isActive=${isActive}, page=${page.number + 1}, size=${size}, sort=${sort})}">
                 Next →
               </a>
             </div>
