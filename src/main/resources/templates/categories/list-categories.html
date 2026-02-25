@@ -239,7 +239,10 @@
                        th:href="@{/edit-category/{id}(id=${category.id})}">
                       Edit
                     </a>
-
+                    <a class="btn btn-sm btn-outline-secondary rounded-pill-btn"
+                       th:href="@{/categories/{id}/attributes(id=${category.id})}">
+                      Attributes
+                    </a>
                     <form th:action="@{/delete-category/{id}(id=${category.id})}"
                           method="post"
                           class="d-inline"
