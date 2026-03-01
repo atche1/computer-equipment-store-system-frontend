@@ -203,6 +203,56 @@
                                 <option th:selected="${size == 50}" value="50">50</option>
                             </select>
                         </div>
+                        <!-- Characteristics filters (only when category is selected) -->
+                        <div class="col-12" th:if="${categoryId != null and !#lists.isEmpty(filterableAttributes)}">
+                            <div class="border-top pt-3 mt-2">
+                                <div class="fw-semibold mb-2">Attribute filters</div>
+
+                                <div class="row g-2">
+                                    <div class="col-12 col-md-6 col-lg-4" th:each="a : ${filterableAttributes}">
+                                        <label class="form-label mb-1" th:text="${a.name()}">Attribute</label>
+
+                                        <!-- TEXT -->
+                                        <input th:if="${a.dataType().name() == 'TEXT'}"
+                                               class="form-control rounded-pill-btn"
+                                               type="text"
+                                               th:name="${'attrText_' + a.id()}"
+                                               th:value="${uiText[a.id()]}"
+                                               placeholder="Type value..."/>
+
+                                        <!-- NUMBER (min/max) -->
+                                        <div th:if="${a.dataType().name() == 'NUMBER'}" class="d-flex gap-2">
+                                            <input class="form-control rounded-pill-btn mono"
+                                                   type="text"
+                                                   th:name="${'attrNumMin_' + a.id()}"
+                                                   th:value="${uiNumMin[a.id()]}"
+                                                   placeholder="min"/>
+
+                                            <input class="form-control rounded-pill-btn mono"
+                                                   type="text"
+                                                   th:name="${'attrNumMax_' + a.id()}"
+                                                   th:value="${uiNumMax[a.id()]}"
+                                                   placeholder="max"/>
+
+                                            <span class="align-self-center text-secondary small" th:if="${a.unit() != null}" th:text="${a.unit()}">unit</span>
+                                        </div>
+
+                                        <!-- BOOLEAN -->
+                                        <select th:if="${a.dataType().name() == 'BOOLEAN'}"
+                                                class="form-select rounded-pill-btn"
+                                                th:name="${'attrBool_' + a.id()}">
+                                            <option value="" th:selected="${uiBool[a.id()] == null}">All</option>
+                                            <option value="true" th:selected="${uiBool[a.id()] != null and uiBool[a.id()].equals('true')}">True</option>
+                                            <option value="false" th:selected="${uiBool[a.id()] != null and uiBool[a.id()].equals('false')}">False</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="text-secondary small mt-2">
+                                    Tip: first select a category to see its filterable attributes.
+                                </div>
+                            </div>
+                        </div>
 
                         <!-- Keep sort + reset page -->
                         <input type="hidden" name="sort" th:value="${sort}" />
@@ -323,13 +373,13 @@
                         <div class="d-flex gap-2">
                             <a class="btn btn-outline-secondary rounded-pill-btn"
                                th:classappend="${page.first} ? ' disabled' : ''"
-                               th:href="@{/products(q=${q}, categoryId=${categoryId}, isActive=${isActive}, minPrice=${minPrice}, maxPrice=${maxPrice}, inStock=${inStock}, page=${page.number - 1}, size=${size}, sort=${sort})}">
+                               th:href="${'/products?page=' + (page.number - 1) + queryString}">
                                 ← Prev
                             </a>
 
                             <a class="btn btn-outline-secondary rounded-pill-btn"
                                th:classappend="${page.last} ? ' disabled' : ''"
-                               th:href="@{/products(q=${q}, categoryId=${categoryId}, isActive=${isActive}, minPrice=${minPrice}, maxPrice=${maxPrice}, inStock=${inStock}, page=${page.number + 1}, size=${size}, sort=${sort})}">
+                               th:href="${'/products?page=' + (page.number + 1) + queryString}">
                                 Next →
                             </a>
                         </div>

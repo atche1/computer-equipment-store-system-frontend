@@ -31,6 +31,12 @@ public interface ProductClient {
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) Boolean inStock,
+
+            @RequestParam(required = false) java.util.List<String> attrText,
+            @RequestParam(required = false) java.util.List<String> attrNumMin,
+            @RequestParam(required = false) java.util.List<String> attrNumMax,
+            @RequestParam(required = false) java.util.List<String> attrBool,
+
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String sort
