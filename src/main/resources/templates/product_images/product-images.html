@@ -13,40 +13,55 @@
             --bg:#f6f7fb;
             --sidebar:#0b1220;
         }
+
         body{background:var(--bg);}
+
         .sidebar{min-height:100vh;background:var(--sidebar);}
+
         .sidebar .nav-link{
             color:rgba(255,255,255,.78);
             border-radius:.9rem;
             padding:.6rem .8rem;
         }
+
         .sidebar .nav-link.active,
         .sidebar .nav-link:hover{
             color:#fff;
             background:rgba(255,255,255,.08);
         }
+
         .card{
             border:0;
             border-radius:1.2rem;
             box-shadow:0 18px 40px rgba(10,20,40,.08);
         }
+
         .img-card{
             border-radius:1.2rem;
             overflow:hidden;
             background:#fff;
             box-shadow:0 18px 40px rgba(10,20,40,.08);
         }
+
         .img-top{
             width:100%;
             height:220px;
             object-fit:cover;
             background:#e9ecef;
         }
+
         .badge-main{
             background:rgba(25,135,84,.14)!important;
             color:#146c43!important;
             border:1px solid rgba(25,135,84,.28);
             font-weight:600;
+        }
+
+        .preview{
+            max-height:120px;
+            border-radius:10px;
+            display:none;
+            margin-top:10px;
         }
     </style>
 </head>
@@ -58,6 +73,7 @@
         <!-- Sidebar -->
         <aside class="col-12 col-lg-2 sidebar p-3">
             <div class="text-white fw-bold mb-4">Admin Panel</div>
+
             <nav class="d-grid gap-1">
                 <a class="nav-link" th:href="@{/categories}">Categories</a>
                 <a class="nav-link" th:href="@{/attributes}">Attributes</a>
@@ -74,11 +90,13 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <h2>Product Images</h2>
+
                     <div class="text-secondary">
                         <span th:text="${product.name()}">Product</span>
                         (#<span th:text="${product.id()}">0</span>)
                     </div>
                 </div>
+
                 <a class="btn btn-outline-secondary" th:href="@{/products}">
                     ← Back
                 </a>
@@ -91,31 +109,42 @@
             <!-- Upload Card -->
             <div class="card mb-4">
                 <div class="card-body">
+
                     <h5 class="mb-3">Upload image</h5>
 
                     <form method="post"
                           th:action="@{|/products/${product.id()}/images/upload|}"
                           enctype="multipart/form-data"
-                          class="row g-3">
+                          class="row g-3"
+                          onsubmit="return validateImage()">
 
                         <div class="col-md-8">
+
                             <input type="file"
                                    name="file"
+                                   id="imageInput"
                                    class="form-control"
                                    accept="image/*"
-                                   required>
+                                   required
+                                   onchange="previewImage(event)">
+
+                            <img id="preview" class="preview"/>
+
                         </div>
 
                         <div class="col-md-2 d-flex align-items-center">
                             <div class="form-check">
+
                                 <input class="form-check-input"
                                        type="checkbox"
                                        name="isMain"
                                        value="true"
                                        id="isMain">
+
                                 <label class="form-check-label" for="isMain">
                                     Set as main
                                 </label>
+
                             </div>
                         </div>
 
@@ -131,20 +160,23 @@
 
             <!-- Images Grid -->
             <div class="row g-4">
+
                 <div class="col-12 col-md-6 col-xl-4"
                      th:each="img : ${images}">
 
                     <div class="img-card">
+
                         <img th:src="${#strings.startsWith(img.imageUrl(), 'http') ? img.imageUrl() : backendBaseUrl + img.imageUrl()}"
                              class="img-top"
-                             alt="Product image">
+                             alt="Product image"
+                             onerror="this.src='/img/placeholder.png'">
 
                         <div class="p-3 d-flex justify-content-between align-items-center">
 
-                            <span class="badge badge-main"
-                                  th:if="${img.isMain()}">
-                                MAIN
-                            </span>
+<span class="badge badge-main"
+      th:if="${img.isMain()}">
+MAIN
+</span>
 
                             <div class="d-flex gap-2">
 
@@ -166,9 +198,9 @@
 
                             </div>
                         </div>
-
                     </div>
                 </div>
+
             </div>
 
             <!-- Empty state -->
@@ -182,5 +214,41 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+function validateImage(){
+
+const fileInput = document.getElementById("imageInput");
+const file = fileInput.files[0];
+
+if(!file){
+alert("Please choose an image.");
+return false;
+}
+
+if(!file.type.startsWith("image/")){
+alert("Only image files are allowed.");
+fileInput.value="";
+return false;
+}
+
+return true;
+}
+
+function previewImage(event){
+
+const file = event.target.files[0];
+const preview = document.getElementById("preview");
+
+if(file && file.type.startsWith("image/")){
+preview.src = URL.createObjectURL(file);
+preview.style.display = "block";
+}
+
+}
+
+</script>
+
 </body>
 </html>
