@@ -342,6 +342,8 @@
                                            th:href="@{/products/{id}/attribute-values(id=${p.id})}">
                                             Attributes
                                         </a>
+                                        <a class="btn btn-outline-secondary rounded-pill-btn"
+                                           th:href="@{|/products/${p.id}/images|}">Images</a>
 
                                         <form th:action="@{/delete-product/{id}(id=${p.id()})}"
                                               method="post"

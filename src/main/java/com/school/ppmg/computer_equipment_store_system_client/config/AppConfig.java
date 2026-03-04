@@ -40,14 +40,35 @@ public class AppConfig {
     }
     @Bean
     public ErrorDecoder feignErrorDecoder() {
-        return (methodKey, response) -> switch (response.status()) {
-            case 400 -> new RuntimeException("Bad request");
-            case 401 -> new RuntimeException("Unauthorized");
-            case 403 -> new RuntimeException("Forbidden");
-            case 404 -> new RuntimeException("Not found");
-            case 409 -> new ApiConflictException("Category already exists (duplicate slug/name).");
-            case 500 -> new RuntimeException("Backend error");
-            default -> new RuntimeException("Feign error: " + response.status());
+        return (methodKey, response) -> {
+
+            String body = "";
+
+            try {
+                if (response.body() != null) {
+                    body = new String(
+                            response.body().asInputStream().readAllBytes(),
+                            java.nio.charset.StandardCharsets.UTF_8
+                    );
+                }
+            } catch (Exception ignored) {
+            }
+
+            return switch (response.status()) {
+                case 400 -> new RuntimeException(
+                        body.isBlank() ? "Bad request" : body
+                );
+                case 401 -> new RuntimeException("Unauthorized");
+                case 403 -> new RuntimeException("Forbidden");
+                case 404 -> new RuntimeException(
+                        body.isBlank() ? "Not found" : body
+                );
+                case 409 -> new ApiConflictException(
+                        body.isBlank() ? "Conflict" : body
+                );
+                case 500 -> new RuntimeException("Backend error");
+                default -> new RuntimeException("Feign error: " + response.status());
+            };
         };
     }
 }
