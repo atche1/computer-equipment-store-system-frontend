@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+
+    <!-- Logo -->
+    <a class="navbar-brand" href="/">
+      Computer Store
+    </a>
+
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarMain">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarMain">
+
+      <!-- Left menu -->
+      <ul class="navbar-nav me-auto">
+
+        <li class="nav-item">
+          <a class="nav-link" href="/">Начало</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/products">Продукти</a>
+        </li>
+
+        <!-- ADMIN MENU -->
+        <li class="nav-item dropdown"
+            th:if="${session.ROLE == 'ADMIN'}">
+
+          <a class="nav-link dropdown-toggle"
+             href="#"
+             role="button"
+             data-bs-toggle="dropdown">
+            Admin
+          </a>
+
+          <ul class="dropdown-menu">
+
+            <li>
+              <a class="dropdown-item"
+                 href="/admin/products">
+                Продукти
+              </a>
+            </li>
+
+            <li>
+              <a class="dropdown-item"
+                 href="/admin/categories">
+                Категории
+              </a>
+            </li>
+
+            <li>
+              <a class="dropdown-item"
+                 href="/admin/attributes">
+                Характеристики
+              </a>
+            </li>
+
+          </ul>
+        </li>
+
+      </ul>
+
+      <!-- Right menu -->
+      <ul class="navbar-nav ms-auto">
+
+        <!-- NOT LOGGED -->
+        <li class="nav-item"
+            th:if="${session.ACCESS_TOKEN == null}">
+          <a class="nav-link" href="/login">
+            Вход
+          </a>
+        </li>
+
+        <li class="nav-item"
+            th:if="${session.ACCESS_TOKEN == null}">
+          <a class="nav-link" href="/register">
+            Регистрация
+          </a>
+        </li>
+
+        <!-- LOGGED USER -->
+        <li class="nav-item"
+            th:if="${session.ACCESS_TOKEN != null}">
+
+                    <span class="navbar-text text-white me-3">
+                        Здравей,
+                        <b th:text="${session.EMAIL}"></b>
+                    </span>
+
+        </li>
+
+        <li class="nav-item"
+            th:if="${session.ACCESS_TOKEN != null}">
+
+          <form method="post" action="/logout">
+            <button class="btn btn-outline-light btn-sm">
+              Изход
+            </button>
+          </form>
+
+        </li>
+
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+</body>
+</html>
