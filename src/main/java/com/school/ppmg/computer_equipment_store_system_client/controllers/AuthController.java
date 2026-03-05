@@ -4,6 +4,7 @@ import com.school.ppmg.computer_equipment_store_system_client.clients.AuthClient
 import com.school.ppmg.computer_equipment_store_system_client.dtos.security.AuthResponse;
 import com.school.ppmg.computer_equipment_store_system_client.dtos.security.LoginRequest;
 import com.school.ppmg.computer_equipment_store_system_client.dtos.security.RegisterRequest;
+import com.school.ppmg.computer_equipment_store_system_client.exceptions.BackendException;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -20,8 +21,18 @@ public class AuthController {
 
     private final AuthClient authClient;
 
+    // helper method
+    private boolean isLogged(HttpSession session) {
+        return session.getAttribute(SESSION_ACCESS_TOKEN) != null;
+    }
+
     @GetMapping("/login")
-    public String loginPage() {
+    public String loginPage(HttpSession session) {
+
+        if (isLogged(session)) {
+            return "redirect:/";
+        }
+
         return "auth/login";
     }
 
@@ -30,13 +41,13 @@ public class AuthController {
                           @RequestParam String password,
                           HttpSession session,
                           Model model) {
+
         try {
-            // DTO is CLASS -> build it safely (works with setters)
+
             LoginRequest req = new LoginRequest();
             req.setEmail(email);
             req.setPassword(password);
 
-            // Response is RECORD -> access via res.accessToken(), res.role()
             AuthResponse res = authClient.login(req);
 
             session.setAttribute(SESSION_ACCESS_TOKEN, res.accessToken());
@@ -44,14 +55,21 @@ public class AuthController {
             session.setAttribute(SESSION_EMAIL, email);
 
             return "redirect:/";
+
         } catch (Exception ex) {
-            model.addAttribute("error", "Грешен имейл или парола");
+
+            model.addAttribute("error", "Invalid email or password.");
             return "auth/login";
         }
     }
 
     @GetMapping("/register")
-    public String registerPage() {
+    public String registerPage(HttpSession session) {
+
+        if (isLogged(session)) {
+            return "redirect:/";
+        }
+
         return "auth/register";
     }
 
@@ -62,8 +80,9 @@ public class AuthController {
                              @RequestParam String lastName,
                              @RequestParam String phone,
                              Model model) {
+
         try {
-            // DTO is CLASS -> build it safely (works with setters)
+
             RegisterRequest req = new RegisterRequest();
             req.setEmail(email);
             req.setPassword(password);
@@ -72,16 +91,29 @@ public class AuthController {
             req.setPhone(phone);
 
             authClient.register(req);
+
             return "redirect:/login";
+
+        } catch (BackendException ex) {
+
+            model.addAttribute("error", ex.getMessage());
+            model.addAttribute("fieldErrors", ex.getFieldErrors());
+
+            return "auth/register";
+
         } catch (Exception ex) {
-            model.addAttribute("error", "Регистрацията не успя: " + ex.getMessage());
+
+            model.addAttribute("error", "Registration failed. Please try again.");
+
             return "auth/register";
         }
     }
 
     @PostMapping("/logout")
     public String logout(HttpSession session) {
+
         session.invalidate();
+
         return "redirect:/";
     }
 }

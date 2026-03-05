@@ -1,5 +1,10 @@
+<!-- =========================
+     4) templates/fragments/navbar.html  (your navbar, FIXED + EN)
+     - Login/Register hidden when logged in
+     - All labels in English
+     ========================= -->
 <!DOCTYPE html>
-<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -22,11 +27,11 @@
       <ul class="navbar-nav me-auto">
 
         <li class="nav-item">
-          <a class="nav-link" href="/">Начало</a>
+          <a class="nav-link" href="/">Home</a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" href="/products">Продукти</a>
+          <a class="nav-link" href="/products">Products</a>
         </li>
 
         <!-- ADMIN MENU -->
@@ -43,23 +48,20 @@
           <ul class="dropdown-menu">
 
             <li>
-              <a class="dropdown-item"
-                 href="/admin/products">
-                Продукти
+              <a class="dropdown-item" href="/admin/products">
+                Products
               </a>
             </li>
 
             <li>
-              <a class="dropdown-item"
-                 href="/admin/categories">
-                Категории
+              <a class="dropdown-item" href="/admin/categories">
+                Categories
               </a>
             </li>
 
             <li>
-              <a class="dropdown-item"
-                 href="/admin/attributes">
-                Характеристики
+              <a class="dropdown-item" href="/admin/attributes">
+                Attributes
               </a>
             </li>
 
@@ -69,43 +71,30 @@
       </ul>
 
       <!-- Right menu -->
-      <ul class="navbar-nav ms-auto">
+      <ul class="navbar-nav ms-auto align-items-lg-center">
 
         <!-- NOT LOGGED -->
-        <li class="nav-item"
-            th:if="${session.ACCESS_TOKEN == null}">
-          <a class="nav-link" href="/login">
-            Вход
-          </a>
+        <li class="nav-item" th:if="${session.ACCESS_TOKEN == null}">
+          <a class="nav-link" href="/login">Sign in</a>
         </li>
 
-        <li class="nav-item"
-            th:if="${session.ACCESS_TOKEN == null}">
-          <a class="nav-link" href="/register">
-            Регистрация
-          </a>
+        <li class="nav-item" th:if="${session.ACCESS_TOKEN == null}">
+          <a class="nav-link" href="/register">Create account</a>
         </li>
 
         <!-- LOGGED USER -->
-        <li class="nav-item"
-            th:if="${session.ACCESS_TOKEN != null}">
-
-                    <span class="navbar-text text-white me-3">
-                        Здравей,
-                        <b th:text="${session.EMAIL}"></b>
-                    </span>
-
+        <li class="nav-item" th:if="${session.ACCESS_TOKEN != null}">
+          <span class="navbar-text text-white me-3">
+            Hello, <b th:text="${session.EMAIL}">user@email.com</b>
+          </span>
         </li>
 
-        <li class="nav-item"
-            th:if="${session.ACCESS_TOKEN != null}">
-
-          <form method="post" action="/logout">
+        <li class="nav-item" th:if="${session.ACCESS_TOKEN != null}">
+          <form method="post" action="/logout" class="d-flex m-0">
             <button class="btn btn-outline-light btn-sm">
-              Изход
+              Sign out
             </button>
           </form>
-
         </li>
 
       </ul>
