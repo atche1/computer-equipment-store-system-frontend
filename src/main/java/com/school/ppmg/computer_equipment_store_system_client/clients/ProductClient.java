@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @FeignClient(
         name = "computer-equipment-store-system-api-products",
@@ -22,6 +23,7 @@ public interface ProductClient {
 
     @GetMapping("/{id}")
     ProductResponse getById(@PathVariable Long id);
+   
 
     @GetMapping
     PageResponse<ProductResponse> getAll(
