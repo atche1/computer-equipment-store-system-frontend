@@ -141,6 +141,13 @@
     </div>
 
   </div>
+  <div class="d-flex justify-content-between mt-3">
+    <a href="/orders" class="btn btn-outline-secondary" th:if="${session.ACCESS_TOKEN != null}">My orders</a>
+    <a href="/checkout" class="btn btn-primary"
+       th:if="${dbCart != null && !#lists.isEmpty(dbCart.items())}">
+      Checkout
+    </a>
+  </div>
 
 
 

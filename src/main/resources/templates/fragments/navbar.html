@@ -1,18 +1,28 @@
-<nav class="navbar navbar-expand-lg bg-white shadow-sm" xmlns:th="http://www.thymeleaf.org"
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<nav class="navbar navbar-expand-lg bg-white shadow-sm"
      th:fragment="navbar">
+
   <div class="container">
 
+    <!-- Logo -->
     <a class="navbar-brand fw-bold" href="/">
       💻 Computer Store
     </a>
 
     <div class="ms-auto d-flex align-items-center gap-2">
 
-      <a class="btn btn-outline-secondary" href="/cart">
+      <!-- Cart (visible for everyone) -->
+      <a class="btn btn-outline-secondary"
+         href="/cart">
         Cart
       </a>
 
-      <!-- Not logged -->
+      <!-- ===================== -->
+      <!-- GUEST USERS -->
+      <!-- ===================== -->
+
       <a class="btn btn-outline-primary"
          th:if="${session.ACCESS_TOKEN == null}"
          th:href="@{/login}">
@@ -25,16 +35,52 @@
         Create account
       </a>
 
-      <!-- Logged -->
+      <!-- ===================== -->
+      <!-- LOGGED USERS -->
+      <!-- ===================== -->
+
+      <a class="btn btn-outline-secondary"
+         th:if="${session.ACCESS_TOKEN != null}"
+         href="/orders">
+        My orders
+      </a>
+
+      <!-- ===================== -->
+      <!-- ADMIN -->
+      <!-- ===================== -->
+
+      <a class="btn btn-outline-dark"
+         th:if="${session.ROLE == 'ADMIN' or session.ROLE == 'ROLE_ADMIN'}"
+         href="/admin/orders">
+        Admin Orders
+      </a>
+
+      <!-- ===================== -->
+      <!-- USER INFO -->
+      <!-- ===================== -->
+
       <span class="text-muted small"
             th:if="${session.ACCESS_TOKEN != null}">
-                Hello, <b th:text="${session.EMAIL}">user@email.com</b>
+                Hello,
+                <b th:text="${session.EMAIL}">user@email.com</b>
             </span>
 
-      <form th:if="${session.ACCESS_TOKEN != null}" method="post" action="/logout" class="m-0">
-        <button class="btn btn-outline-secondary">Sign out</button>
+      <!-- Logout -->
+      <form th:if="${session.ACCESS_TOKEN != null}"
+            method="post"
+            action="/logout"
+            class="m-0">
+
+        <button class="btn btn-outline-secondary">
+          Sign out
+        </button>
+
       </form>
 
     </div>
+
   </div>
+
 </nav>
+
+</html>

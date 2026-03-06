@@ -63,57 +63,7 @@
      NAVBAR
      ========================= -->
 
-<nav class="navbar navbar-expand-lg bg-white shadow-sm">
-
-    <div class="container">
-
-        <a class="navbar-brand fw-bold" href="/">
-            💻 Computer Store
-        </a>
-
-        <div class="ms-auto d-flex align-items-center gap-2">
-
-            <a class="btn btn-outline-secondary"
-               href="/cart">
-                Cart
-            </a>
-
-            <!-- NOT LOGGED -->
-            <a class="btn btn-outline-primary"
-               th:if="${session.ACCESS_TOKEN == null}"
-               th:href="@{/login}">
-                Sign in
-            </a>
-
-            <a class="btn btn-primary"
-               th:if="${session.ACCESS_TOKEN == null}"
-               th:href="@{/register}">
-                Create account
-            </a>
-
-            <!-- LOGGED -->
-            <span class="text-muted small"
-                  th:if="${session.ACCESS_TOKEN != null}">
-                Hello,
-                <b th:text="${session.EMAIL}">user@email.com</b>
-            </span>
-
-            <form th:if="${session.ACCESS_TOKEN != null}"
-                  method="post"
-                  action="/logout"
-                  class="m-0">
-
-                <button class="btn btn-outline-secondary">
-                    Sign out
-                </button>
-
-            </form>
-
-        </div>
-
-    </div>
-
-</nav>
+<div th:replace="fragments/navbar"></div>
 
 
 <!-- =========================
