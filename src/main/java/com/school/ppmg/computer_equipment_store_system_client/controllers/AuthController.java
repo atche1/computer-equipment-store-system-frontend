@@ -1,10 +1,13 @@
 package com.school.ppmg.computer_equipment_store_system_client.controllers;
 
 import com.school.ppmg.computer_equipment_store_system_client.clients.AuthClient;
+import com.school.ppmg.computer_equipment_store_system_client.clients.CartClient;
+import com.school.ppmg.computer_equipment_store_system_client.dtos.cart.MergeCartRequest;
 import com.school.ppmg.computer_equipment_store_system_client.dtos.security.AuthResponse;
 import com.school.ppmg.computer_equipment_store_system_client.dtos.security.LoginRequest;
 import com.school.ppmg.computer_equipment_store_system_client.dtos.security.RegisterRequest;
 import com.school.ppmg.computer_equipment_store_system_client.exceptions.BackendException;
+import com.school.ppmg.computer_equipment_store_system_client.session.SessionCart;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -18,6 +21,8 @@ public class AuthController {
     public static final String SESSION_ACCESS_TOKEN = "ACCESS_TOKEN";
     public static final String SESSION_ROLE = "ROLE";
     public static final String SESSION_EMAIL = "EMAIL";
+    public static final String SESSION_CART = "SESSION_CART";
+    private final CartClient cartClient;
 
     private final AuthClient authClient;
 
@@ -43,7 +48,6 @@ public class AuthController {
                           Model model) {
 
         try {
-
             LoginRequest req = new LoginRequest();
             req.setEmail(email);
             req.setPassword(password);
@@ -54,10 +58,16 @@ public class AuthController {
             session.setAttribute(SESSION_ROLE, res.role());
             session.setAttribute(SESSION_EMAIL, email);
 
+            // ✅ ТУК: merge guest cart -> DB cart (вече имаме токен в сесията)
+            SessionCart guestCart = (SessionCart) session.getAttribute(SESSION_CART);
+            if (guestCart != null && !guestCart.isEmpty()) {
+                cartClient.mergeCart(new MergeCartRequest(guestCart.getItems()));
+                session.removeAttribute(SESSION_CART);
+            }
+
             return "redirect:/";
 
         } catch (Exception ex) {
-
             model.addAttribute("error", "Invalid email or password.");
             return "auth/login";
         }

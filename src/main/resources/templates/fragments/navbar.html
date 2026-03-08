@@ -1,107 +1,86 @@
-<!-- =========================
-     4) templates/fragments/navbar.html  (your navbar, FIXED + EN)
-     - Login/Register hidden when logged in
-     - All labels in English
-     ========================= -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg bg-white shadow-sm"
+     th:fragment="navbar">
+
   <div class="container">
 
     <!-- Logo -->
-    <a class="navbar-brand" href="/">
-      Computer Store
+    <a class="navbar-brand fw-bold" href="/">
+      💻 Computer Store
     </a>
 
-    <button class="navbar-toggler" type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarMain">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <div class="ms-auto d-flex align-items-center gap-2">
 
-    <div class="collapse navbar-collapse" id="navbarMain">
+      <!-- Cart (visible for everyone) -->
+      <a class="btn btn-outline-secondary"
+         href="/cart">
+        Cart
+      </a>
 
-      <!-- Left menu -->
-      <ul class="navbar-nav me-auto">
+      <!-- ===================== -->
+      <!-- GUEST USERS -->
+      <!-- ===================== -->
 
-        <li class="nav-item">
-          <a class="nav-link" href="/">Home</a>
-        </li>
+      <a class="btn btn-outline-primary"
+         th:if="${session.ACCESS_TOKEN == null}"
+         th:href="@{/login}">
+        Sign in
+      </a>
 
-        <li class="nav-item">
-          <a class="nav-link" href="/products">Products</a>
-        </li>
+      <a class="btn btn-primary"
+         th:if="${session.ACCESS_TOKEN == null}"
+         th:href="@{/register}">
+        Create account
+      </a>
 
-        <!-- ADMIN MENU -->
-        <li class="nav-item dropdown"
-            th:if="${session.ROLE == 'ADMIN'}">
+      <!-- ===================== -->
+      <!-- LOGGED USERS -->
+      <!-- ===================== -->
 
-          <a class="nav-link dropdown-toggle"
-             href="#"
-             role="button"
-             data-bs-toggle="dropdown">
-            Admin
-          </a>
+      <a class="btn btn-outline-secondary"
+         th:if="${session.ACCESS_TOKEN != null}"
+         href="/orders">
+        My orders
+      </a>
 
-          <ul class="dropdown-menu">
+      <!-- ===================== -->
+      <!-- ADMIN -->
+      <!-- ===================== -->
 
-            <li>
-              <a class="dropdown-item" href="/admin/products">
-                Products
-              </a>
-            </li>
+      <a class="btn btn-outline-dark"
+         th:if="${session.ROLE == 'ADMIN' or session.ROLE == 'ROLE_ADMIN'}"
+         href="/admin/orders">
+        Admin Orders
+      </a>
 
-            <li>
-              <a class="dropdown-item" href="/admin/categories">
-                Categories
-              </a>
-            </li>
+      <!-- ===================== -->
+      <!-- USER INFO -->
+      <!-- ===================== -->
 
-            <li>
-              <a class="dropdown-item" href="/admin/attributes">
-                Attributes
-              </a>
-            </li>
+      <span class="text-muted small"
+            th:if="${session.ACCESS_TOKEN != null}">
+                Hello,
+                <b th:text="${session.EMAIL}">user@email.com</b>
+            </span>
 
-          </ul>
-        </li>
+      <!-- Logout -->
+      <form th:if="${session.ACCESS_TOKEN != null}"
+            method="post"
+            action="/logout"
+            class="m-0">
 
-      </ul>
+        <button class="btn btn-outline-secondary">
+          Sign out
+        </button>
 
-      <!-- Right menu -->
-      <ul class="navbar-nav ms-auto align-items-lg-center">
-
-        <!-- NOT LOGGED -->
-        <li class="nav-item" th:if="${session.ACCESS_TOKEN == null}">
-          <a class="nav-link" href="/login">Sign in</a>
-        </li>
-
-        <li class="nav-item" th:if="${session.ACCESS_TOKEN == null}">
-          <a class="nav-link" href="/register">Create account</a>
-        </li>
-
-        <!-- LOGGED USER -->
-        <li class="nav-item" th:if="${session.ACCESS_TOKEN != null}">
-          <span class="navbar-text text-white me-3">
-            Hello, <b th:text="${session.EMAIL}">user@email.com</b>
-          </span>
-        </li>
-
-        <li class="nav-item" th:if="${session.ACCESS_TOKEN != null}">
-          <form method="post" action="/logout" class="d-flex m-0">
-            <button class="btn btn-outline-light btn-sm">
-              Sign out
-            </button>
-          </form>
-        </li>
-
-      </ul>
+      </form>
 
     </div>
+
   </div>
+
 </nav>
 
-</body>
 </html>
