@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Service Details</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container py-4">
+
+  <div class="mb-4">
+    <a href="/services" class="btn btn-outline-secondary btn-sm">
+      Back to services
+    </a>
+  </div>
+
+  <!-- SERVICE INFO -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+
+      <h1 th:text="${service.name()}">Service name</h1>
+
+      <p class="text-muted"
+         th:text="${service.description()}">
+        Description
+      </p>
+
+      <p class="fw-bold">
+        Price:
+        <span th:text="${service.price()} + ' BGN'"></span>
+      </p>
+
+    </div>
+  </div>
+
+  <!-- REQUEST FORM -->
+  <div class="card shadow-sm" th:if="${session.ACCESS_TOKEN != null}">
+    <div class="card-body">
+
+      <h3 class="mb-3">Submit service request</h3>
+
+      <!-- GENERAL ERROR -->
+      <div class="alert alert-danger"
+           th:if="${error}">
+        <b>Validation error.</b>
+        Please check the fields below.
+      </div>
+
+      <form th:action="@{/services/{id}/request(id=${service.id()})}" method="post">
+
+        <!-- PHONE -->
+        <div class="mb-3">
+
+          <label class="form-label">Phone number</label>
+
+          <input type="text"
+                 name="customerPhone"
+                 class="form-control"
+                 required
+                 pattern="^\+?[0-9]{8,15}$"
+                 placeholder="+359888123456"
+                 th:value="${requestForm.customerPhone}"
+                 th:classappend="${fieldErrors != null and fieldErrors.containsKey('customerPhone')} ? ' is-invalid'">
+
+          <div class="invalid-feedback"
+               th:if="${fieldErrors != null and fieldErrors.containsKey('customerPhone')}"
+               th:text="${fieldErrors.get('customerPhone')}">
+          </div>
+
+        </div>
+
+        <!-- DESCRIPTION -->
+        <div class="mb-3">
+
+          <label class="form-label">Description</label>
+
+          <textarea name="description"
+                    rows="5"
+                    class="form-control"
+                    minlength="10"
+                    maxlength="5000"
+                    required
+                    placeholder="Describe the problem with your device..."
+                    th:text="${requestForm.description}"
+                    th:classappend="${fieldErrors != null and fieldErrors.containsKey('description')} ? ' is-invalid'">
+                    </textarea>
+
+          <div class="invalid-feedback"
+               th:if="${fieldErrors != null and fieldErrors.containsKey('description')}"
+               th:text="${fieldErrors.get('description')}">
+          </div>
+
+        </div>
+
+        <button type="submit"
+                class="btn btn-primary">
+          Submit request
+        </button>
+
+      </form>
+
+    </div>
+  </div>
+
+  <!-- LOGIN MESSAGE -->
+  <div class="alert alert-info"
+       th:if="${session.ACCESS_TOKEN == null}">
+    Please <a href="/login">log in</a> to submit a service request.
+  </div>
+
+</div>
+
+</body>
+</html>

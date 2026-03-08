@@ -11,7 +11,13 @@
       💻 Computer Store
     </a>
 
-    <div class="ms-auto d-flex align-items-center gap-2">
+    <div class="ms-auto d-flex align-items-center gap-2 flex-wrap">
+
+      <!-- Public -->
+      <a class="btn btn-outline-secondary"
+         href="/services">
+        Services
+      </a>
 
       <!-- Cart (visible for everyone) -->
       <a class="btn btn-outline-secondary"
@@ -42,7 +48,13 @@
       <a class="btn btn-outline-secondary"
          th:if="${session.ACCESS_TOKEN != null}"
          href="/orders">
-        My orders
+        My Orders
+      </a>
+
+      <a class="btn btn-outline-secondary"
+         th:if="${session.ACCESS_TOKEN != null}"
+         href="/my-service-requests">
+        My Service Requests
       </a>
 
       <!-- ===================== -->
@@ -53,6 +65,18 @@
          th:if="${session.ROLE == 'ADMIN' or session.ROLE == 'ROLE_ADMIN'}"
          href="/admin/orders">
         Admin Orders
+      </a>
+
+      <a class="btn btn-outline-dark"
+         th:if="${session.ROLE == 'ADMIN' or session.ROLE == 'ROLE_ADMIN'}"
+         href="/admin/services">
+        Manage Services
+      </a>
+
+      <a class="btn btn-outline-dark"
+         th:if="${session.ROLE == 'ADMIN' or session.ROLE == 'ROLE_ADMIN'}"
+         href="/admin/service-requests">
+        Manage Service Requests
       </a>
 
       <!-- ===================== -->
@@ -71,7 +95,7 @@
             action="/logout"
             class="m-0">
 
-        <button class="btn btn-outline-secondary">
+        <button class="btn btn-outline-secondary" type="submit">
           Sign out
         </button>
 
