@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Отказан достъп</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-7 col-lg-5">
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body p-4 text-center">
+          <h1 class="h3 mb-3 text-danger">Отказан достъп</h1>
+          <p class="text-muted mb-4">
+            Нямате права да отворите тази страница.
+          </p>
+
+          <div class="d-flex justify-content-center gap-2">
+            <a th:href="@{/}" class="btn btn-primary">Към началната страница</a>
+            <a th:href="@{/login}" class="btn btn-outline-secondary">Вход</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

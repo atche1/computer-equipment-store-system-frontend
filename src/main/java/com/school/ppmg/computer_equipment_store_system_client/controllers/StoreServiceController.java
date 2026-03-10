@@ -4,6 +4,7 @@ import com.school.ppmg.computer_equipment_store_system_client.clients.StoreServi
 import com.school.ppmg.computer_equipment_store_system_client.dtos.service.ServiceRequest;
 import com.school.ppmg.computer_equipment_store_system_client.dtos.service.ServiceResponse;
 import com.school.ppmg.computer_equipment_store_system_client.exceptions.BackendException;
+import com.school.ppmg.computer_equipment_store_system_client.security.AdminGuard;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class StoreServiceController {
 
     private final StoreServiceClient storeServiceClient;
+    private final AdminGuard adminGuard;
 
     @GetMapping("/services")
     public String servicesPage(Model model) {
@@ -25,7 +27,8 @@ public class StoreServiceController {
     @GetMapping("/services/{id}")
     public String serviceDetails(@PathVariable Long id, Model model) {
         model.addAttribute("service", storeServiceClient.getById(id));
-        model.addAttribute("requestForm", new com.school.ppmg.computer_equipment_store_system_client.dtos.service_request.CreateServiceRequestRequest());
+        model.addAttribute("requestForm",
+                new com.school.ppmg.computer_equipment_store_system_client.dtos.service_request.CreateServiceRequestRequest());
         return "services/service-details";
     }
 
@@ -34,33 +37,31 @@ public class StoreServiceController {
                                 @RequestParam(required = false) Boolean isActive,
                                 HttpSession session,
                                 Model model) {
-        if (!"ADMIN".equals(session.getAttribute(AuthController.SESSION_ROLE))) {
-            return "redirect:/";
-        }
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
 
         var servicesPage = storeServiceClient.getAllForAdmin(isActive, page, 20, "createdAt,desc");
         model.addAttribute("servicesPage", servicesPage);
         model.addAttribute("isActive", isActive);
-        return "admin/services";
+
+        return "admin/services/services";
     }
 
     @GetMapping("/admin/services/create")
     public String createServicePage(HttpSession session, Model model) {
-        if (!"ADMIN".equals(session.getAttribute(AuthController.SESSION_ROLE))) {
-            return "redirect:/";
-        }
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
 
         model.addAttribute("service", new ServiceRequest());
-        return "services/create-service";
+        return "admin/services/create-service";
     }
 
     @PostMapping("/admin/services/create")
     public String createService(@ModelAttribute("service") ServiceRequest request,
                                 HttpSession session,
                                 Model model) {
-        if (!"ADMIN".equals(session.getAttribute(AuthController.SESSION_ROLE))) {
-            return "redirect:/";
-        }
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
 
         try {
             storeServiceClient.create(request);
@@ -68,7 +69,7 @@ public class StoreServiceController {
         } catch (BackendException ex) {
             model.addAttribute("error", ex.getMessage());
             model.addAttribute("service", request);
-            return "services/create-service";
+            return "admin/services/create-service";
         }
     }
 
@@ -76,9 +77,8 @@ public class StoreServiceController {
     public String editServicePage(@PathVariable Long id,
                                   HttpSession session,
                                   Model model) {
-        if (!"ADMIN".equals(session.getAttribute(AuthController.SESSION_ROLE))) {
-            return "redirect:/";
-        }
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
 
         ServiceResponse service = storeServiceClient.getById(id);
 
@@ -90,7 +90,8 @@ public class StoreServiceController {
 
         model.addAttribute("service", request);
         model.addAttribute("serviceId", id);
-        return "services/edit-service";
+
+        return "admin/services/edit-service";
     }
 
     @PostMapping("/admin/services/edit/{id}")
@@ -98,9 +99,8 @@ public class StoreServiceController {
                               @ModelAttribute("service") ServiceRequest request,
                               HttpSession session,
                               Model model) {
-        if (!"ADMIN".equals(session.getAttribute(AuthController.SESSION_ROLE))) {
-            return "redirect:/";
-        }
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
 
         try {
             storeServiceClient.update(id, request);
@@ -109,15 +109,14 @@ public class StoreServiceController {
             model.addAttribute("error", ex.getMessage());
             model.addAttribute("serviceId", id);
             model.addAttribute("service", request);
-            return "services/edit-service";
+            return "admin/services/edit-service";
         }
     }
 
     @PostMapping("/admin/services/delete/{id}")
     public String deleteService(@PathVariable Long id, HttpSession session) {
-        if (!"ADMIN".equals(session.getAttribute(AuthController.SESSION_ROLE))) {
-            return "redirect:/";
-        }
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
 
         storeServiceClient.delete(id);
         return "redirect:/admin/services";

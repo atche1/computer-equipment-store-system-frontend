@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${product.name()} + ' - Product Details'">Product Details</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(180deg, #eef2ff 0%, #f7f8fc 100%);
+            min-height: 100vh;
+        }
+
+        .details-card {
+            border: 0;
+            border-radius: 20px;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .main-image-wrapper {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+            min-height: 420px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-image {
+            max-width: 100%;
+            max-height: 360px;
+            object-fit: contain;
+        }
+
+        .image-placeholder {
+            color: #6c757d;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .thumb-image {
+    width: 100%;
+    height: 90px;
+    object-fit: contain;
+    background: #fff;
+    border-radius: 12px;
+    padding: 8px;
+    border: 2px solid #e9ecef;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.thumb-image:hover {
+    border-color: #0d6efd;
+    transform: translateY(-2px);
+}
+
+.thumb-image.active-thumb {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+}
+
+        .price {
+            font-size: 30px;
+            font-weight: 700;
+            color: #0d6efd;
+        }
+
+        .stock-badge {
+            font-size: 14px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .spec-table td,
+        .spec-table th {
+            vertical-align: middle;
+        }
+
+        .spec-name {
+            font-weight: 600;
+            width: 40%;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="fragments/navbar"></div>
+
+<div class="container py-5">
+
+    <div class="mb-4">
+        <a th:href="@{/products}" class="btn btn-outline-secondary btn-sm">
+            Back to products
+        </a>
+    </div>
+
+    <div class="card details-card">
+        <div class="card-body p-4 p-lg-5">
+
+            <div class="row g-5">
+
+                <!-- LEFT SIDE -->
+                <div class="col-lg-5">
+
+                    <div class="main-image-wrapper mb-3">
+                        <img th:if="${mainImage != null}"
+                             th:src="${mainImage.imageUrl()}"
+                             th:alt="${product.name()}"
+                             class="main-image"
+                             id="mainProductImage">
+
+                        <div th:if="${mainImage == null}" class="image-placeholder" id="mainImagePlaceholder">
+                            No image available
+                        </div>
+                    </div>
+
+                    <div class="row g-2" th:if="${images != null and !#lists.isEmpty(images)}">
+                        <div class="col-4 col-sm-3" th:each="img : ${images}">
+                            <img th:src="${img.imageUrl()}"
+                                 th:alt="${product.name()}"
+                                 class="thumb-image product-thumb"
+                                 th:attr="data-image-url=${img.imageUrl()}">
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- RIGHT SIDE -->
+                <div class="col-lg-7">
+
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                        <span class="badge text-bg-primary"
+                              th:text="${product.categoryName()} ?: 'Uncategorized'">
+                            Category
+                        </span>
+
+                        <span class="badge stock-badge"
+                              th:classappend="${product.quantity() != null and product.quantity() > 0} ? ' text-bg-success' : ' text-bg-danger'"
+                              th:text="${product.quantity() != null and product.quantity() > 0} ? 'In stock' : 'Out of stock'">
+                            In stock
+                        </span>
+
+                        <span class="badge text-bg-secondary"
+                              th:if="${product.isActive() != null and !product.isActive()}">
+                            Inactive
+                        </span>
+                    </div>
+
+                    <h1 class="mb-3" th:text="${product.name()}">Product name</h1>
+
+                    <div class="price mb-4" th:text="${#numbers.formatDecimal(product.price(), 1, 2)} + ' BGN'">
+                        0.00 BGN
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="section-title">Description</div>
+
+                        <p class="text-muted mb-0"
+                           th:if="${product.description() != null and !#strings.isEmpty(product.description())}"
+                           th:text="${product.description()}">
+                            Product description
+                        </p>
+
+                        <p class="text-muted mb-0"
+                           th:if="${product.description() == null or #strings.isEmpty(product.description())}">
+                            No description available for this product.
+                        </p>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="section-title">Product Information</div>
+
+                        <ul class="list-group list-group-flush rounded overflow-hidden">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Category</span>
+                                <strong th:text="${product.categoryName()} ?: 'Uncategorized'">Category</strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Available Quantity</span>
+                                <strong th:text="${product.quantity()} ?: 0">0</strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Status</span>
+                                <strong th:text="${product.isActive()} ? 'Active' : 'Inactive'">Active</strong>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="d-flex flex-column flex-sm-row gap-2 mb-4">
+                        <form method="post" action="/cart/add" class="d-flex gap-2 flex-grow-1">
+                            <input type="hidden" name="productId" th:value="${product.id()}"/>
+
+                            <input type="number"
+                                   name="qty"
+                                   value="1"
+                                   min="1"
+                                   class="form-control"
+                                   style="max-width: 120px;"
+                                   th:attr="max=${product.quantity() != null ? product.quantity() : null}">
+
+                            <button class="btn btn-primary flex-grow-1"
+                                    th:disabled="${product.quantity() == null or product.quantity() <= 0 or (product.isActive() != null and !product.isActive())}">
+                                Add to cart
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SPECIFICATIONS -->
+            <div class="mt-5">
+                <h2 class="section-title">Specifications</h2>
+
+                <div th:if="${attributes != null and !#lists.isEmpty(attributes)}" class="table-responsive">
+                    <table class="table table-bordered bg-white spec-table align-middle">
+                        <thead class="table-light">
+                        <tr>
+                            <th>Attribute</th>
+                            <th>Value</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="attr : ${attributes}">
+                            <td class="spec-name" th:text="${attr.attributeName()}">Attribute name</td>
+                            <td>
+                                <span th:if="${attr.dataType() != null and attr.dataType().name() == 'TEXT'}"
+                                      th:text="${attr.valueText()}">
+                                    Value
+                                </span>
+
+                                <span th:if="${attr.dataType() != null and attr.dataType().name() == 'NUMBER'}"
+                                      th:text="${attr.valueNumber()} + (${attr.unit()} != null ? ' ' + ${attr.unit()} : '')">
+                                    Value
+                                </span>
+
+                                <span th:if="${attr.dataType() != null and attr.dataType().name() == 'BOOLEAN'}"
+                                      th:text="${attr.valueBoolean()} ? 'Yes' : 'No'">
+                                    Yes
+                                </span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div th:if="${attributes == null or #lists.isEmpty(attributes)}" class="alert alert-secondary mb-0">
+                    No specifications available for this product.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const mainImage = document.getElementById("mainProductImage");
+        const placeholder = document.getElementById("mainImagePlaceholder");
+        const thumbs = document.querySelectorAll(".product-thumb");
+
+        if (!mainImage || thumbs.length === 0) {
+            return;
+        }
+
+        thumbs.forEach((thumb) => {
+            if (thumb.getAttribute("data-image-url") === mainImage.getAttribute("src")) {
+                thumb.classList.add("active-thumb");
+            }
+
+            thumb.addEventListener("click", function () {
+                const newUrl = this.getAttribute("data-image-url");
+
+                if (!newUrl) {
+                    return;
+                }
+
+                mainImage.setAttribute("src", newUrl);
+
+                if (placeholder) {
+                    placeholder.style.display = "none";
+                }
+
+                thumbs.forEach(t => t.classList.remove("active-thumb"));
+                this.classList.add("active-thumb");
+            });
+        });
+    });
+</script>
+</body>
+</html>

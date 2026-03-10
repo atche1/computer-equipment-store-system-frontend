@@ -1,12 +1,19 @@
 package com.school.ppmg.computer_equipment_store_system_client.controllers;
 
 import com.school.ppmg.computer_equipment_store_system_client.clients.CategoryClient;
+import com.school.ppmg.computer_equipment_store_system_client.clients.ProductAttributeValueClient;
 import com.school.ppmg.computer_equipment_store_system_client.clients.ProductClient;
+import com.school.ppmg.computer_equipment_store_system_client.clients.ProductImageClient;
 import com.school.ppmg.computer_equipment_store_system_client.dtos.category.CategoryResponse;
 import com.school.ppmg.computer_equipment_store_system_client.dtos.common.PageResponse;
 import com.school.ppmg.computer_equipment_store_system_client.dtos.product.ProductRequest;
 import com.school.ppmg.computer_equipment_store_system_client.dtos.product.ProductResponse;
+import com.school.ppmg.computer_equipment_store_system_client.dtos.product_attribute_value.ProductAttributeValueResponse;
+import com.school.ppmg.computer_equipment_store_system_client.dtos.product_image.ProductImageResponse;
 import com.school.ppmg.computer_equipment_store_system_client.exceptions.ApiConflictException;
+import com.school.ppmg.computer_equipment_store_system_client.exceptions.BackendException;
+import com.school.ppmg.computer_equipment_store_system_client.security.AdminGuard;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -16,7 +23,11 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -25,6 +36,13 @@ public class ProductController {
     private final ProductClient productClient;
     private final CategoryClient categoryClient;
     private final com.school.ppmg.computer_equipment_store_system_client.clients.CategoryAttributeClient categoryAttributeClient;
+    private final ProductImageClient productImageClient;
+    private final ProductAttributeValueClient productAttributeValueClient;
+    private final AdminGuard adminGuard;
+
+    // =========================================================
+    // PUBLIC CATALOG
+    // =========================================================
 
     @GetMapping("/products")
     public String productsPage(
@@ -44,7 +62,6 @@ public class ProductController {
             sort = "name,asc";
         }
 
-        // 1) Load filterable attributes for selected category
         List<com.school.ppmg.computer_equipment_store_system_client.dtos.attribute.AttributeResponse> filterableAttributes = List.of();
         if (categoryId != null) {
             filterableAttributes = categoryAttributeClient.list(categoryId).stream()
@@ -52,21 +69,20 @@ public class ProductController {
                     .toList();
         }
 
-        // 2) Parse attr filters from request params:
-        // attrText_12=Logitech -> "12:Logitech"
-        List<String> attrText = new java.util.ArrayList<>();
-        List<String> attrNumMin = new java.util.ArrayList<>();
-        List<String> attrNumMax = new java.util.ArrayList<>();
-        List<String> attrBool = new java.util.ArrayList<>();
+        List<String> attrText = new ArrayList<>();
+        List<String> attrNumMin = new ArrayList<>();
+        List<String> attrNumMax = new ArrayList<>();
+        List<String> attrBool = new ArrayList<>();
 
-        java.util.Map<Long, String> uiText = new java.util.HashMap<>();
-        java.util.Map<Long, String> uiNumMin = new java.util.HashMap<>();
-        java.util.Map<Long, String> uiNumMax = new java.util.HashMap<>();
-        java.util.Map<Long, String> uiBool = new java.util.HashMap<>();
+        Map<Long, String> uiText = new HashMap<>();
+        Map<Long, String> uiNumMin = new HashMap<>();
+        Map<Long, String> uiNumMax = new HashMap<>();
+        Map<Long, String> uiBool = new HashMap<>();
 
         for (var entry : params.entrySet()) {
             String key = entry.getKey();
             if (entry.getValue() == null || entry.getValue().isEmpty()) continue;
+
             String val = entry.getValue().get(0);
             if (val == null || val.isBlank()) continue;
 
@@ -97,14 +113,21 @@ public class ProductController {
             }
         }
 
-        // 3) Call backend
-        PageResponse<ProductResponse> result =
-                productClient.getAll(q, categoryId, isActive, minPrice, maxPrice, inStock,
-                        attrText.isEmpty() ? null : attrText,
-                        attrNumMin.isEmpty() ? null : attrNumMin,
-                        attrNumMax.isEmpty() ? null : attrNumMax,
-                        attrBool.isEmpty() ? null : attrBool,
-                        page, size, sort);
+        PageResponse<ProductResponse> result = productClient.getAll(
+                q,
+                categoryId,
+                isActive,
+                minPrice,
+                maxPrice,
+                inStock,
+                attrText.isEmpty() ? null : attrText,
+                attrNumMin.isEmpty() ? null : attrNumMin,
+                attrNumMax.isEmpty() ? null : attrNumMax,
+                attrBool.isEmpty() ? null : attrBool,
+                page,
+                size,
+                sort
+        );
 
         List<CategoryResponse> categories = categoryClient.listActive();
 
@@ -121,87 +144,126 @@ public class ProductController {
         model.addAttribute("sort", sort);
         model.addAttribute("size", size);
 
-        // attribute filters for UI
         model.addAttribute("filterableAttributes", filterableAttributes);
         model.addAttribute("uiText", uiText);
         model.addAttribute("uiNumMin", uiNumMin);
         model.addAttribute("uiNumMax", uiNumMax);
         model.addAttribute("uiBool", uiBool);
 
-        // 4) Build queryString (without page) for pager links
         model.addAttribute("queryString", buildQueryString(params, sort, size));
 
         return "products/list-products";
     }
 
-    private Long tryParseIdSuffix(String key, String prefix) {
-        try {
-            return Long.parseLong(key.substring(prefix.length()));
-        } catch (Exception ex) {
-            return null;
-        }
+    @GetMapping("/products/{id}")
+    public String productDetails(@PathVariable Long id, Model model) {
+        ProductResponse product = productClient.getById(id);
+
+        List<ProductImageResponse> images = productImageClient.list(id);
+        List<ProductAttributeValueResponse> attributes = productAttributeValueClient.list(id);
+
+        ProductImageResponse mainImage = images.stream()
+                .filter(img -> Boolean.TRUE.equals(img.isMain()))
+                .findFirst()
+                .orElse(images.isEmpty() ? null : images.get(0));
+
+        model.addAttribute("product", product);
+        model.addAttribute("images", images);
+        model.addAttribute("mainImage", mainImage);
+        model.addAttribute("attributes", attributes);
+
+        return "products/product-details";
     }
 
-    private String buildQueryString(org.springframework.util.MultiValueMap<String, String> params, String sort, int size) {
-        // keep all current params except "page"; ensure sort/size exist
-        java.util.Map<String, String> flat = new java.util.LinkedHashMap<>();
+    // =========================================================
+    // ADMIN PRODUCT MANAGEMENT
+    // =========================================================
 
-        for (var e : params.entrySet()) {
-            String k = e.getKey();
-            if ("page".equals(k)) continue;
-            if (e.getValue() == null || e.getValue().isEmpty()) continue;
-            String v = e.getValue().get(0);
-            if (v == null || v.isBlank()) continue;
-            flat.put(k, v);
+    @GetMapping("/admin/products")
+    public String adminProductsPage(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Boolean isActive,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String sort,
+            HttpSession session,
+            Model model
+    ) {
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
+
+        if (sort == null || sort.isBlank()) {
+            sort = "createdAt,desc";
         }
 
-        if (!flat.containsKey("sort")) flat.put("sort", sort);
-        if (!flat.containsKey("size")) flat.put("size", String.valueOf(size));
+        PageResponse<ProductResponse> result = productClient.getAll(
+                q,
+                categoryId,
+                isActive,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                page,
+                size,
+                sort
+        );
 
-        StringBuilder sb = new StringBuilder();
-        for (var e : flat.entrySet()) {
-            sb.append("&").append(urlEnc(e.getKey())).append("=").append(urlEnc(e.getValue()));
-        }
-        return sb.toString();
+        model.addAttribute("page", result);
+        model.addAttribute("products", result.getContent());
+        model.addAttribute("categories", categoryClient.listActive());
+
+        model.addAttribute("q", q);
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("isActive", isActive);
+        model.addAttribute("sort", sort);
+        model.addAttribute("size", size);
+
+        return "admin/products/list-products-admin";
     }
 
-    private String urlEnc(String s) {
-        try {
-            return java.net.URLEncoder.encode(s, java.nio.charset.StandardCharsets.UTF_8);
-        } catch (Exception ex) {
-            return s;
-        }
-    }
+    @GetMapping("/admin/products/create")
+    public String createProduct(HttpSession session, Model model) {
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
 
-    @GetMapping("/add-product")
-    public String createProduct(Model model) {
         model.addAttribute("product", new ProductRequest());
         model.addAttribute("categories", categoryClient.listActive());
-        return "products/create-product";
+        return "admin/products/create-product";
     }
 
-    @PostMapping("/save-product")
+    @PostMapping("/admin/products/create")
     public String submitProduct(@Valid @ModelAttribute("product") ProductRequest request,
                                 BindingResult bindingResult,
+                                HttpSession session,
                                 Model model) {
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", categoryClient.listActive());
-            return "products/create-product";
+            return "admin/products/create-product";
         }
 
         try {
             productClient.create(request);
-            return "redirect:/products";
-        } catch (ApiConflictException ex) {
+            return "redirect:/admin/products";
+        } catch (BackendException ex) {
             bindingResult.addError(new ObjectError("product", ex.getMessage()));
             model.addAttribute("categories", categoryClient.listActive());
-            return "products/create-product";
+            return "admin/products/create-product";
         }
     }
 
-    @GetMapping("/edit-product/{id}")
-    public String editProduct(@PathVariable Long id, Model model) {
+    @GetMapping("/admin/products/{id}/edit")
+    public String editProduct(@PathVariable Long id, HttpSession session, Model model) {
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
+
         ProductResponse p = productClient.getById(id);
 
         ProductRequest req = new ProductRequest();
@@ -216,35 +278,92 @@ public class ProductController {
         model.addAttribute("productId", id);
         model.addAttribute("categories", categoryClient.listActive());
 
-        return "products/edit-product";
+        return "admin/products/edit-product";
     }
 
-    @PostMapping("/edit-product/{id}")
+    @PostMapping("/admin/products/{id}/edit")
     public String updateProduct(@PathVariable Long id,
                                 @Valid @ModelAttribute("product") ProductRequest request,
                                 BindingResult bindingResult,
+                                HttpSession session,
                                 Model model) {
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("productId", id);
             model.addAttribute("categories", categoryClient.listActive());
-            return "products/edit-product";
+            return "admin/products/edit-product";
         }
 
         try {
             productClient.update(id, request);
-            return "redirect:/products";
-        } catch (ApiConflictException ex) {
+            return "redirect:/admin/products";
+        } catch (BackendException ex) {
             bindingResult.addError(new ObjectError("product", ex.getMessage()));
             model.addAttribute("productId", id);
             model.addAttribute("categories", categoryClient.listActive());
-            return "products/edit-product";
+            return "admin/products/edit-product";
         }
     }
 
-    @PostMapping("/delete-product/{id}")
-    public String deleteProduct(@PathVariable Long id) {
+    @PostMapping("/admin/products/{id}/delete")
+    public String deleteProduct(@PathVariable Long id, HttpSession session) {
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
+
         productClient.delete(id);
-        return "redirect:/products";
+        return "redirect:/admin/products";
+    }
+
+    // =========================================================
+    // HELPERS
+    // =========================================================
+
+    private Long tryParseIdSuffix(String key, String prefix) {
+        try {
+            return Long.parseLong(key.substring(prefix.length()));
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    private String buildQueryString(org.springframework.util.MultiValueMap<String, String> params, String sort, int size) {
+        Map<String, String> flat = new java.util.LinkedHashMap<>();
+
+        for (var e : params.entrySet()) {
+            String k = e.getKey();
+            if ("page".equals(k)) continue;
+            if (e.getValue() == null || e.getValue().isEmpty()) continue;
+
+            String v = e.getValue().get(0);
+            if (v == null || v.isBlank()) continue;
+
+            flat.put(k, v);
+        }
+
+        if (!flat.containsKey("sort")) {
+            flat.put("sort", sort);
+        }
+        if (!flat.containsKey("size")) {
+            flat.put("size", String.valueOf(size));
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (var e : flat.entrySet()) {
+            sb.append("&")
+                    .append(urlEnc(e.getKey()))
+                    .append("=")
+                    .append(urlEnc(e.getValue()));
+        }
+        return sb.toString();
+    }
+
+    private String urlEnc(String s) {
+        try {
+            return java.net.URLEncoder.encode(s, StandardCharsets.UTF_8);
+        } catch (Exception ex) {
+            return s;
+        }
     }
 }

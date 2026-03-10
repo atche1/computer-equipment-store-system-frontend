@@ -1,5 +1,6 @@
 package com.school.ppmg.computer_equipment_store_system_client.exceptions;
 
+import java.util.Collections;
 import java.util.Map;
 
 public class BackendException extends RuntimeException {
@@ -12,6 +13,6 @@ public class BackendException extends RuntimeException {
     }
 
     public Map<String, String> getFieldErrors() {
-        return fieldErrors;
+        return fieldErrors != null ? fieldErrors : Collections.emptyMap();
     }
 }

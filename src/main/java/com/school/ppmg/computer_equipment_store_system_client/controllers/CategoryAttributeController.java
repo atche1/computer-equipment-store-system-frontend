@@ -7,6 +7,9 @@ import com.school.ppmg.computer_equipment_store_system_client.dtos.attribute.Att
 import com.school.ppmg.computer_equipment_store_system_client.dtos.category.CategoryResponse;
 import com.school.ppmg.computer_equipment_store_system_client.dtos.category_attribute.CategoryAttributeAddRequest;
 import com.school.ppmg.computer_equipment_store_system_client.dtos.common.PageResponse;
+import com.school.ppmg.computer_equipment_store_system_client.exceptions.BackendException;
+import com.school.ppmg.computer_equipment_store_system_client.security.AdminGuard;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,14 +27,18 @@ public class CategoryAttributeController {
     private final CategoryClient categoryClient;
     private final AttributeClient attributeClient;
     private final CategoryAttributeClient categoryAttributeClient;
+    private final AdminGuard adminGuard;
 
     @GetMapping("/categories/{categoryId}/attributes")
-    public String manage(@PathVariable Long categoryId, Model model) {
-        CategoryResponse category = categoryClient.getById(categoryId);
+    public String manage(@PathVariable Long categoryId,
+                         HttpSession session,
+                         Model model) {
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
 
+        CategoryResponse category = categoryClient.getById(categoryId);
         List<AttributeResponse> assigned = categoryAttributeClient.list(categoryId);
 
-        // всички атрибути за dropdown (увеличи size ако имаш много)
         PageResponse<AttributeResponse> allPage =
                 attributeClient.getAll(null, null, null, null, 0, 1000, "name,asc");
 
@@ -51,24 +58,24 @@ public class CategoryAttributeController {
         model.addAttribute("categoryId", categoryId);
         model.addAttribute("assignedAttributes", assigned);
         model.addAttribute("availableAttributes", available);
-
-        // ако решиш да ползваш th:object в бъдеще (не е задължително)
         model.addAttribute("addRequest", new CategoryAttributeAddRequest());
 
-        return "category_attributes/category-attributes";
+        return "admin/category_attributes/category-attributes";
     }
 
     @PostMapping("/categories/{categoryId}/attributes/add")
-    public String add(
-            @PathVariable Long categoryId,
-            @RequestParam Long attributeId,
-            RedirectAttributes redirectAttributes
-    ) {
+    public String add(@PathVariable Long categoryId,
+                      @RequestParam Long attributeId,
+                      HttpSession session,
+                      RedirectAttributes redirectAttributes) {
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
+
         try {
             CategoryAttributeAddRequest req = new CategoryAttributeAddRequest(attributeId);
             categoryAttributeClient.add(categoryId, req);
             redirectAttributes.addFlashAttribute("successMessage", "Attribute added successfully.");
-        } catch (RuntimeException ex) {
+        } catch (BackendException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
         }
 
@@ -76,15 +83,17 @@ public class CategoryAttributeController {
     }
 
     @PostMapping("/categories/{categoryId}/attributes/remove/{attributeId}")
-    public String remove(
-            @PathVariable Long categoryId,
-            @PathVariable Long attributeId,
-            RedirectAttributes redirectAttributes
-    ) {
+    public String remove(@PathVariable Long categoryId,
+                         @PathVariable Long attributeId,
+                         HttpSession session,
+                         RedirectAttributes redirectAttributes) {
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
+
         try {
             categoryAttributeClient.remove(categoryId, attributeId);
             redirectAttributes.addFlashAttribute("successMessage", "Attribute removed successfully.");
-        } catch (RuntimeException ex) {
+        } catch (BackendException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
         }
 
