@@ -1,43 +1,51 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <title>Products</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
+        body{
+            background: linear-gradient(180deg,#eef2ff 0%,#f7f8fc 100%);
+            min-height:100vh;
+        }
 
-body{
-    background: linear-gradient(180deg,#eef2ff 0%,#f7f8fc 100%);
-    min-height:100vh;
-}
+        .product-card{
+            border:0;
+            border-radius:16px;
+            box-shadow:0 8px 22px rgba(0,0,0,0.08);
+            transition:all .2s ease;
+        }
 
-.product-card{
-    border:0;
-    border-radius:16px;
-    box-shadow:0 8px 22px rgba(0,0,0,0.08);
-    transition:all .2s ease;
-}
+        .product-card:hover{
+            transform:translateY(-4px);
+            box-shadow:0 12px 30px rgba(0,0,0,0.12);
+        }
 
-.product-card:hover{
-    transform:translateY(-4px);
-    box-shadow:0 12px 30px rgba(0,0,0,0.12);
-}
+        .price{
+            font-size:20px;
+            font-weight:600;
+        }
 
-.price{
-    font-size:20px;
-    font-weight:600;
-}
+        .filter-card{
+            border:0;
+            border-radius:16px;
+            box-shadow:0 8px 22px rgba(0,0,0,0.08);
+        }
 
-</style>
-
+        .section-title{
+            font-size:14px;
+            font-weight:700;
+            text-transform:uppercase;
+            letter-spacing:.04em;
+            color:#6c757d;
+            margin-bottom:.75rem;
+        }
+    </style>
 </head>
-
 <body>
 
 <div th:replace="fragments/navbar"></div>
@@ -46,110 +54,163 @@ body{
 
     <h1 class="mb-4">Products</h1>
 
-    <!-- FILTERS -->
-
-    <div class="card mb-4">
-
+    <div class="card filter-card mb-4">
         <div class="card-body">
 
             <form method="get" th:action="@{/products}" class="row g-3">
 
                 <div class="col-md-4">
-
                     <label class="form-label">Search</label>
-
                     <input type="text"
                            name="q"
                            class="form-control"
                            placeholder="Search products..."
                            th:value="${q}">
-
                 </div>
 
                 <div class="col-md-3">
-
                     <label class="form-label">Category</label>
-
-                    <select class="form-select" name="categoryId">
-
+                    <select class="form-select" name="categoryId" onchange="this.form.submit()">
                         <option value="">All</option>
-
                         <option th:each="c : ${categories}"
                                 th:value="${c.id()}"
                                 th:selected="${categoryId != null and categoryId == c.id()}"
                                 th:text="${c.name()}">
                         </option>
-
                     </select>
-
                 </div>
 
                 <div class="col-md-2">
-
                     <label class="form-label">Min price</label>
-
                     <input type="text"
                            name="minPrice"
                            class="form-control"
+                           placeholder="e.g. 500"
                            th:value="${minPrice}">
-
                 </div>
 
                 <div class="col-md-2">
-
                     <label class="form-label">Max price</label>
-
                     <input type="text"
                            name="maxPrice"
                            class="form-control"
+                           placeholder="e.g. 2500"
                            th:value="${maxPrice}">
-
                 </div>
 
-                <div class="col-md-1 d-flex align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label">Availability</label>
+                    <select class="form-select" name="inStock">
+                        <option value="" th:selected="${inStock == null}">All</option>
+                        <option value="true" th:selected="${inStock != null and inStock}">In stock only</option>
+                        <option value="false" th:selected="${inStock != null and !inStock}">Out of stock only</option>
+                    </select>
+                </div>
 
+                <div class="col-md-3">
+                    <label class="form-label">Sort</label>
+                    <select class="form-select" name="sort">
+                        <option value="name,asc" th:selected="${sort == 'name,asc'}">Name A-Z</option>
+                        <option value="name,desc" th:selected="${sort == 'name,desc'}">Name Z-A</option>
+                        <option value="price,asc" th:selected="${sort == 'price,asc'}">Price low to high</option>
+                        <option value="price,desc" th:selected="${sort == 'price,desc'}">Price high to low</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Page size</label>
+                    <select class="form-select" name="size">
+                        <option value="10" th:selected="${size == 10}">10</option>
+                        <option value="20" th:selected="${size == 20}">20</option>
+                        <option value="30" th:selected="${size == 30}">30</option>
+                    </select>
+                </div>
+
+                <div class="col-12"
+                     th:if="${filterableAttributes != null and !#lists.isEmpty(filterableAttributes)}">
+
+                    <hr class="my-2">
+                    <div class="section-title">Main characteristics</div>
+
+                    <div class="row g-3">
+                        <div class="col-md-3"
+                             th:each="attr : ${filterableAttributes}">
+
+                            <div th:if="${attr.dataType() != null and attr.dataType().toString() == 'TEXT'}">
+                                <label class="form-label" th:text="${attr.name()}"></label>
+                                <input type="text"
+                                       class="form-control"
+                                       th:name="${'attrText_' + attr.id()}"
+                                       th:value="${uiText != null ? uiText.get(attr.id()) : ''}"
+                                       th:placeholder="${(attr.unit() != null and !#strings.isEmpty(attr.unit())) ? 'Value (' + attr.unit() + ')' : 'Value'}">
+                            </div>
+
+                            <div th:if="${attr.dataType() != null and attr.dataType().toString() == 'NUMBER'}">
+                                <label class="form-label"
+                                       th:text="${attr.name() + ((attr.unit() != null and !#strings.isEmpty(attr.unit())) ? ' (' + attr.unit() + ')' : '')}">
+                                </label>
+                                <div class="d-flex gap-2">
+                                    <input type="text"
+                                           class="form-control"
+                                           th:name="${'attrNumMin_' + attr.id()}"
+                                           th:value="${uiNumMin != null ? uiNumMin.get(attr.id()) : ''}"
+                                           placeholder="Min">
+                                    <input type="text"
+                                           class="form-control"
+                                           th:name="${'attrNumMax_' + attr.id()}"
+                                           th:value="${uiNumMax != null ? uiNumMax.get(attr.id()) : ''}"
+                                           placeholder="Max">
+                                </div>
+                            </div>
+
+                            <div th:if="${attr.dataType() != null and attr.dataType().toString() == 'BOOLEAN'}">
+                                <label class="form-label" th:text="${attr.name()}"></label>
+                                <select class="form-select"
+                                        th:name="${'attrBool_' + attr.id()}">
+                                    <option value="" th:selected="${uiBool == null or uiBool.get(attr.id()) == null}">All</option>
+                                    <option value="true" th:selected="${uiBool != null and uiBool.get(attr.id()) == 'true'}">Yes</option>
+                                    <option value="false" th:selected="${uiBool != null and uiBool.get(attr.id()) == 'false'}">No</option>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end">
                     <button class="btn btn-primary w-100">Apply</button>
+                </div>
 
+                <div class="col-md-2 d-flex align-items-end">
+                    <a th:href="@{/products}" class="btn btn-outline-secondary w-100">Clear</a>
                 </div>
 
             </form>
-
         </div>
-
     </div>
 
-    <!-- PRODUCTS GRID -->
-
     <div class="row g-4">
-
         <div class="col-lg-3 col-md-4 col-sm-6"
              th:each="p : ${products}">
 
             <div class="card product-card h-100">
-
                 <div class="card-body d-flex flex-column">
 
                     <h5 class="card-title">
-
                         <a th:href="@{/products/{id}(id=${p.id()})}"
                            th:text="${p.name()}"
                            class="text-decoration-none text-dark">
                         </a>
-
                     </h5>
 
-                    <p class="text-muted small">
-
+                    <p class="text-muted small mb-1">
                         Category:
                         <b th:text="${p.categoryName()}"></b>
-
                     </p>
 
-                    <p class="text-muted small">
-
-                        In stock:
-                        <b th:text="${p.quantity()}"></b>
-
+                    <p class="text-muted small mb-2">
+                        Availability:
+                        <b th:text="${p.quantity() != null and p.quantity() > 0 ? 'In stock (' + p.quantity() + ')' : 'Out of stock'}"></b>
                     </p>
 
                     <p class="price mb-3"
@@ -158,88 +219,55 @@ body{
 
                     <a class="btn btn-outline-secondary mb-2"
                        th:href="@{/products/{id}(id=${p.id()})}">
-
                         View details
-
                     </a>
 
-                    <form method="post"
-                          action="/cart/add"
-                          class="mt-auto">
-
-                        <input type="hidden"
-                               name="productId"
-                               th:value="${p.id()}"/>
-
-                        <input type="hidden"
-                               name="qty"
-                               value="1"/>
+                    <form method="post" action="/cart/add" class="mt-auto">
+                        <input type="hidden" name="productId" th:value="${p.id()}"/>
+                        <input type="hidden" name="qty" value="1"/>
 
                         <button class="btn btn-primary w-100"
                                 th:disabled="${p.quantity() != null and p.quantity() <= 0}">
-
                             Add to cart
-
                         </button>
-
                     </form>
 
                 </div>
-
             </div>
-
         </div>
 
-        <div class="col-12"
-             th:if="${#lists.isEmpty(products)}">
-
+        <div class="col-12" th:if="${#lists.isEmpty(products)}">
             <div class="alert alert-warning text-center">
-
                 No products found.
-
             </div>
-
         </div>
-
     </div>
-
-    <!-- PAGINATION -->
 
     <div class="mt-4 d-flex justify-content-between align-items-center"
          th:if="${page != null}">
 
         <div>
-
             Page <b th:text="${page.number + 1}"></b>
             of <b th:text="${page.totalPages}"></b>
-
         </div>
 
         <div class="d-flex gap-2">
-
             <a class="btn btn-outline-secondary"
                th:classappend="${page.first} ? ' disabled'"
                th:href="${'/products?page=' + (page.number - 1) + queryString}">
-
                 Prev
-
             </a>
 
             <a class="btn btn-outline-secondary"
                th:classappend="${page.last} ? ' disabled'"
                th:href="${'/products?page=' + (page.number + 1) + queryString}">
-
                 Next
-
             </a>
-
         </div>
-
     </div>
 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>

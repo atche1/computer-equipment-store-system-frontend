@@ -116,7 +116,7 @@ public class ProductController {
         PageResponse<ProductResponse> result = productClient.getAll(
                 q,
                 categoryId,
-                isActive,
+                true,
                 minPrice,
                 maxPrice,
                 inStock,
