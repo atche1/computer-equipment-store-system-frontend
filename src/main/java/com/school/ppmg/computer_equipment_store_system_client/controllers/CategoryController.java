@@ -5,6 +5,9 @@ import com.school.ppmg.computer_equipment_store_system_client.dtos.category.Cate
 import com.school.ppmg.computer_equipment_store_system_client.dtos.category.CategoryResponse;
 import com.school.ppmg.computer_equipment_store_system_client.dtos.common.PageResponse;
 import com.school.ppmg.computer_equipment_store_system_client.exceptions.ApiConflictException;
+import com.school.ppmg.computer_equipment_store_system_client.exceptions.BackendException;
+import com.school.ppmg.computer_equipment_store_system_client.security.AdminGuard;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -13,11 +16,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
-
 @Controller
 @RequiredArgsConstructor
 public class CategoryController {
+
     private final CategoryClient categoryClient;
+    private final AdminGuard adminGuard;
 
     @GetMapping("/categories")
     public String categoriesPage(
@@ -26,8 +30,12 @@ public class CategoryController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String sort,
+            HttpSession session,
             Model model
     ) {
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
+
         if (sort == null || sort.isBlank()) {
             sort = "name,asc";
         }
@@ -37,40 +45,49 @@ public class CategoryController {
 
         model.addAttribute("page", result);
         model.addAttribute("categories", result.getContent());
-
         model.addAttribute("q", q);
         model.addAttribute("isActive", isActive);
         model.addAttribute("sort", sort);
         model.addAttribute("size", size);
 
-        return "categories/list-categories";
+        return "admin/categories/list-categories";
     }
+
     @GetMapping("/add-category")
-    public String createCategory(Model model) {
+    public String createCategory(HttpSession session, Model model) {
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
+
         model.addAttribute("category", new CategoryRequest());
-        return "categories/create-category";
+        return "admin/categories/create-category";
     }
 
     @PostMapping("/save-category")
     public String submitCategory(@Valid @ModelAttribute("category") CategoryRequest request,
                                  BindingResult bindingResult,
+                                 HttpSession session,
                                  Model model) {
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
 
         if (bindingResult.hasErrors()) {
-            return "categories/create-category";
+            return "admin/categories/create-category";
         }
 
         try {
             categoryClient.create(request);
             return "redirect:/categories";
-        } catch (ApiConflictException ex) {
-            // глобално съобщение във формата
+        } catch (BackendException ex) {
             bindingResult.addError(new ObjectError("category", ex.getMessage()));
-            return "categories/create-category";
+            return "admin/categories/create-category";
         }
     }
+
     @GetMapping("/edit-category/{id}")
-    public String editCategory(@PathVariable Long id, Model model) {
+    public String editCategory(@PathVariable Long id, HttpSession session, Model model) {
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
+
         CategoryResponse c = categoryClient.getById(id);
 
         CategoryRequest req = new CategoryRequest();
@@ -81,34 +98,39 @@ public class CategoryController {
         model.addAttribute("category", req);
         model.addAttribute("categoryId", id);
 
-        return "categories/edit-category";
+        return "admin/categories/edit-category";
     }
 
     @PostMapping("/edit-category/{id}")
     public String updateCategory(@PathVariable Long id,
                                  @Valid @ModelAttribute("category") CategoryRequest request,
                                  BindingResult bindingResult,
+                                 HttpSession session,
                                  Model model) {
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("categoryId", id);
-            return "categories/edit-category";
+            return "admin/categories/edit-category";
         }
 
         try {
             categoryClient.update(id, request);
             return "redirect:/categories";
-        } catch (ApiConflictException ex) {
-            // ако slug / name вече съществува
+        } catch (BackendException ex) {
             bindingResult.rejectValue("slug", "conflict", ex.getMessage());
             model.addAttribute("categoryId", id);
-            return "categories/edit-category";
+            return "admin/categories/edit-category";
         }
     }
+
     @PostMapping("/delete-category/{id}")
-    public String deleteCategory(@PathVariable Long id) {
+    public String deleteCategory(@PathVariable Long id, HttpSession session) {
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
+
         categoryClient.delete(id);
         return "redirect:/categories";
     }
-
 }

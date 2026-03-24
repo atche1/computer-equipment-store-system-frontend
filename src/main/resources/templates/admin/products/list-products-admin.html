@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin • Products</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        :root{
+            --brand: #0b5ed7;
+            --bg: #f6f7fb;
+            --sidebar: #0b1220;
+        }
+
+        body{
+            background: var(--bg);
+        }
+
+        .sidebar{
+            min-height: 100vh;
+            background: var(--sidebar);
+        }
+
+        .sidebar .nav-link{
+            color: rgba(255,255,255,.78);
+            border-radius: .9rem;
+            padding: .6rem .8rem;
+        }
+
+        .sidebar .nav-link.active,
+        .sidebar .nav-link:hover{
+            color: #fff;
+            background: rgba(255,255,255,.08);
+        }
+
+        .brand-pill{
+            display:inline-flex;
+            align-items:center;
+            gap:.5rem;
+            padding:.25rem .6rem;
+            border-radius:999px;
+            font-size:.8rem;
+            background: rgba(11,94,215,.15);
+            border: 1px solid rgba(255,255,255,.12);
+            color:#d6e6ff;
+        }
+
+        .card{
+            border: 0;
+            border-radius: 1rem;
+            box-shadow: 0 10px 28px rgba(10, 20, 40, .06);
+        }
+
+        .table thead th{
+            background:#f2f5ff;
+            border-bottom:0;
+            font-weight:600;
+            color:#223;
+            white-space: nowrap;
+        }
+
+        .table td,
+        .table th{
+            vertical-align: middle;
+        }
+
+        .search-wrap{
+            position: relative;
+        }
+
+        .search-icon{
+            position:absolute;
+            left:.9rem;
+            top:50%;
+            transform:translateY(-50%);
+            opacity:.55;
+            pointer-events:none;
+        }
+
+        .search-input{
+            padding-left: 2.4rem;
+            border-radius: 999px;
+        }
+
+        .rounded-pill-btn{
+            border-radius: 999px;
+        }
+
+        .badge-soft{
+            background: #e7f1ff;
+            color: var(--brand);
+            border: 1px solid rgba(11,94,215,.25);
+        }
+
+        .mono{
+            font-variant-numeric: tabular-nums;
+        }
+    </style>
+</head>
+
+<body>
+<div th:replace="fragments/navbar"></div>
+
+<div class="container-fluid">
+    <div class="row g-0">
+
+        <!-- SIDEBAR -->
+        <aside class="col-12 col-lg-2 sidebar p-3">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div class="text-white fw-semibold">
+                    Admin Panel
+                    <span class="brand-pill ms-2">Computer Store</span>
+                </div>
+            </div>
+
+            <nav class="nav flex-column gap-1">
+                <a class="nav-link" th:href="@{/categories}">Categories</a>
+                <a class="nav-link" th:href="@{/attributes}">Attributes</a>
+                <a class="nav-link active" th:href="@{/admin/products}">Products</a>
+                <a class="nav-link" href="#">Orders</a>
+                <a class="nav-link" href="#">Customers</a>
+                <a class="nav-link" href="#">Settings</a>
+            </nav>
+
+            <hr class="border-light opacity-25 my-4">
+
+            <div class="text-white-50 small">
+                Logged in as:
+                <span class="text-white" th:text="${#authentication?.name}">admin</span>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="col-12 col-lg-10 p-3 p-lg-4">
+
+            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3">
+                <div>
+                    <h1 class="h3 mb-1">Products</h1>
+                    <div class="text-secondary">Manage products in your catalog.</div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <a class="btn btn-primary rounded-pill-btn px-4"
+                       th:href="@{/admin/products/create}">
+                        + New product
+                    </a>
+                </div>
+            </div>
+
+            <!-- FILTERS -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <form class="row g-2 align-items-end"
+                          method="get"
+                          th:action="@{/admin/products}">
+
+                        <div class="col-12 col-md-4">
+                            <label class="form-label mb-1">Search</label>
+                            <div class="search-wrap">
+                                <span class="search-icon">🔎</span>
+                                <input class="form-control search-input"
+                                       type="text"
+                                       name="q"
+                                       placeholder="Search by name or description..."
+                                       th:value="${q}">
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-3">
+                            <label class="form-label mb-1">Category</label>
+                            <select class="form-select rounded-pill-btn" name="categoryId">
+                                <option th:selected="${categoryId == null}" value="">All</option>
+                                <option th:each="c : ${categories}"
+                                        th:value="${c.id()}"
+                                        th:selected="${categoryId != null and categoryId == c.id()}"
+                                        th:text="${c.name()}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-2">
+                            <label class="form-label mb-1">Status</label>
+                            <select class="form-select rounded-pill-btn" name="isActive">
+                                <option th:selected="${isActive == null}" value="">All</option>
+                                <option th:selected="${isActive != null and isActive}" value="true">Active</option>
+                                <option th:selected="${isActive != null and !isActive}" value="false">Inactive</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-3">
+                            <label class="form-label mb-1">Stock</label>
+                            <select class="form-select rounded-pill-btn" name="inStock">
+                                <option th:selected="${inStock == null}" value="">All</option>
+                                <option th:selected="${inStock != null and inStock}" value="true">In stock</option>
+                                <option th:selected="${inStock != null and !inStock}" value="false">Out of stock</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-2">
+                            <label class="form-label mb-1">Min price</label>
+                            <input class="form-control rounded-pill-btn mono"
+                                   type="text"
+                                   name="minPrice"
+                                   placeholder="0.00"
+                                   th:value="${minPrice}">
+                        </div>
+
+                        <div class="col-12 col-md-2">
+                            <label class="form-label mb-1">Max price</label>
+                            <input class="form-control rounded-pill-btn mono"
+                                   type="text"
+                                   name="maxPrice"
+                                   placeholder="9999.99"
+                                   th:value="${maxPrice}">
+                        </div>
+
+                        <div class="col-12 col-md-2">
+                            <label class="form-label mb-1">Size</label>
+                            <select class="form-select rounded-pill-btn" name="size">
+                                <option th:selected="${size == 10}" value="10">10</option>
+                                <option th:selected="${size == 20}" value="20">20</option>
+                                <option th:selected="${size == 50}" value="50">50</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12" th:if="${categoryId != null and !#lists.isEmpty(filterableAttributes)}">
+                            <div class="border-top pt-3 mt-2">
+                                <div class="fw-semibold mb-2">Attribute filters</div>
+
+                                <div class="row g-2">
+                                    <div class="col-12 col-md-6 col-lg-4" th:each="a : ${filterableAttributes}">
+                                        <label class="form-label mb-1" th:text="${a.name()}">Attribute</label>
+
+                                        <input th:if="${a.dataType().name() == 'TEXT'}"
+                                               class="form-control rounded-pill-btn"
+                                               type="text"
+                                               th:name="${'attrText_' + a.id()}"
+                                               th:value="${uiText[a.id()]}"
+                                               placeholder="Type value..."/>
+
+                                        <div th:if="${a.dataType().name() == 'NUMBER'}" class="d-flex gap-2">
+                                            <input class="form-control rounded-pill-btn mono"
+                                                   type="text"
+                                                   th:name="${'attrNumMin_' + a.id()}"
+                                                   th:value="${uiNumMin[a.id()]}"
+                                                   placeholder="min"/>
+
+                                            <input class="form-control rounded-pill-btn mono"
+                                                   type="text"
+                                                   th:name="${'attrNumMax_' + a.id()}"
+                                                   th:value="${uiNumMax[a.id()]}"
+                                                   placeholder="max"/>
+
+                                            <span class="align-self-center text-secondary small"
+                                                  th:if="${a.unit() != null}"
+                                                  th:text="${a.unit()}">unit</span>
+                                        </div>
+
+                                        <select th:if="${a.dataType().name() == 'BOOLEAN'}"
+                                                class="form-select rounded-pill-btn"
+                                                th:name="${'attrBool_' + a.id()}">
+                                            <option value="" th:selected="${uiBool[a.id()] == null}">All</option>
+                                            <option value="true" th:selected="${uiBool[a.id()] != null and uiBool[a.id()].equals('true')}">True</option>
+                                            <option value="false" th:selected="${uiBool[a.id()] != null and uiBool[a.id()].equals('false')}">False</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="text-secondary small mt-2">
+                                    Tip: first select a category to see its filterable attributes.
+                                </div>
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="sort" th:value="${sort}" />
+                        <input type="hidden" name="page" value="0" />
+
+                        <div class="col-12 col-md-2">
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-outline-primary rounded-pill-btn">
+                                    Apply
+                                </button>
+                                <a class="btn btn-outline-secondary rounded-pill-btn"
+                                   th:href="@{/admin/products}">
+                                    Reset
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="col-12 text-md-end">
+                            <div class="text-secondary small">
+                                Total:
+                                <strong th:text="${page != null ? page.totalElements : #lists.size(products)}">0</strong>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+            <!-- TABLE -->
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                            <tr>
+                                <th class="ps-3" style="width:90px;">ID</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th class="text-end" style="width:140px;">Price</th>
+                                <th class="text-end" style="width:120px;">Qty</th>
+                                <th style="width:140px;">Status</th>
+                                <th class="text-end pe-3" style="width:220px;">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            <tr th:if="${#lists.isEmpty(products)}">
+                                <td colspan="7" class="text-center py-5 text-secondary">
+                                    No products found.
+                                </td>
+                            </tr>
+
+                            <tr th:each="p : ${products}">
+                                <td class="ps-3 fw-semibold" th:text="${p.id()}">1</td>
+
+                                <td>
+                                    <div class="fw-semibold" th:text="${p.name()}">Product name</div>
+                                    <div class="text-secondary small text-truncate"
+                                         style="max-width:520px;"
+                                         th:text="${p.description()}">description</div>
+                                </td>
+
+                                <td>
+                                    <span class="badge badge-soft rounded-pill"
+                                          th:text="${p.categoryName()}">Category</span>
+                                </td>
+
+                                <td class="text-end mono" th:text="${p.price()}">0.00</td>
+
+                                <td class="text-end mono" th:text="${p.quantity()}">0</td>
+
+                                <td>
+                                    <span th:if="${p.isActive()}"
+                                          class="badge text-bg-success rounded-pill">Active</span>
+                                    <span th:unless="${p.isActive()}"
+                                          class="badge text-bg-secondary rounded-pill">Inactive</span>
+                                </td>
+
+                                <td class="text-end pe-3">
+                                    <div class="d-inline-flex gap-2 flex-wrap justify-content-end">
+                                        <a class="btn btn-sm btn-outline-primary rounded-pill-btn"
+                                           th:href="@{/admin/products/{id}/edit(id=${p.id()})}">
+                                            Edit
+                                        </a>
+
+                                        <a class="btn btn-sm btn-outline-secondary rounded-pill-btn"
+                                           th:href="@{/products/{id}/attribute-values(id=${p.id()})}">
+                                            Attributes
+                                        </a>
+
+                                        <a class="btn btn-sm btn-outline-secondary rounded-pill-btn"
+                                           th:href="@{|/products/${p.id()}/images|}">
+                                            Images
+                                        </a>
+
+                                        <form th:action="@{/admin/products/{id}/delete(id=${p.id()})}"
+                                              method="post"
+                                              class="d-inline"
+                                              onsubmit="return confirm('Are you sure you want to delete this product?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill-btn">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PAGER -->
+                <div class="card-footer bg-white border-0" th:if="${page != null}">
+                    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+
+                        <div class="text-secondary small">
+                            Page <strong th:text="${page.number + 1}">1</strong>
+                            / <strong th:text="${page.totalPages}">1</strong>
+                            • Total: <strong th:text="${page.totalElements}">0</strong>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <a class="btn btn-outline-secondary rounded-pill-btn"
+                               th:classappend="${page.first} ? ' disabled' : ''"
+                               th:href="${'/admin/products?page=' + (page.number - 1) + queryString}">
+                                ← Prev
+                            </a>
+
+                            <a class="btn btn-outline-secondary rounded-pill-btn"
+                               th:classappend="${page.last} ? ' disabled' : ''"
+                               th:href="${'/admin/products?page=' + (page.number + 1) + queryString}">
+                                Next →
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

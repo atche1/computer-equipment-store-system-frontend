@@ -16,7 +16,7 @@ public class HomeController {
     public String home(Model model) {
 
         var productsPage = productClient.getAll(
-                null, null, true,   // isActive=true (по желание)
+                null, null, true,
                 null, null, null,
                 null, null, null, null,
                 0, 12, "id,desc"
@@ -24,5 +24,10 @@ public class HomeController {
 
         model.addAttribute("productsPage", productsPage);
         return "home";
+    }
+
+    @GetMapping("/access-denied")
+    public String accessDenied() {
+        return "access-denied";
     }
 }

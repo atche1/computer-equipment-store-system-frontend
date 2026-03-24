@@ -1,398 +1,271 @@
 <!doctype html>
-<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Admin • Products</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Products</title>
 
-    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-    :root{
-      --brand: #0b5ed7;
-      --bg: #f6f7fb;
-      --sidebar: #0b1220;
-    }
-    body{ background: var(--bg); }
-    .sidebar{
-      min-height: 100vh;
-      background: var(--sidebar);
-    }
-    .sidebar .nav-link{
-      color: rgba(255,255,255,.78);
-      border-radius: .9rem;
-      padding: .6rem .8rem;
-    }
-    .sidebar .nav-link.active,
-    .sidebar .nav-link:hover{
-      color: #fff;
-      background: rgba(255,255,255,.08);
-    }
-    .brand-pill{
-      display:inline-flex;
-      align-items:center;
-      gap:.5rem;
-      padding:.25rem .6rem;
-      border-radius:999px;
-      font-size:.8rem;
-      background: rgba(11,94,215,.15);
-      border: 1px solid rgba(255,255,255,.12);
-      color:#d6e6ff;
-    }
-    .card{
-      border: 0;
-      border-radius: 1rem;
-      box-shadow: 0 10px 28px rgba(10, 20, 40, .06);
-    }
-    .table thead th{
-      background:#f2f5ff;
-      border-bottom:0;
-      font-weight:600;
-      color:#223;
-      white-space: nowrap;
-    }
-    .table td, .table th{ vertical-align: middle; }
-    .search-wrap{ position: relative; }
-    .search-icon{
-      position:absolute;
-      left:.9rem;
-      top:50%;
-      transform:translateY(-50%);
-      opacity:.55;
-      pointer-events:none;
-    }
-    .search-input{
-      padding-left: 2.4rem;
-      border-radius: 999px;
-    }
-    .rounded-pill-btn{ border-radius: 999px; }
-    .badge-soft{
-      background: #e7f1ff;
-      color: var(--brand);
-      border: 1px solid rgba(11,94,215,.25);
-    }
-    .mono{ font-variant-numeric: tabular-nums; }
-  </style>
+        body{
+            background: linear-gradient(180deg,#eef2ff 0%,#f7f8fc 100%);
+            min-height:100vh;
+        }
+
+        .product-card{
+            border:0;
+            border-radius:16px;
+            box-shadow:0 8px 22px rgba(0,0,0,0.08);
+            transition:all .2s ease;
+        }
+
+        .product-card:hover{
+            transform:translateY(-4px);
+            box-shadow:0 12px 30px rgba(0,0,0,0.12);
+        }
+
+        .price{
+            font-size:20px;
+            font-weight:600;
+        }
+
+        .filter-card{
+            border:0;
+            border-radius:16px;
+            box-shadow:0 8px 22px rgba(0,0,0,0.08);
+        }
+
+        .section-title{
+            font-size:14px;
+            font-weight:700;
+            text-transform:uppercase;
+            letter-spacing:.04em;
+            color:#6c757d;
+            margin-bottom:.75rem;
+        }
+    </style>
 </head>
-
 <body>
+
 <div th:replace="fragments/navbar"></div>
-<div class="container-fluid">
-    <div class="row g-0">
 
-        <!-- SIDEBAR -->
-        <aside class="col-12 col-lg-2 sidebar p-3">
-            <div class="d-flex align-items-center justify-content-between mb-4">
-                <div class="text-white fw-semibold">
-                    Admin Panel
-                    <span class="brand-pill ms-2">Computer Store</span>
-                </div>
-            </div>
+<div class="container py-4">
 
-            <nav class="nav flex-column gap-1">
-                <a class="nav-link" th:href="@{/categories}">Categories</a>
-                <a class="nav-link" th:href="@{/attributes}">Attributes</a>
-                <a class="nav-link active" th:href="@{/products}">Products</a>
-                <a class="nav-link" href="#">Orders</a>
-                <a class="nav-link" href="#">Customers</a>
-                <a class="nav-link" href="#">Settings</a>
-            </nav>
+    <h1 class="mb-4">Products</h1>
 
-            <hr class="border-light opacity-25 my-4">
+    <div class="card filter-card mb-4">
+        <div class="card-body">
 
-            <div class="text-white-50 small">
-                Logged in as:
-                <span class="text-white" th:text="${#authentication?.name}">admin</span>
-            </div>
-        </aside>
+            <form method="get" th:action="@{/products}" class="row g-3">
 
-        <!-- MAIN -->
-        <main class="col-12 col-lg-10 p-3 p-lg-4">
-
-            <!-- PAGE TITLE -->
-            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3">
-                <div>
-                    <h1 class="h3 mb-1">Products</h1>
-                    <div class="text-secondary">Manage products in your catalog.</div>
+                <div class="col-md-4">
+                    <label class="form-label">Search</label>
+                    <input type="text"
+                           name="q"
+                           class="form-control"
+                           placeholder="Search products..."
+                           th:value="${q}">
                 </div>
 
-                <div class="d-flex gap-2">
-                    <a class="btn btn-primary rounded-pill-btn px-4"
-                       th:href="@{/add-product}">
-                        + New product
-                    </a>
+                <div class="col-md-3">
+                    <label class="form-label">Category</label>
+                    <select class="form-select" name="categoryId" onchange="this.form.submit()">
+                        <option value="">All</option>
+                        <option th:each="c : ${categories}"
+                                th:value="${c.id()}"
+                                th:selected="${categoryId != null and categoryId == c.id()}"
+                                th:text="${c.name()}">
+                        </option>
+                    </select>
                 </div>
-            </div>
 
-            <!-- FILTERS -->
-            <div class="card mb-3">
-                <div class="card-body">
-                    <form class="row g-2 align-items-end" method="get" th:action="@{/products}">
+                <div class="col-md-2">
+                    <label class="form-label">Min price</label>
+                    <input type="text"
+                           name="minPrice"
+                           class="form-control"
+                           placeholder="e.g. 500"
+                           th:value="${minPrice}">
+                </div>
 
-                        <!-- Search -->
-                        <div class="col-12 col-md-4">
-                            <label class="form-label mb-1">Search</label>
-                            <div class="search-wrap">
-                                <span class="search-icon">🔎</span>
-                                <input class="form-control search-input"
-                                       type="text"
-                                       name="q"
-                                       placeholder="Search by name/description..."
-                                       th:value="${q}">
+                <div class="col-md-2">
+                    <label class="form-label">Max price</label>
+                    <input type="text"
+                           name="maxPrice"
+                           class="form-control"
+                           placeholder="e.g. 2500"
+                           th:value="${maxPrice}">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Availability</label>
+                    <select class="form-select" name="inStock">
+                        <option value="" th:selected="${inStock == null}">All</option>
+                        <option value="true" th:selected="${inStock != null and inStock}">In stock only</option>
+                        <option value="false" th:selected="${inStock != null and !inStock}">Out of stock only</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Sort</label>
+                    <select class="form-select" name="sort">
+                        <option value="name,asc" th:selected="${sort == 'name,asc'}">Name A-Z</option>
+                        <option value="name,desc" th:selected="${sort == 'name,desc'}">Name Z-A</option>
+                        <option value="price,asc" th:selected="${sort == 'price,asc'}">Price low to high</option>
+                        <option value="price,desc" th:selected="${sort == 'price,desc'}">Price high to low</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Page size</label>
+                    <select class="form-select" name="size">
+                        <option value="10" th:selected="${size == 10}">10</option>
+                        <option value="20" th:selected="${size == 20}">20</option>
+                        <option value="30" th:selected="${size == 30}">30</option>
+                    </select>
+                </div>
+
+                <div class="col-12"
+                     th:if="${filterableAttributes != null and !#lists.isEmpty(filterableAttributes)}">
+
+                    <hr class="my-2">
+                    <div class="section-title">Main characteristics</div>
+
+                    <div class="row g-3">
+                        <div class="col-md-3"
+                             th:each="attr : ${filterableAttributes}">
+
+                            <div th:if="${attr.dataType() != null and attr.dataType().toString() == 'TEXT'}">
+                                <label class="form-label" th:text="${attr.name()}"></label>
+                                <input type="text"
+                                       class="form-control"
+                                       th:name="${'attrText_' + attr.id()}"
+                                       th:value="${uiText != null ? uiText.get(attr.id()) : ''}"
+                                       th:placeholder="${(attr.unit() != null and !#strings.isEmpty(attr.unit())) ? 'Value (' + attr.unit() + ')' : 'Value'}">
                             </div>
-                        </div>
 
-                        <!-- Category -->
-                        <div class="col-12 col-md-3">
-                            <label class="form-label mb-1">Category</label>
-                            <select class="form-select rounded-pill-btn" name="categoryId">
-                                <option th:selected="${categoryId == null}" value="">All</option>
-                                <option th:each="c : ${categories}"
-                                        th:value="${c.id()}"
-                                        th:selected="${categoryId != null and categoryId == c.id()}"
-                                        th:text="${c.name()}">
-                                </option>
-                            </select>
-                        </div>
-
-                        <!-- Status -->
-                        <div class="col-12 col-md-2">
-                            <label class="form-label mb-1">Status</label>
-                            <select class="form-select rounded-pill-btn" name="isActive">
-                                <option th:selected="${isActive == null}" value="">All</option>
-                                <option th:selected="${isActive != null and isActive}" value="true">Active</option>
-                                <option th:selected="${isActive != null and !isActive}" value="false">Inactive</option>
-                            </select>
-                        </div>
-
-                        <!-- In stock -->
-                        <div class="col-12 col-md-3">
-                            <label class="form-label mb-1">Stock</label>
-                            <select class="form-select rounded-pill-btn" name="inStock">
-                                <option th:selected="${inStock == null}" value="">All</option>
-                                <option th:selected="${inStock != null and inStock}" value="true">In stock</option>
-                                <option th:selected="${inStock != null and !inStock}" value="false">Out of stock</option>
-                            </select>
-                        </div>
-
-                        <!-- Price range -->
-                        <div class="col-12 col-md-2">
-                            <label class="form-label mb-1">Min price</label>
-                            <input class="form-control rounded-pill-btn mono"
-                                   type="text"
-                                   name="minPrice"
-                                   placeholder="0.00"
-                                   th:value="${minPrice}">
-                        </div>
-
-                        <div class="col-12 col-md-2">
-                            <label class="form-label mb-1">Max price</label>
-                            <input class="form-control rounded-pill-btn mono"
-                                   type="text"
-                                   name="maxPrice"
-                                   placeholder="9999.99"
-                                   th:value="${maxPrice}">
-                        </div>
-
-                        <!-- Size -->
-                        <div class="col-12 col-md-2">
-                            <label class="form-label mb-1">Size</label>
-                            <select class="form-select rounded-pill-btn" name="size">
-                                <option th:selected="${size == 10}" value="10">10</option>
-                                <option th:selected="${size == 20}" value="20">20</option>
-                                <option th:selected="${size == 50}" value="50">50</option>
-                            </select>
-                        </div>
-                        <!-- Characteristics filters (only when category is selected) -->
-                        <div class="col-12" th:if="${categoryId != null and !#lists.isEmpty(filterableAttributes)}">
-                            <div class="border-top pt-3 mt-2">
-                                <div class="fw-semibold mb-2">Attribute filters</div>
-
-                                <div class="row g-2">
-                                    <div class="col-12 col-md-6 col-lg-4" th:each="a : ${filterableAttributes}">
-                                        <label class="form-label mb-1" th:text="${a.name()}">Attribute</label>
-
-                                        <!-- TEXT -->
-                                        <input th:if="${a.dataType().name() == 'TEXT'}"
-                                               class="form-control rounded-pill-btn"
-                                               type="text"
-                                               th:name="${'attrText_' + a.id()}"
-                                               th:value="${uiText[a.id()]}"
-                                               placeholder="Type value..."/>
-
-                                        <!-- NUMBER (min/max) -->
-                                        <div th:if="${a.dataType().name() == 'NUMBER'}" class="d-flex gap-2">
-                                            <input class="form-control rounded-pill-btn mono"
-                                                   type="text"
-                                                   th:name="${'attrNumMin_' + a.id()}"
-                                                   th:value="${uiNumMin[a.id()]}"
-                                                   placeholder="min"/>
-
-                                            <input class="form-control rounded-pill-btn mono"
-                                                   type="text"
-                                                   th:name="${'attrNumMax_' + a.id()}"
-                                                   th:value="${uiNumMax[a.id()]}"
-                                                   placeholder="max"/>
-
-                                            <span class="align-self-center text-secondary small" th:if="${a.unit() != null}" th:text="${a.unit()}">unit</span>
-                                        </div>
-
-                                        <!-- BOOLEAN -->
-                                        <select th:if="${a.dataType().name() == 'BOOLEAN'}"
-                                                class="form-select rounded-pill-btn"
-                                                th:name="${'attrBool_' + a.id()}">
-                                            <option value="" th:selected="${uiBool[a.id()] == null}">All</option>
-                                            <option value="true" th:selected="${uiBool[a.id()] != null and uiBool[a.id()].equals('true')}">True</option>
-                                            <option value="false" th:selected="${uiBool[a.id()] != null and uiBool[a.id()].equals('false')}">False</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="text-secondary small mt-2">
-                                    Tip: first select a category to see its filterable attributes.
+                            <div th:if="${attr.dataType() != null and attr.dataType().toString() == 'NUMBER'}">
+                                <label class="form-label"
+                                       th:text="${attr.name() + ((attr.unit() != null and !#strings.isEmpty(attr.unit())) ? ' (' + attr.unit() + ')' : '')}">
+                                </label>
+                                <div class="d-flex gap-2">
+                                    <input type="text"
+                                           class="form-control"
+                                           th:name="${'attrNumMin_' + attr.id()}"
+                                           th:value="${uiNumMin != null ? uiNumMin.get(attr.id()) : ''}"
+                                           placeholder="Min">
+                                    <input type="text"
+                                           class="form-control"
+                                           th:name="${'attrNumMax_' + attr.id()}"
+                                           th:value="${uiNumMax != null ? uiNumMax.get(attr.id()) : ''}"
+                                           placeholder="Max">
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Keep sort + reset page -->
-                        <input type="hidden" name="sort" th:value="${sort}" />
-                        <input type="hidden" name="page" value="0" />
-
-                        <!-- Buttons -->
-                        <div class="col-12 col-md-2">
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-outline-primary rounded-pill-btn">
-                                    Apply
-                                </button>
-                                <a class="btn btn-outline-secondary rounded-pill-btn"
-                                   th:href="@{/products}">
-                                    Reset
-                                </a>
+                            <div th:if="${attr.dataType() != null and attr.dataType().toString() == 'BOOLEAN'}">
+                                <label class="form-label" th:text="${attr.name()}"></label>
+                                <select class="form-select"
+                                        th:name="${'attrBool_' + attr.id()}">
+                                    <option value="" th:selected="${uiBool == null or uiBool.get(attr.id()) == null}">All</option>
+                                    <option value="true" th:selected="${uiBool != null and uiBool.get(attr.id()) == 'true'}">Yes</option>
+                                    <option value="false" th:selected="${uiBool != null and uiBool.get(attr.id()) == 'false'}">No</option>
+                                </select>
                             </div>
+
                         </div>
-
-                        <!-- Total -->
-                        <div class="col-12 text-md-end">
-                            <div class="text-secondary small">
-                                Total:
-                                <strong th:text="${page != null ? page.totalElements : #lists.size(products)}">0</strong>
-                            </div>
-                        </div>
-
-                    </form>
-                </div>
-            </div>
-
-            <!-- TABLE -->
-            <div class="card">
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead>
-                            <tr>
-                                <th class="ps-3" style="width:90px;">ID</th>
-                                <th>Name</th>
-                                <th>Category</th>
-                                <th class="text-end" style="width:140px;">Price</th>
-                                <th class="text-end" style="width:120px;">Qty</th>
-                                <th style="width:140px;">Status</th>
-                                <th class="text-end pe-3" style="width:180px;">Actions</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-
-                            <tr th:if="${#lists.isEmpty(products)}">
-                                <td colspan="7" class="text-center py-5 text-secondary">
-                                    No products found.
-                                </td>
-                            </tr>
-
-                            <tr th:each="p : ${products}">
-                                <td class="ps-3 fw-semibold" th:text="${p.id()}">1</td>
-
-                                <td>
-                                    <div class="fw-semibold" th:text="${p.name()}">Product name</div>
-                                    <div class="text-secondary small text-truncate" style="max-width:520px;"
-                                         th:text="${p.description()}">description</div>
-                                </td>
-
-                                <td>
-                  <span class="badge badge-soft rounded-pill"
-                        th:text="${p.categoryName()}">Category</span>
-                                </td>
-
-                                <td class="text-end mono" th:text="${p.price()}">0.00</td>
-
-                                <td class="text-end mono" th:text="${p.quantity()}">0</td>
-
-                                <td>
-                  <span th:if="${p.isActive()}"
-                        class="badge text-bg-success rounded-pill">Active</span>
-                                    <span th:unless="${p.isActive()}"
-                                          class="badge text-bg-secondary rounded-pill">Inactive</span>
-                                </td>
-
-                                <td class="text-end pe-3">
-                                    <div class="d-inline-flex gap-2">
-                                        <a class="btn btn-sm btn-outline-primary rounded-pill-btn"
-                                           th:href="@{/edit-product/{id}(id=${p.id()})}">
-                                            Edit
-                                        </a>
-                                        <a class="btn btn-sm btn-outline-secondary rounded-pill-btn"
-                                           th:href="@{/products/{id}/attribute-values(id=${p.id})}">
-                                            Attributes
-                                        </a>
-                                        <a class="btn btn-outline-secondary rounded-pill-btn"
-                                           th:href="@{|/products/${p.id}/images|}">Images</a>
-
-                                        <form th:action="@{/delete-product/{id}(id=${p.id()})}"
-                                              method="post"
-                                              class="d-inline"
-                                              onsubmit="return confirm('Сигурна ли си, че искаш да изтриеш този продукт?');">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill-btn">
-                                                Delete
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            </tbody>
-                        </table>
                     </div>
                 </div>
 
-                <!-- PAGER -->
-                <div class="card-footer bg-white border-0" th:if="${page != null}">
-                    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
-
-                        <div class="text-secondary small">
-                            Page <strong th:text="${page.number + 1}">1</strong>
-                            / <strong th:text="${page.totalPages}">1</strong>
-                            • Total: <strong th:text="${page.totalElements}">0</strong>
-                        </div>
-
-                        <div class="d-flex gap-2">
-                            <a class="btn btn-outline-secondary rounded-pill-btn"
-                               th:classappend="${page.first} ? ' disabled' : ''"
-                               th:href="${'/products?page=' + (page.number - 1) + queryString}">
-                                ← Prev
-                            </a>
-
-                            <a class="btn btn-outline-secondary rounded-pill-btn"
-                               th:classappend="${page.last} ? ' disabled' : ''"
-                               th:href="${'/products?page=' + (page.number + 1) + queryString}">
-                                Next →
-                            </a>
-                        </div>
-
-                    </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-primary w-100">Apply</button>
                 </div>
-            </div>
 
-        </main>
+                <div class="col-md-2 d-flex align-items-end">
+                    <a th:href="@{/products}" class="btn btn-outline-secondary w-100">Clear</a>
+                </div>
+
+            </form>
+        </div>
     </div>
+
+    <div class="row g-4">
+        <div class="col-lg-3 col-md-4 col-sm-6"
+             th:each="p : ${products}">
+
+            <div class="card product-card h-100">
+                <div class="card-body d-flex flex-column">
+
+                    <h5 class="card-title">
+                        <a th:href="@{/products/{id}(id=${p.id()})}"
+                           th:text="${p.name()}"
+                           class="text-decoration-none text-dark">
+                        </a>
+                    </h5>
+
+                    <p class="text-muted small mb-1">
+                        Category:
+                        <b th:text="${p.categoryName()}"></b>
+                    </p>
+
+                    <p class="text-muted small mb-2">
+                        Availability:
+                        <b th:text="${p.quantity() != null and p.quantity() > 0 ? 'In stock (' + p.quantity() + ')' : 'Out of stock'}"></b>
+                    </p>
+
+                    <p class="price mb-3"
+                       th:text="${#numbers.formatDecimal(p.price(),1,2)} + ' BGN'">
+                    </p>
+
+                    <a class="btn btn-outline-secondary mb-2"
+                       th:href="@{/products/{id}(id=${p.id()})}">
+                        View details
+                    </a>
+
+                    <form method="post" action="/cart/add" class="mt-auto">
+                        <input type="hidden" name="productId" th:value="${p.id()}"/>
+                        <input type="hidden" name="qty" value="1"/>
+
+                        <button class="btn btn-primary w-100"
+                                th:disabled="${p.quantity() != null and p.quantity() <= 0}">
+                            Add to cart
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12" th:if="${#lists.isEmpty(products)}">
+            <div class="alert alert-warning text-center">
+                No products found.
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex justify-content-between align-items-center"
+         th:if="${page != null}">
+
+        <div>
+            Page <b th:text="${page.number + 1}"></b>
+            of <b th:text="${page.totalPages}"></b>
+        </div>
+
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-secondary"
+               th:classappend="${page.first} ? ' disabled'"
+               th:href="${'/products?page=' + (page.number - 1) + queryString}">
+                Prev
+            </a>
+
+            <a class="btn btn-outline-secondary"
+               th:classappend="${page.last} ? ' disabled'"
+               th:href="${'/products?page=' + (page.number + 1) + queryString}">
+                Next
+            </a>
+        </div>
+    </div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

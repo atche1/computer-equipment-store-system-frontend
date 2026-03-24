@@ -6,6 +6,9 @@ import com.school.ppmg.computer_equipment_store_system_client.dtos.attribute.Att
 import com.school.ppmg.computer_equipment_store_system_client.dtos.common.PageResponse;
 import com.school.ppmg.computer_equipment_store_system_client.enums.AttributeDataType;
 import com.school.ppmg.computer_equipment_store_system_client.exceptions.ApiConflictException;
+import com.school.ppmg.computer_equipment_store_system_client.exceptions.BackendException;
+import com.school.ppmg.computer_equipment_store_system_client.security.AdminGuard;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -17,7 +20,10 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequiredArgsConstructor
 public class AttributeController {
+
     private final AttributeClient attributeClient;
+    private final AdminGuard adminGuard;
+
     @GetMapping("/attributes")
     public String attributesPage(
             @RequestParam(required = false) String q,
@@ -27,8 +33,12 @@ public class AttributeController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String sort,
+            HttpSession session,
             Model model
     ) {
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
+
         if (sort == null || sort.isBlank()) {
             sort = "name,asc";
         }
@@ -38,63 +48,62 @@ public class AttributeController {
 
         model.addAttribute("page", result);
         model.addAttribute("attributes", result.getContent());
-
-        // за да се запазят филтрите във view-то
         model.addAttribute("q", q);
         model.addAttribute("dataType", dataType);
         model.addAttribute("filterable", filterable);
         model.addAttribute("unit", unit);
-
         model.addAttribute("sort", sort);
         model.addAttribute("size", size);
-
-        // dropdown за enum
         model.addAttribute("dataTypes", AttributeDataType.values());
 
-        return "attributes/list-attributes";
+        return "admin/attributes/list-attributes";
     }
 
-
     @GetMapping("/add-attribute")
-    public String createAttribute(Model model) {
+    public String createAttribute(HttpSession session, Model model) {
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
+
         AttributeRequest req = new AttributeRequest();
-        // default стойност за dropdown-а (по желание)
         req.setDataType(AttributeDataType.TEXT);
-        // default filterable (ако в request е null)
         if (req.getIsFilterable() == null) {
             req.setIsFilterable(true);
         }
 
         model.addAttribute("attribute", req);
         model.addAttribute("dataTypes", AttributeDataType.values());
-        return "attributes/create-attribute";
+
+        return "admin/attributes/create-attribute";
     }
 
-
     @PostMapping("/save-attribute")
-    public String submitAttribute(
-            @Valid @ModelAttribute("attribute") AttributeRequest request,
-            BindingResult bindingResult,
-            Model model
-    ) {
+    public String submitAttribute(@Valid @ModelAttribute("attribute") AttributeRequest request,
+                                  BindingResult bindingResult,
+                                  HttpSession session,
+                                  Model model) {
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("dataTypes", AttributeDataType.values());
-            return "attributes/create-attribute";
+            return "admin/attributes/create-attribute";
         }
 
         try {
             attributeClient.create(request);
             return "redirect:/attributes";
-        } catch (ApiConflictException ex) {
+        } catch (BackendException ex) {
             bindingResult.addError(new ObjectError("attribute", ex.getMessage()));
             model.addAttribute("dataTypes", AttributeDataType.values());
-            return "attributes/create-attribute";
+            return "admin/attributes/create-attribute";
         }
     }
 
-
     @GetMapping("/edit-attribute/{id}")
-    public String editAttribute(@PathVariable Long id, Model model) {
+    public String editAttribute(@PathVariable Long id, HttpSession session, Model model) {
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
+
         AttributeResponse a = attributeClient.getById(id);
 
         AttributeRequest req = new AttributeRequest();
@@ -107,38 +116,40 @@ public class AttributeController {
         model.addAttribute("attributeId", id);
         model.addAttribute("dataTypes", AttributeDataType.values());
 
-        return "attributes/edit-attribute";
+        return "admin/attributes/edit-attribute";
     }
 
-
     @PostMapping("/edit-attribute/{id}")
-    public String updateAttribute(
-            @PathVariable Long id,
-            @Valid @ModelAttribute("attribute") AttributeRequest request,
-            BindingResult bindingResult,
-            Model model
-    ) {
+    public String updateAttribute(@PathVariable Long id,
+                                  @Valid @ModelAttribute("attribute") AttributeRequest request,
+                                  BindingResult bindingResult,
+                                  HttpSession session,
+                                  Model model) {
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("attributeId", id);
             model.addAttribute("dataTypes", AttributeDataType.values());
-            return "attributes/edit-attribute";
+            return "admin/attributes/edit-attribute";
         }
 
         try {
             attributeClient.update(id, request);
             return "redirect:/attributes";
-        } catch (ApiConflictException ex) {
-            // конфликт (например: име вече съществува)
+        } catch (BackendException ex) {
             bindingResult.rejectValue("name", "conflict", ex.getMessage());
             model.addAttribute("attributeId", id);
             model.addAttribute("dataTypes", AttributeDataType.values());
-            return "attributes/edit-attribute";
+            return "admin/attributes/edit-attribute";
         }
     }
 
-
     @PostMapping("/delete-attribute/{id}")
-    public String deleteAttribute(@PathVariable Long id) {
+    public String deleteAttribute(@PathVariable Long id, HttpSession session) {
+        String redirect = adminGuard.check(session);
+        if (redirect != null) return redirect;
+
         attributeClient.delete(id);
         return "redirect:/attributes";
     }
