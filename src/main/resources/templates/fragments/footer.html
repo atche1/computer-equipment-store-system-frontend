@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="footer">
+
+  <style>
+    :root{
+      --main-blue:#0d4dad;
+      --footer-bg:#f3f4f6;
+      --text:#374151;
+    }
+
+    .store-footer{
+      margin-top:60px;
+    }
+
+    /* TOP BLUE STRIP */
+    .footer-top{
+      background:var(--main-blue);
+      color:#fff;
+      padding:22px 0;
+      text-align:center;
+      font-size:1.2rem;
+      font-weight:500;
+    }
+
+    /* MAIN FOOTER */
+    .footer-main{
+      background:var(--footer-bg);
+      padding:55px 0 40px;
+    }
+
+    .footer-title{
+      font-size:1.3rem;
+      font-weight:700;
+      margin-bottom:1.2rem;
+      color:#111827;
+    }
+
+    .footer-text{
+      font-size:1rem;
+      line-height:1.7;
+      color:var(--text);
+    }
+
+    .footer-links{
+      list-style:none;
+      padding:0;
+      margin:0;
+    }
+
+    .footer-links li{
+      margin-bottom:.6rem;
+    }
+
+    .footer-links a{
+      text-decoration:none;
+      color:var(--text);
+      transition:.2s;
+      font-size:1rem;
+    }
+
+    .footer-links a:hover{
+      color:var(--main-blue);
+    }
+
+    .footer-contact{
+      font-size:1rem;
+      line-height:1.8;
+      color:var(--text);
+    }
+
+    .footer-contact a{
+      text-decoration:none;
+      color:var(--text);
+    }
+
+    .footer-contact a:hover{
+      color:var(--main-blue);
+    }
+    .footer-features{
+  background:#f9fafb;
+  padding:25px 0;
+  border-top:1px solid #e5e7eb;
+}
+
+.feature-box{
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+  padding:18px;
+  border:1px solid #e5e7eb;
+  border-radius:.6rem;
+  background:#fff;
+  height:100%;
+  transition:.2s ease;
+}
+
+.feature-box:hover{
+  box-shadow:0 4px 12px rgba(0,0,0,.05);
+}
+
+.feature-box i{
+  font-size:28px;
+  color:#0d4dad;
+}
+
+.feature-title{
+  font-weight:600;
+  font-size:1rem;
+  color:#111827;
+}
+
+.feature-text{
+  font-size:.9rem;
+  color:#6b7280;
+}
+
+    /* BOTTOM */
+    .footer-bottom{
+      background:#e5e7eb;
+      padding:16px 0;
+      text-align:center;
+      font-size:.95rem;
+      color:#4b5563;
+      border-top:1px solid #d1d5db;
+    }
+
+    @media (max-width: 767px){
+      .footer-main{
+        padding:40px 0 25px;
+      }
+
+      .footer-title{
+        font-size:1.1rem;
+      }
+    }
+  </style>
+
+  <footer class="store-footer">
+    <!-- FEATURES BAR -->
+    <div class="footer-features">
+      <div class="container">
+        <div class="row g-3">
+
+          <div class="col-md-6 col-lg-3">
+            <div class="feature-box">
+              <i class="bi bi-camera-video"></i>
+              <div>
+                <div class="feature-title">Smart CCTV</div>
+                <div class="feature-text">AI-powered surveillance systems</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <div class="feature-box">
+              <i class="bi bi-shield-check"></i>
+              <div>
+                <div class="feature-title">2 Years Warranty</div>
+                <div class="feature-text">Manufacturer warranty included</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ТУК е заместителят -->
+          <div class="col-md-6 col-lg-3">
+            <div class="feature-box">
+              <i class="bi bi-headset"></i>
+              <div>
+                <div class="feature-title">24/7 Support</div>
+                <div class="feature-text">We are here to help anytime</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <div class="feature-box">
+              <i class="bi bi-sliders"></i>
+              <div>
+                <div class="feature-title">Easy Setup</div>
+                <div class="feature-text">Quick and simple installation</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- BLUE STRIP -->
+    <div class="footer-top">
+      Fast delivery • Quality products • Trusted service
+    </div>
+
+    <!-- MAIN -->
+    <div class="footer-main">
+      <div class="container">
+        <div class="row g-4">
+
+          <!-- ABOUT -->
+          <div class="col-md-6 col-lg-4">
+            <h5 class="footer-title">EchtaTech</h5>
+            <p class="footer-text">
+              We provide high-quality computer equipment, accessories and tech solutions
+              for home users, gamers and businesses.
+            </p>
+          </div>
+
+          <!-- LINKS -->
+          <div class="col-md-6 col-lg-2">
+            <h5 class="footer-title">Shop</h5>
+            <ul class="footer-links">
+              <li><a th:href="@{/products}">Products</a></li>
+              <li><a th:href="@{/services}">Services</a></li>
+              <li><a th:href="@{/products(inStock=true)}">In stock</a></li>
+            </ul>
+          </div>
+
+          <!-- ACCOUNT -->
+          <div class="col-md-6 col-lg-2">
+            <h5 class="footer-title">Account</h5>
+            <ul class="footer-links">
+              <li><a th:href="@{/login}">Login</a></li>
+              <li><a th:href="@{/register}">Register</a></li>
+              <li><a th:href="@{/my-account}">My account</a></li>
+            </ul>
+          </div>
+
+          <!-- SUPPORT -->
+          <div class="col-md-6 col-lg-2">
+            <h5 class="footer-title">Support</h5>
+            <ul class="footer-links">
+              <li><a href="#">Shipping</a></li>
+              <li><a href="#">Returns</a></li>
+              <li><a href="#">Privacy</a></li>
+              <li><a href="#">Terms</a></li>
+            </ul>
+          </div>
+
+          <!-- CONTACT -->
+          <div class="col-md-6 col-lg-2">
+            <h5 class="footer-title">Contact</h5>
+            <div class="footer-contact">
+              Email:
+              <a href="mailto:echtatech@gmail.com">echtatech@gmail.com</a>
+              <br>
+              Phone:
+              <a href="tel:+12135619063">+1 (213) 561-9063</a>
+              <br>
+              Razgrad, Bulgaria
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM -->
+    <div class="footer-bottom">
+      © 2026 EchtaTech • All rights reserved
+    </div>
+
+  </footer>
+
+</div>
+
+</html>

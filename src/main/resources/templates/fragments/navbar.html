@@ -1,110 +1,279 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<nav class="navbar navbar-expand-lg bg-white shadow-sm"
-     th:fragment="navbar">
+<div th:fragment="navbar">
 
-  <div class="container">
+  <style>
+    :root{
+      --main-blue:#0d4dad;
+    }
 
-    <!-- Logo -->
-    <a class="navbar-brand fw-bold" href="/">
-      💻 Computer Store
-    </a>
+    .store-topbar{
+      background:var(--main-blue);
+      color:#fff;
+      font-size:14px;
+    }
 
-    <div class="ms-auto d-flex align-items-center gap-2 flex-wrap">
+    .store-topbar a{
+      color:#fff;
+      text-decoration:none;
+    }
 
-      <!-- Public -->
-      <a class="btn btn-outline-secondary"
-         href="/services">
-        Services
-      </a>
+    .store-main-header{
+      background:#f4f4f4;
+      padding:26px 0;
+      border-bottom:1px solid #e8e8e8;
+    }
 
-      <!-- Cart (visible for everyone) -->
-      <a class="btn btn-outline-secondary"
-         href="/cart">
-        Cart
-      </a>
+    .store-logo-wrap{
+      display:flex;
+      align-items:center;
+      min-height:110px;
+    }
 
-      <!-- ===================== -->
-      <!-- GUEST USERS -->
-      <!-- ===================== -->
+    .store-logo-img{
+      height:110px;
+      object-fit:contain;
+    }
 
-      <a class="btn btn-outline-primary"
-         th:if="${session.ACCESS_TOKEN == null}"
-         th:href="@{/login}">
-        Sign in
-      </a>
+    .store-search{
+      width:100%;
+      max-width:820px;
+    }
 
-      <a class="btn btn-primary"
-         th:if="${session.ACCESS_TOKEN == null}"
-         th:href="@{/register}">
-        Create account
-      </a>
+    .store-search .form-select{
+      border-radius:8px 0 0 8px;
+      min-height:58px;
+      border:1px solid #d8d8d8;
+      max-width:180px;
+    }
 
-      <!-- ===================== -->
-      <!-- LOGGED USERS -->
-      <!-- ===================== -->
+    .store-search .form-control{
+      border-radius:0;
+      min-height:58px;
+      border:1px solid #d8d8d8;
+    }
 
-      <a class="btn btn-outline-secondary"
-         th:if="${session.ACCESS_TOKEN != null}"
-         href="/orders">
-        My Orders
-      </a>
+    .store-search .search-btn{
+      min-height:58px;
+      padding:0 34px;
+      background:var(--main-blue);
+      border-color:var(--main-blue);
+      font-weight:600;
+      border-radius:0 8px 8px 0;
+      color:#fff;
+      white-space:nowrap;
+    }
 
-      <a class="btn btn-outline-secondary"
-         th:if="${session.ACCESS_TOKEN != null}"
-         href="/my-service-requests">
-        My Service Requests
-      </a>
+    .store-right-panel{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:18px;
+      min-height:110px;
+      flex-wrap:nowrap;
+    }
 
-      <!-- ===================== -->
-      <!-- ADMIN -->
-      <!-- ===================== -->
+    .store-header-email{
+      font-weight:600;
+      white-space:nowrap;
+    }
 
-      <a class="btn btn-outline-dark"
-         th:if="${session.ROLE == 'ADMIN' or session.ROLE == 'ROLE_ADMIN'}"
-         href="/admin/orders">
-        Admin Orders
-      </a>
+    .store-actions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-shrink:0;
+    }
 
-      <a class="btn btn-outline-dark"
-         th:if="${session.ROLE == 'ADMIN' or session.ROLE == 'ROLE_ADMIN'}"
-         href="/admin/services">
-        Manage Services
-      </a>
+    .store-icon-link{
+      width:48px;
+      height:48px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:10px;
+      text-decoration:none;
+      color:#111;
+      position:relative;
+      transition:background .2s ease, color .2s ease;
+      font-size:0;
+    }
 
-      <a class="btn btn-outline-dark"
-         th:if="${session.ROLE == 'ADMIN' or session.ROLE == 'ROLE_ADMIN'}"
-         href="/admin/service-requests">
-        Manage Service Requests
-      </a>
+    .store-icon-link:hover{
+      background:#e9ecef;
+      color:#111;
+    }
 
-      <!-- ===================== -->
-      <!-- USER INFO -->
-      <!-- ===================== -->
+    .store-icon-link i{
+      font-size:28px;
+      line-height:1;
+    }
 
-      <span class="text-muted small"
-            th:if="${session.ACCESS_TOKEN != null}">
-                Hello,
-                <b th:text="${session.EMAIL}">user@email.com</b>
-            </span>
+    .store-cart-badge{
+      position:absolute;
+      top:3px;
+      right:1px;
+      min-width:20px;
+      height:20px;
+      padding:0 5px;
+      border-radius:50px;
+      background:var(--main-blue);
+      color:#fff;
+      font-size:11px;
+      font-weight:700;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      line-height:1;
+    }
 
-      <!-- Logout -->
-      <form th:if="${session.ACCESS_TOKEN != null}"
-            method="post"
-            action="/logout"
-            class="m-0">
+    .store-menu{
+      background:var(--main-blue);
+    }
 
-        <button class="btn btn-outline-secondary" type="submit">
-          Sign out
-        </button>
+    .store-menu .nav-link{
+      color:#fff;
+      font-weight:600;
+      text-transform:uppercase;
+      padding:16px 14px;
+    }
 
-      </form>
+    .store-menu .nav-link:hover{
+      background:rgba(255,255,255,.12);
+      color:#fff;
+    }
 
+    @media(max-width:991px){
+      .store-right-panel{
+        flex-wrap:wrap;
+        justify-content:center;
+      }
+
+      .store-header-email{
+        width:100%;
+        text-align:center;
+      }
+
+      .store-search{
+        max-width:100%;
+      }
+    }
+  </style>
+
+  <div class="store-topbar py-2">
+    <div class="container text-center">
+      Contact us on Email:
+      <a href="mailto:echtatech@gmail.com">echtatech@gmail.com</a>
+      Or WhatsApp:
+      <a href="tel:+12135619063">+1 (213) 561-9063</a>
     </div>
-
   </div>
 
-</nav>
+  <div class="store-main-header">
+    <div class="container">
+      <div class="row align-items-center g-4">
+
+        <div class="col-12 col-lg-2">
+          <div class="store-logo-wrap">
+            <a th:href="@{/}">
+              <img class="store-logo-img"
+                   th:src="@{/images/logo.png}"
+                   alt="Logo">
+            </a>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-6">
+          <form class="store-search" method="get" th:action="@{/products}">
+            <div class="input-group">
+              <select class="form-select" name="categoryId">
+                <option value="">All Tags</option>
+                <option th:each="c : ${categories}"
+                        th:value="${c.id()}"
+                        th:text="${c.name()}">
+                </option>
+              </select>
+
+              <input type="text"
+                     class="form-control"
+                     name="q"
+                     placeholder="Search for products">
+
+              <button class="btn btn-primary search-btn" type="submit">
+                Search
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="col-12 col-lg-4">
+          <div class="store-right-panel">
+
+            <span class="store-header-email">
+              echtatech@gmail.com
+            </span>
+
+            <div class="store-actions">
+              <!-- Guest -->
+              <a class="store-icon-link"
+                 th:if="${session.ACCESS_TOKEN == null}"
+                 th:href="@{/login}"
+                 title="Sign in">
+                <i class="bi bi-person-circle"></i>
+              </a>
+
+              <!-- Logged -->
+              <a class="store-icon-link"
+                 th:if="${session.ACCESS_TOKEN != null}"
+                 th:href="@{/my-account}"
+                 title="My Account">
+                <i class="bi bi-person-circle"></i>
+              </a>
+
+              <!-- Cart -->
+              <a class="store-icon-link" th:href="@{/cart}" title="Cart">
+                <i class="bi bi-cart3"></i>
+                <span class="store-cart-badge"
+                      th:if="${cartItemCount != null and cartItemCount > 0}"
+                      th:text="${cartItemCount}">0</span>
+              </a>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <nav class="navbar navbar-expand-lg store-menu navbar-dark">
+    <div class="container">
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="menu">
+        <ul class="navbar-nav me-auto">
+
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/products}">Products</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/services}">Services</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/products(inStock=true)}">In-Stock Product</a>
+          </li>
+
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+</div>
 
 </html>

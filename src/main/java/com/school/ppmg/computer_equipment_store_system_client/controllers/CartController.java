@@ -2,9 +2,11 @@ package com.school.ppmg.computer_equipment_store_system_client.controllers;
 
 import com.school.ppmg.computer_equipment_store_system_client.clients.CartClient;
 import com.school.ppmg.computer_equipment_store_system_client.clients.ProductClient;
+import com.school.ppmg.computer_equipment_store_system_client.clients.ProductImageClient;
 import com.school.ppmg.computer_equipment_store_system_client.dtos.cart.MergeCartRequest;
 import com.school.ppmg.computer_equipment_store_system_client.dtos.cart.UpdateCartItemRequest;
 import com.school.ppmg.computer_equipment_store_system_client.dtos.product.ProductResponse;
+import com.school.ppmg.computer_equipment_store_system_client.dtos.product_image.ProductImageResponse;
 import com.school.ppmg.computer_equipment_store_system_client.session.SessionCart;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ public class CartController {
 
     private final CartClient cartClient;
     private final ProductClient productClient;
+    private final ProductImageClient productImageClient;
 
     private boolean isLogged(HttpSession session) {
         Object token = session.getAttribute(SESSION_ACCESS_TOKEN);
@@ -63,8 +66,9 @@ public class CartController {
 
             ProductResponse p = productClient.getById(productId);
             BigDecimal lineTotal = p.price().multiply(BigDecimal.valueOf(qty));
+            String imageUrl = resolveProductImage(productId);
 
-            lines.add(new GuestCartLine(p, qty, lineTotal));
+            lines.add(new GuestCartLine(p, qty, lineTotal, imageUrl));
             total = total.add(lineTotal);
         }
 
@@ -74,7 +78,12 @@ public class CartController {
         return "cart/cart";
     }
 
-    public record GuestCartLine(ProductResponse product, Integer qty, BigDecimal lineTotal) {}
+    public record GuestCartLine(
+            ProductResponse product,
+            Integer qty,
+            BigDecimal lineTotal,
+            String imageUrl
+    ) {}
 
     // ---------- ADD ----------
     @PostMapping("/add")
@@ -143,5 +152,15 @@ public class CartController {
 
         cartClient.deleteItem(itemId);
         return "redirect:/cart";
+    }
+    private String resolveProductImage(Long productId) {
+        List<ProductImageResponse> images = productImageClient.list(productId);
+
+        ProductImageResponse mainImage = images.stream()
+                .filter(img -> Boolean.TRUE.equals(img.isMain()))
+                .findFirst()
+                .orElse(images.isEmpty() ? null : images.get(0));
+
+        return mainImage != null ? mainImage.imageUrl() : null;
     }
 }
