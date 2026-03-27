@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<section th:fragment="partnersSection" class="section-block partners-section">
+    <div class="container-fluid px-0">
+        <div class="section-head minimal-head">
+            <h2 class="section-title">Partner brands</h2>
+            <p class="section-desc">
+                Trusted brands and organizations we work with.
+            </p>
+        </div>
+
+        <div class="partners-grid">
+            <div class="partner-card">
+                <img th:src="@{/images/partners/pmg-rz.jpg}" alt="Partner 7">
+            </div>
+            <div class="partner-card">
+                <img th:src="@{/images/partners/luckycars.jpeg}" alt="Partner 1">
+            </div>
+            <div class="partner-card">
+                <img th:src="@{/images/partners/bird.png}" alt="Partner 2">
+            </div>
+            <div class="partner-card">
+                <img th:src="@{/images/partners/circle.jpg}" alt="Partner 3">
+            </div>
+            <div class="partner-card">
+                <img th:src="@{/images/partners/company.jpg}" alt="Partner 4">
+            </div>
+            <div class="partner-card">
+                <img th:src="@{/images/partners/mountain.jpg}" alt="Partner 5">
+            </div>
+            <div class="partner-card">
+                <img th:src="@{/images/partners/nz.jpg}" alt="Partner 6">
+            </div>
+            <div class="partner-card">
+                <img th:src="@{/images/partners/sun.png}" alt="Partner 8">
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

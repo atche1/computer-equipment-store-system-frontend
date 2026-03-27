@@ -699,6 +699,78 @@
             margin-bottom:0;
             color:rgba(255,255,255,.88);
         }
+        /* PARTNERS */
+.partners-section{
+    padding-top: 10px;
+}
+
+.partners-grid{
+    display:grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 24px;
+}
+
+.partner-card{
+    background:#fff;
+    border:1px solid rgba(15,23,42,.10);
+    min-height:170px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    box-shadow:0 6px 18px rgba(15,23,42,.05);
+    transition:.2s ease;
+}
+
+.partner-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 14px 30px rgba(15,23,42,.08);
+}
+
+.partner-card img{
+    max-width:100%;
+    max-height:90px;
+    object-fit:contain;
+    opacity:.85;
+    transition:.25s ease;
+}
+
+.partner-card:hover img{
+    transform: scale(1.05);
+    opacity:1;
+}
+
+@media (max-width: 1400px){
+    .partners-grid{
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 991px){
+    .partners-grid{
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .partner-card{
+        min-height:150px;
+    }
+}
+
+@media (max-width: 767px){
+    .partners-grid{
+        grid-template-columns: repeat(2, 1fr);
+        gap:16px;
+    }
+
+    .partner-card{
+        min-height:130px;
+        padding:18px;
+    }
+
+    .partner-card img{
+        max-height:64px;
+    }
+}
 
         /* RESPONSIVE */
         @media (max-width: 1600px){
@@ -1146,10 +1218,6 @@
                                      th:text="${#numbers.formatDecimal(s.price(),1,2)} + ' EUR'">
                                     0.00 EUR
                                 </div>
-
-                                <div class="latest-service-note">
-                                    View details
-                                </div>
                             </div>
                         </a>
 
@@ -1168,6 +1236,7 @@
             </div>
         </div>
     </section>
+    <div th:replace="~{fragments/partners :: partnersSection}"></div>
 
 </div>
 
