@@ -3,13 +3,16 @@ package com.school.ppmg.computer_equipment_store_system_client.controllers;
 import com.school.ppmg.computer_equipment_store_system_client.clients.CategoryClient;
 import com.school.ppmg.computer_equipment_store_system_client.clients.ProductClient;
 import com.school.ppmg.computer_equipment_store_system_client.clients.ProductImageClient;
+import com.school.ppmg.computer_equipment_store_system_client.clients.StoreServiceClient;
 import com.school.ppmg.computer_equipment_store_system_client.dtos.product.ProductResponse;
 import com.school.ppmg.computer_equipment_store_system_client.dtos.product_image.ProductImageResponse;
+import com.school.ppmg.computer_equipment_store_system_client.dtos.service.ServiceResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +24,7 @@ public class HomeController {
     private final ProductClient productClient;
     private final CategoryClient categoryClient;
     private final ProductImageClient productImageClient;
+    private final StoreServiceClient storeServiceClient;
 
     @GetMapping("/")
     public String home(Model model) {
@@ -55,9 +59,17 @@ public class HomeController {
             latestProductImages.put(product.id(), imageUrl);
         }
 
+        List<ServiceResponse> latestServices = storeServiceClient.getAllActive()
+                .stream()
+                .sorted(Comparator.comparing(ServiceResponse::createdAt,
+                        Comparator.nullsLast(Comparator.reverseOrder())))
+                .limit(4)
+                .toList();
+
         model.addAttribute("latestProducts", latestProducts);
         model.addAttribute("latestProductImages", latestProductImages);
         model.addAttribute("categories", categories);
+        model.addAttribute("latestServices", latestServices);
 
         return "home";
     }

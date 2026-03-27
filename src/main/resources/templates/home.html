@@ -534,6 +534,152 @@
     opacity: .6;
     cursor: not-allowed;
 }
+/* LATEST SERVICES */
+.latest-services-section{
+    padding-top: 4px;
+}
+
+.latest-services-grid{
+    row-gap: 28px;
+}
+
+.latest-service-card{
+    position: relative;
+    height: 100%;
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    box-shadow: 0 8px 22px rgba(15,23,42,.06);
+    transition: .22s ease;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.latest-service-card:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 16px 34px rgba(15,23,42,.10);
+}
+
+.latest-service-card::before{
+    content:"";
+    position:absolute;
+    top:0;
+    right:0;
+    width:140px;
+    height:140px;
+    background: radial-gradient(circle, rgba(13,77,173,.14) 0%, rgba(13,77,173,0) 72%);
+    pointer-events:none;
+}
+
+.latest-service-top{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:18px;
+}
+
+.latest-service-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 14px;
+    border-radius:999px;
+    background: rgba(13,77,173,.08);
+    color: var(--brand);
+    font-size: .84rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.latest-service-icon{
+    width:68px;
+    height:68px;
+    border-radius:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:
+            linear-gradient(145deg, #0d4dad 0%, #123b78 100%);
+    color:#fff;
+    font-size:1.8rem;
+    box-shadow: 0 12px 24px rgba(13,77,173,.20);
+    flex-shrink:0;
+}
+
+.latest-service-link{
+    text-decoration:none;
+    color:inherit;
+    display:block;
+    position:relative;
+    z-index:2;
+}
+
+.latest-service-link:hover{
+    color:inherit;
+}
+
+.latest-service-title{
+    font-size: 1.18rem;
+    line-height: 1.35;
+    font-weight: 700;
+    color:#0f172a;
+    margin-bottom: 12px;
+    min-height: 52px;
+}
+
+.latest-service-desc{
+    color:#6b7280;
+    font-size: .97rem;
+    line-height:1.65;
+    margin-bottom: 18px;
+    min-height: 78px;
+}
+
+.latest-service-meta{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    margin-bottom: 20px;
+    flex-wrap:wrap;
+}
+
+.latest-service-price{
+    font-size: 1.15rem;
+    font-weight: 800;
+    color:#111827;
+}
+
+.latest-service-note{
+    font-size:.88rem;
+    color:#64748b;
+}
+
+.latest-service-btn{
+    display:block;
+    width:100%;
+    border:1.5px solid #0d4dad;
+    color:#0d4dad;
+    background: transparent;
+    text-align:center;
+    padding:14px 16px;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration:none;
+    transition:.2s ease;
+    margin-top:auto;
+    position:relative;
+    z-index:2;
+}
+
+.latest-service-btn:hover{
+    background:#0d4dad;
+    border-color:#0d4dad;
+    color:#fff;
+}
 
         /* CTA */
         .cta-banner{
@@ -940,6 +1086,83 @@
                 <div class="col-12" th:if="${latestProducts == null or #lists.isEmpty(latestProducts)}">
                     <div class="alert alert-light border rounded-4 text-center shadow-sm">
                         No latest products available right now.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="section-block latest-services-section">
+        <div class="container-fluid px-0">
+            <div class="section-head minimal-head">
+                <h2 class="section-title">Latest services</h2>
+                <p class="section-desc">
+                    Explore the newest services and send a request for the one you need.
+                </p>
+            </div>
+
+            <div class="row latest-services-grid">
+                <div class="col-sm-6 col-xl-3"
+                     th:each="s : ${latestServices}">
+                    <div class="latest-service-card">
+
+                        <a th:href="@{/services/{id}(id=${s.id()})}" class="latest-service-link">
+                            <div class="latest-service-top">
+                            <span class="latest-service-badge">
+                                <i class="bi bi-stars"></i>
+                                New service
+                            </span>
+
+                                <div class="latest-service-icon">
+                                    <i th:classappend="${
+                                    #strings.containsIgnoreCase(s.name(),'repair') ? 'bi bi-tools' :
+                                    #strings.containsIgnoreCase(s.name(),'diagnostic') ? 'bi bi-search' :
+                                    #strings.containsIgnoreCase(s.name(),'install') ? 'bi bi-cpu' :
+                                    #strings.containsIgnoreCase(s.name(),'upgrade') ? 'bi bi-arrow-up-circle' :
+                                    #strings.containsIgnoreCase(s.name(),'clean') ? 'bi bi-droplet-half' :
+                                    #strings.containsIgnoreCase(s.name(),'software') ? 'bi bi-window-stack' :
+                                    #strings.containsIgnoreCase(s.name(),'network') ? 'bi bi-router' :
+                                    #strings.containsIgnoreCase(s.name(),'laptop') ? 'bi bi-laptop' :
+                                    'bi bi-gear-wide-connected'
+                                }"></i>
+                                </div>
+                            </div>
+
+                            <div class="latest-service-title"
+                                 th:text="${s.name()}">
+                                Service name
+                            </div>
+
+                            <div class="latest-service-desc"
+                                 th:text="${s.description() != null && s.description().length() > 120
+                                        ? #strings.substring(s.description(), 0, 120) + '...'
+                                        : (s.description() != null && !#strings.isEmpty(s.description())
+                                            ? s.description()
+                                            : 'Professional service for your device with reliable execution and personal support.')}">
+                                Service description
+                            </div>
+
+                            <div class="latest-service-meta">
+                                <div class="latest-service-price"
+                                     th:text="${#numbers.formatDecimal(s.price(),1,2)} + ' EUR'">
+                                    0.00 EUR
+                                </div>
+
+                                <div class="latest-service-note">
+                                    View details
+                                </div>
+                            </div>
+                        </a>
+
+                        <a th:href="@{/services/{id}(id=${s.id()})}"
+                           class="latest-service-btn">
+                            Request service
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-12" th:if="${latestServices == null or #lists.isEmpty(latestServices)}">
+                    <div class="alert alert-light border rounded-4 text-center shadow-sm">
+                        No latest services available right now.
                     </div>
                 </div>
             </div>
