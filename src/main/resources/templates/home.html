@@ -406,78 +406,134 @@
             margin-bottom:0;
         }
 
-        /* PRODUCTS */
-        .products-wrap{
-            padding-top:16px;
-        }
 
-        .product-card{
-            border:0;
-            border-radius:24px;
-            overflow:hidden;
-            background:#fff;
-            box-shadow:0 10px 28px rgba(15,23,42,.08);
-            transition:.22s ease;
-            height:100%;
-        }
+              /* LATEST PRODUCTS */
+.latest-products-section{
+    padding-top: 8px;
+}
 
-        .product-card:hover{
-            transform:translateY(-5px);
-            box-shadow:0 16px 36px rgba(15,23,42,.12);
-        }
+.latest-products-grid{
+    row-gap: 28px;
+}
 
-        .product-thumb{
-            height:220px;
-            background:linear-gradient(135deg,#edf3ff 0%,#f7faff 100%);
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            color:var(--brand);
-            font-size:4rem;
-        }
+.latest-product-card{
+    height: 100%;
+    background: #eef3fb;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    box-shadow: 0 6px 18px rgba(15,23,42,.05);
+    transition: .22s ease;
+    padding: 22px 22px 20px;
+    display: flex;
+    flex-direction: column;
+}
 
-        .product-category{
-            font-size:.82rem;
-            font-weight:700;
-            color:var(--brand);
-            text-transform:uppercase;
-            letter-spacing:.05em;
-        }
+.latest-product-card:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(15,23,42,.08);
+}
 
-        .product-name{
-            font-size:1.1rem;
-            font-weight:700;
-            color:#111827;
-            text-decoration:none;
-        }
+.latest-product-link{
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
 
-        .product-name:hover{
-            color:var(--brand);
-        }
+.latest-product-link:hover{
+    color: inherit;
+}
 
-        .product-price{
-            font-size:1.28rem;
-            font-weight:800;
-            color:#0f172a;
-        }
+.latest-product-image-wrap{
+    height: 210px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom: 22px;
+    background: transparent;
+}
 
-        .stock-badge{
-            display:inline-block;
-            padding:7px 12px;
-            border-radius:999px;
-            font-size:.85rem;
-            font-weight:700;
-        }
+.latest-product-image{
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display:block;
+}
 
-        .stock-ok{
-            background:#e8f7ed;
-            color:#1f7a3f;
-        }
+.latest-product-brand{
+    font-size: .92rem;
+    color:#6b7280;
+    margin-bottom: 8px;
+}
 
-        .stock-no{
-            background:#fdecec;
-            color:#b42318;
-        }
+.latest-product-title{
+    font-size: 1.05rem;
+    line-height: 1.4;
+    font-weight: 500;
+    color:#2b2f36;
+    min-height: 58px;
+    margin-bottom: 18px;
+}
+
+.latest-product-stock{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: .9rem;
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+
+.latest-product-stock.in{
+    background:#e7f4e8;
+    color:#3d7f45;
+}
+
+.latest-product-stock.out{
+    background:#fdecec;
+    color:#b42318;
+}
+
+.latest-product-stock::before{
+    content:"";
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background: currentColor;
+    display:block;
+}
+
+.latest-product-price{
+    font-size: 1.1rem;
+    font-weight: 800;
+    color:#1f2937;
+    margin-bottom: 18px;
+}
+
+.latest-product-btn{
+    display:block;
+    width:100%;
+    border:1.5px solid #0d6efd;
+    color:#0d4dad;
+    background: transparent;
+    text-align:center;
+    padding:14px 16px;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration:none;
+    transition:.2s ease;
+}
+
+.latest-product-btn:hover:not(:disabled){
+    background:#0d4dad;
+    border-color:#0d4dad;
+    color:#fff;
+}
+
+.latest-product-btn:disabled{
+    opacity: .6;
+    cursor: not-allowed;
+}
 
         /* CTA */
         .cta-banner{
@@ -821,147 +877,69 @@
             </div>
         </div>
     </section>
-
-    <section class="section-block">
+    <section class="section-block latest-products-section">
         <div class="container-fluid px-0">
-            <div class="section-head">
-                <div class="section-eyebrow">Why choose us</div>
-                <h2 class="section-title">Technology you can trust</h2>
+            <div class="section-head minimal-head">
+                <h2 class="section-title">Latest products</h2>
                 <p class="section-desc">
-                    We combine quality products, dependable service and a modern shopping experience
-                    for customers who want the right equipment at the right price.
+                    Discover the newest products.
                 </p>
             </div>
 
-            <div class="row g-4">
-                <div class="col-md-6 col-xl-3">
-                    <div class="card info-card p-4">
-                        <div class="info-icon"><i class="bi bi-patch-check"></i></div>
-                        <div class="info-title">Quality Products</div>
-                        <p class="info-text">Carefully selected equipment for daily use, office setups and gaming builds.</p>
-                    </div>
-                </div>
+            <div class="row latest-products-grid">
+                <div class="col-sm-6 col-xl-3"
+                     th:each="p : ${latestProducts}">
+                    <div class="latest-product-card">
 
-                <div class="col-md-6 col-xl-3">
-                    <div class="card info-card p-4">
-                        <div class="info-icon"><i class="bi bi-lightning-charge"></i></div>
-                        <div class="info-title">Fast Delivery</div>
-                        <p class="info-text">Quick order processing and smooth delivery for available products.</p>
-                    </div>
-                </div>
+                        <a th:href="@{/products/{id}(id=${p.id()})}" class="latest-product-link">
+                            <div class="latest-product-image-wrap">
+                                <img class="latest-product-image"
+                                     th:src="${latestProductImages[p.id()]}"
+                                     th:alt="${p.name()}">
+                            </div>
 
-                <div class="col-md-6 col-xl-3">
-                    <div class="card info-card p-4">
-                        <div class="info-icon"><i class="bi bi-headset"></i></div>
-                        <div class="info-title">Helpful Support</div>
-                        <p class="info-text">We help customers choose the right product and solve issues faster.</p>
-                    </div>
-                </div>
+                            <div class="latest-product-brand"
+                                 th:text="${p.categoryName() != null ? p.categoryName() : 'EchtaTech'}">
+                                Category
+                            </div>
 
-                <div class="col-md-6 col-xl-3">
-                    <div class="card info-card p-4">
-                        <div class="info-icon"><i class="bi bi-gear-wide-connected"></i></div>
-                        <div class="info-title">Professional Service</div>
-                        <p class="info-text">Installation, maintenance and tech assistance for your equipment needs.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="section-block products-wrap">
-        <div class="container-fluid px-0">
-            <div class="section-head">
-                <div class="section-eyebrow">Featured products</div>
-                <h2 class="section-title">Latest available products</h2>
-                <p class="section-desc">
-                    Explore some of the newest items currently shown on your homepage.
-                </p>
-            </div>
-
-            <div class="row g-4">
-                <div class="col-md-6 col-lg-4 col-xl-3"
-                     th:each="p : ${productsPage.content}">
-
-                    <div class="card product-card">
-                        <div class="product-thumb">
-                            <i class="bi bi-pc-display-horizontal"></i>
-                        </div>
-
-                        <div class="card-body d-flex flex-column p-4">
-                            <div class="product-category mb-2"
-                                 th:text="${p.categoryName()}">Category</div>
-
-                            <a class="product-name mb-2"
-                               th:href="@{/products/{id}(id=${p.id()})}"
-                               th:text="${p.name()}">
+                            <div class="latest-product-title"
+                                 th:text="${p.name()}">
                                 Product name
-                            </a>
-
-                            <p class="text-muted small mb-3"
-                               th:text="${p.description() != null and !#strings.isEmpty(p.description()) ? (#strings.length(p.description()) > 90 ? #strings.substring(p.description(),0,90) + '...' : p.description()) : 'High quality technology product for your needs.'}">
-                                Product description
-                            </p>
-
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <div class="product-price"
-                                     th:text="${#numbers.formatDecimal(p.price(),1,2)} + ' BGN'">
-                                    0.00 BGN
-                                </div>
-
-                                <span th:if="${p.quantity() != null and p.quantity() > 0}"
-                                      class="stock-badge stock-ok">
-                                    In stock
-                                </span>
-
-                                <span th:if="${p.quantity() == null or p.quantity() <= 0}"
-                                      class="stock-badge stock-no">
-                                    Out of stock
-                                </span>
                             </div>
 
-                            <div class="mt-auto d-grid gap-2">
-                                <a th:href="@{/products/{id}(id=${p.id()})}"
-                                   class="btn btn-outline-secondary">
-                                    View details
-                                </a>
-
-                                <form method="post" action="/cart/add">
-                                    <input type="hidden" name="productId" th:value="${p.id()}"/>
-                                    <input type="hidden" name="qty" value="1"/>
-
-                                    <button class="btn btn-primary w-100"
-                                            th:disabled="${p.quantity() == null or p.quantity() <= 0}">
-                                        Add to cart
-                                    </button>
-                                </form>
+                            <div th:if="${p.quantity() != null and p.quantity() > 0}"
+                                 class="latest-product-stock in">
+                                IN STOCK
                             </div>
-                        </div>
+
+                            <div th:if="${p.quantity() == null or p.quantity() <= 0}"
+                                 class="latest-product-stock out">
+                                OUT OF STOCK
+                            </div>
+
+                            <div class="latest-product-price"
+                                 th:text="${#numbers.formatDecimal(p.price(),1,2)} + ' EUR'">
+                                0.00 EUR
+                            </div>
+                        </a>
+
+                        <form method="post" action="/cart/add" class="mt-auto">
+                            <input type="hidden" name="productId" th:value="${p.id()}"/>
+                            <input type="hidden" name="qty" value="1"/>
+
+                            <button type="submit"
+                                    class="latest-product-btn"
+                                    th:disabled="${p.quantity() == null or p.quantity() <= 0}">
+                                Add to cart
+                            </button>
+                        </form>
                     </div>
                 </div>
 
-                <div class="col-12" th:if="${productsPage == null or #lists.isEmpty(productsPage.content)}">
-                    <div class="alert alert-warning text-center rounded-4 shadow-sm">
-                        No featured products found.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="section-block pt-0">
-        <div class="container-fluid px-0">
-            <div class="cta-banner">
-                <div class="row align-items-center g-4">
-                    <div class="col-lg-8">
-                        <h3>Need help choosing the right equipment?</h3>
-                        <p>
-                            Browse our catalog, compare categories and find the best technology solution
-                            for your home, office or business.
-                        </p>
-                    </div>
-                    <div class="col-lg-4 text-lg-end">
-                        <a th:href="@{/products}" class="btn btn-light btn-lg px-4 fw-bold">Explore all products</a>
+                <div class="col-12" th:if="${latestProducts == null or #lists.isEmpty(latestProducts)}">
+                    <div class="alert alert-light border rounded-4 text-center shadow-sm">
+                        No latest products available right now.
                     </div>
                 </div>
             </div>
