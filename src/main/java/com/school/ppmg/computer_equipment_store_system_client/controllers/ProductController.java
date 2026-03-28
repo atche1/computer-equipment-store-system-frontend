@@ -167,10 +167,59 @@ public class ProductController {
                 .findFirst()
                 .orElse(images.isEmpty() ? null : images.get(0));
 
+        String brandName = extractBrandName(product.name());
+
+        PageResponse<ProductResponse> allProductsPage = productClient.getAll(
+                null,
+                null,
+                true,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                0,
+                200,
+                "createdAt,desc"
+        );
+
+        List<ProductResponse> allProducts = allProductsPage.getContent() != null
+                ? allProductsPage.getContent()
+                : List.of();
+
+        List<ProductResponse> sameCategoryProducts = allProducts.stream()
+                .filter(p -> p.id() != null && !p.id().equals(product.id()))
+                .filter(p -> Boolean.TRUE.equals(p.isActive()))
+                .filter(p -> product.categoryId() != null && product.categoryId().equals(p.categoryId()))
+                .limit(8)
+                .toList();
+
+        List<ProductResponse> sameBrandProducts = allProducts.stream()
+                .filter(p -> p.id() != null && !p.id().equals(product.id()))
+                .filter(p -> Boolean.TRUE.equals(p.isActive()))
+                .filter(p -> {
+                    String currentBrand = extractBrandName(p.name());
+                    return !brandName.isBlank() && brandName.equalsIgnoreCase(currentBrand);
+                })
+                .limit(8)
+                .toList();
+
+        Map<Long, String> sameCategoryProductImages = buildProductImageMap(sameCategoryProducts);
+        Map<Long, String> sameBrandProductImages = buildProductImageMap(sameBrandProducts);
+
         model.addAttribute("product", product);
         model.addAttribute("images", images);
         model.addAttribute("mainImage", mainImage);
         model.addAttribute("attributes", attributes);
+        model.addAttribute("brandName", brandName);
+
+        model.addAttribute("sameCategoryProducts", sameCategoryProducts);
+        model.addAttribute("sameCategoryProductImages", sameCategoryProductImages);
+
+        model.addAttribute("sameBrandProducts", sameBrandProducts);
+        model.addAttribute("sameBrandProductImages", sameBrandProductImages);
 
         return "products/product-details";
     }
@@ -365,5 +414,34 @@ public class ProductController {
         } catch (Exception ex) {
             return s;
         }
+    }
+    private String extractBrandName(String productName) {
+        if (productName == null || productName.isBlank()) {
+            return "";
+        }
+
+        String[] parts = productName.trim().split("\\s+");
+        return parts.length > 0 ? parts[0] : "";
+    }
+
+    private Map<Long, String> buildProductImageMap(List<ProductResponse> products) {
+        Map<Long, String> imageMap = new HashMap<>();
+
+        for (ProductResponse p : products) {
+            try {
+                List<ProductImageResponse> productImages = productImageClient.list(p.id());
+
+                ProductImageResponse main = productImages.stream()
+                        .filter(img -> Boolean.TRUE.equals(img.isMain()))
+                        .findFirst()
+                        .orElse(productImages.isEmpty() ? null : productImages.get(0));
+
+                imageMap.put(p.id(), main != null ? main.imageUrl() : null);
+            } catch (Exception ex) {
+                imageMap.put(p.id(), null);
+            }
+        }
+
+        return imageMap;
     }
 }
