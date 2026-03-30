@@ -157,18 +157,15 @@
     <div th:if="${error}" class="alert alert-danger login-alert" th:text="${error}"></div>
 
     <form method="post" action="/login" novalidate>
+      <input type="hidden" name="returnUrl" th:value="${returnUrl}">
 
       <div class="mb-4">
         <label class="form-label">Email address</label>
         <input type="email"
                name="email"
                class="form-control"
-               placeholder=""
                autocomplete="username"
                required>
-        <div class="text-danger field-error"
-             th:if="${fieldErrors != null and fieldErrors.containsKey('email')}"
-             th:text="${fieldErrors.get('email')}"></div>
       </div>
 
       <div class="mb-4">
@@ -179,9 +176,6 @@
                placeholder="Password"
                autocomplete="current-password"
                required>
-        <div class="text-danger field-error"
-             th:if="${fieldErrors != null and fieldErrors.containsKey('password')}"
-             th:text="${fieldErrors.get('password')}"></div>
       </div>
 
       <div class="login-actions">
@@ -193,7 +187,6 @@
           Create account
         </a>
       </div>
-
     </form>
 
   </div>

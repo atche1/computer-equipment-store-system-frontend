@@ -22,28 +22,34 @@ public class AuthController {
     public static final String SESSION_ROLE = "ROLE";
     public static final String SESSION_EMAIL = "EMAIL";
     public static final String SESSION_CART = "SESSION_CART";
-    private final CartClient cartClient;
 
+    private final CartClient cartClient;
     private final AuthClient authClient;
 
-    // helper method
     private boolean isLogged(HttpSession session) {
         return session.getAttribute(SESSION_ACCESS_TOKEN) != null;
     }
 
     @GetMapping("/login")
-    public String loginPage(HttpSession session) {
+    public String loginPage(@RequestParam(required = false) String returnUrl,
+                            HttpSession session,
+                            Model model) {
 
         if (isLogged(session)) {
+            if (returnUrl != null && !returnUrl.isBlank() && returnUrl.startsWith("/")) {
+                return "redirect:" + returnUrl;
+            }
             return "redirect:/";
         }
 
+        model.addAttribute("returnUrl", returnUrl);
         return "auth/login";
     }
 
     @PostMapping("/login")
     public String doLogin(@RequestParam String email,
                           @RequestParam String password,
+                          @RequestParam(required = false) String returnUrl,
                           HttpSession session,
                           Model model) {
 
@@ -58,17 +64,21 @@ public class AuthController {
             session.setAttribute(SESSION_ROLE, res.role());
             session.setAttribute(SESSION_EMAIL, email);
 
-            // ✅ ТУК: merge guest cart -> DB cart (вече имаме токен в сесията)
             SessionCart guestCart = (SessionCart) session.getAttribute(SESSION_CART);
             if (guestCart != null && !guestCart.isEmpty()) {
                 cartClient.mergeCart(new MergeCartRequest(guestCart.getItems()));
                 session.removeAttribute(SESSION_CART);
             }
 
+            if (returnUrl != null && !returnUrl.isBlank() && returnUrl.startsWith("/")) {
+                return "redirect:" + returnUrl;
+            }
+
             return "redirect:/";
 
         } catch (Exception ex) {
             model.addAttribute("error", "Invalid email or password.");
+            model.addAttribute("returnUrl", returnUrl);
             return "auth/login";
         }
     }
@@ -92,7 +102,6 @@ public class AuthController {
                              Model model) {
 
         try {
-
             RegisterRequest req = new RegisterRequest();
             req.setEmail(email);
             req.setPassword(password);
@@ -105,25 +114,19 @@ public class AuthController {
             return "redirect:/login";
 
         } catch (BackendException ex) {
-
             model.addAttribute("error", ex.getMessage());
             model.addAttribute("fieldErrors", ex.getFieldErrors());
-
             return "auth/register";
 
         } catch (Exception ex) {
-
             model.addAttribute("error", "Registration failed. Please try again.");
-
             return "auth/register";
         }
     }
 
     @PostMapping("/logout")
     public String logout(HttpSession session) {
-
         session.invalidate();
-
         return "redirect:/";
     }
 }

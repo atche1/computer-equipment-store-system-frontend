@@ -1,123 +1,523 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
 <head>
   <meta charset="UTF-8">
-  <title>Service Details</title>
+  <title th:text="${service.name()} + ' - Service Details'">Service Details</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-</head>
+  <style>
+        :root{
+            --brand:#0d4dad;
+            --brand-dark:#0a3d8c;
+            --text:#1f2937;
+            --muted:#6b7280;
+            --success-bg:#e7f4e8;
+            --success-text:#3d7f45;
+            --surface-soft:rgba(255,255,255,.38);
+            --surface-border:rgba(255,255,255,.48);
+            --field-bg:rgba(255,255,255,.62);
+            --field-border:#d7e2ef;
+        }
 
+        body{
+            background: linear-gradient(180deg, #edf3fb 0%, #f8fbff 100%);
+            min-height:100vh;
+            color:var(--text);
+        }
+
+        .page-shell{
+            max-width:1820px;
+            margin:0 auto;
+            padding:0 18px 48px;
+        }
+
+        .details-page{
+            padding-top:26px;
+        }
+
+        .back-btn{
+            border-radius:999px;
+            font-weight:600;
+            padding:9px 18px;
+            border:1px solid #d9e3ef;
+            background:rgba(255,255,255,.58);
+            color:#334155;
+            text-decoration:none;
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            transition:.2s ease;
+        }
+
+        .back-btn:hover{
+            border-color:var(--brand);
+            color:var(--brand);
+            background:rgba(255,255,255,.9);
+        }
+
+        .service-hero{
+            padding-top:6px;
+        }
+
+        .service-grid{
+            display:grid;
+            grid-template-columns:minmax(420px, .9fr) minmax(0, 1.1fr);
+            gap:56px;
+            align-items:start;
+        }
+
+        .summary-side{
+            min-width:0;
+            max-width:760px;
+            padding-top:8px;
+        }
+
+        .service-type{
+            font-size:13px;
+            color:#7b8794;
+            text-transform:uppercase;
+            letter-spacing:.08em;
+            font-weight:700;
+            margin-bottom:10px;
+        }
+
+        .service-title{
+            font-size:clamp(2.2rem, 2.8vw, 4rem);
+            line-height:1.08;
+            font-weight:800;
+            color:#111827;
+            margin-bottom:18px;
+        }
+
+        .top-meta{
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
+            align-items:center;
+            margin-bottom:22px;
+        }
+
+        .category-chip{
+            background:#eef4ff;
+            color:var(--brand);
+            border-radius:999px;
+            padding:8px 14px;
+            font-size:13px;
+            font-weight:700;
+        }
+
+        .availability-chip{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            padding:8px 14px;
+            border-radius:999px;
+            font-size:13px;
+            font-weight:700;
+            background:var(--success-bg);
+            color:var(--success-text);
+        }
+
+        .availability-chip::before{
+            content:"";
+            width:8px;
+            height:8px;
+            border-radius:50%;
+            background:currentColor;
+        }
+
+        .price-line{
+            padding:10px 0 18px;
+            border-bottom:1px solid rgba(15,23,42,.08);
+            margin-bottom:20px;
+        }
+
+        .price-label{
+            font-size:12px;
+            text-transform:uppercase;
+            letter-spacing:.08em;
+            color:#7b8794;
+            font-weight:700;
+            margin-bottom:8px;
+        }
+
+        .price{
+            margin:0;
+            font-size:clamp(30px, 2.2vw, 42px);
+            font-weight:800;
+            color:#1d4ed8;
+        }
+
+        .quick-points{
+            display:grid;
+            gap:12px;
+            margin-bottom:24px;
+        }
+
+        .quick-point{
+            display:flex;
+            align-items:flex-start;
+            gap:12px;
+            color:#4b5563;
+            font-size:14px;
+            line-height:1.7;
+        }
+
+        .quick-point-icon{
+            width:36px;
+            height:36px;
+            min-width:36px;
+            border-radius:50%;
+            background:#edf4ff;
+            color:var(--brand);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:15px;
+        }
+
+        .details-text-block{
+            padding-top:4px;
+            margin-bottom:26px;
+        }
+
+        .details-mini-title{
+            font-size:12px;
+            text-transform:uppercase;
+            letter-spacing:.08em;
+            color:#7b8794;
+            font-weight:700;
+            margin-bottom:10px;
+        }
+
+        .description-text{
+            color:#4b5563;
+            font-size:14px;
+            line-height:1.9;
+            margin:0;
+        }
+
+        .empty-state{
+            color:#6b7280;
+            font-size:14px;
+            margin:0;
+        }
+
+        .request-btn,
+        .login-request-btn{
+            min-width:260px;
+            min-height:56px;
+            border:0;
+            border-radius:16px;
+            background:linear-gradient(135deg, var(--brand) 0%, #1e6cf0 100%);
+            font-size:17px;
+            font-weight:700;
+            color:#fff;
+            box-shadow:0 10px 22px rgba(13,77,173,.16);
+            text-decoration:none;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            padding:0 26px;
+            transition:.2s ease;
+        }
+
+        .request-btn:hover,
+        .login-request-btn:hover{
+            background:linear-gradient(135deg, var(--brand-dark) 0%, #125fdd 100%);
+            color:#fff;
+            transform:translateY(-1px);
+        }
+
+        .request-form-wrap{
+            margin-top:12px;
+            padding:26px 24px 22px;
+            border-radius:30px;
+            background:linear-gradient(180deg, rgba(255,255,255,.30) 0%, rgba(255,255,255,.18) 100%);
+            border:1px solid rgba(255,255,255,.45);
+            box-shadow:none;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .request-card-title{
+            font-size:1.15rem;
+            font-weight:800;
+            color:#111827;
+            margin-bottom:6px;
+        }
+
+        .request-card-desc{
+            color:#6b7280;
+            font-size:.93rem;
+            margin-bottom:18px;
+            line-height:1.65;
+        }
+
+        .service-request-form .form-label{
+            font-weight:700;
+            color:#475569;
+            margin-bottom:8px;
+            font-size:.95rem;
+        }
+
+        .service-request-form .form-control{
+            min-height:52px;
+            border-radius:16px;
+            border:1px solid var(--field-border);
+            background:var(--field-bg);
+            padding:14px 16px;
+            box-shadow:none !important;
+            color:#1f2937;
+        }
+
+        .service-request-form textarea.form-control{
+            min-height:140px;
+            resize:vertical;
+        }
+
+        .service-request-form .form-control::placeholder{
+            color:#94a3b8;
+        }
+
+        .service-request-form .form-control:focus{
+            border-color:rgba(13,77,173,.45);
+            background:rgba(255,255,255,.78);
+        }
+
+        .service-request-form .invalid-feedback{
+            font-size:.88rem;
+        }
+
+        .soft-alert{
+            border-radius:16px;
+            border:1px solid rgba(220,38,38,.10);
+            background:rgba(254,242,242,.72);
+            color:#991b1b;
+            padding:12px 14px;
+            font-size:.93rem;
+            margin-bottom:16px;
+        }
+
+        .image-side{
+            min-width:0;
+        }
+
+        .service-image{
+            width:100%;
+            min-height:640px;
+            max-height:760px;
+            object-fit:cover;
+            border-radius:34px;
+            display:block;
+            box-shadow:0 20px 40px rgba(15,23,42,.08);
+        }
+
+        @media (max-width: 1200px){
+            .service-grid{
+                grid-template-columns:1fr;
+                gap:34px;
+            }
+
+            .summary-side{
+                max-width:100%;
+                order:1;
+            }
+
+            .image-side{
+                order:2;
+            }
+
+            .service-image{
+                min-height:440px;
+                max-height:560px;
+            }
+        }
+
+        @media (max-width: 767.98px){
+            .page-shell{
+                padding:0 14px 36px;
+            }
+
+            .details-page{
+                padding-top:18px;
+            }
+
+            .service-title{
+                font-size:2rem;
+            }
+
+            .service-grid{
+                gap:24px;
+            }
+
+            .service-image{
+                min-height:280px;
+                max-height:360px;
+                border-radius:22px;
+            }
+
+            .request-form-wrap{
+                padding:20px 18px 18px;
+                border-radius:24px;
+            }
+
+            .request-btn,
+            .login-request-btn{
+                width:100%;
+            }
+        }
+    </style>
+</head>
 <body>
 
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container py-4">
+<div class="page-shell">
+  <div class="details-page">
 
-  <div class="mb-4">
-    <a href="/services" class="btn btn-outline-secondary btn-sm">
-      Back to services
-    </a>
-  </div>
+    <section class="service-hero">
+      <div class="service-grid">
 
-  <!-- SERVICE INFO -->
-  <div class="card shadow-sm mb-4">
-    <div class="card-body">
+        <div class="summary-side">
+          <div class="service-type">Service</div>
 
-      <h1 th:text="${service.name()}">Service name</h1>
+          <h1 class="service-title" th:text="${service.name()}">Service name</h1>
 
-      <p class="text-muted"
-         th:text="${service.description()}">
-        Description
-      </p>
+          <div class="top-meta">
+            <span class="category-chip">IT support</span>
+            <span class="availability-chip">Available for request</span>
+          </div>
 
-      <p class="fw-bold">
-        Price:
-        <span th:text="${service.price()} + ' BGN'"></span>
-      </p>
+          <div class="price-line">
+            <div class="price-label">Price</div>
+            <p class="price"
+               th:text="${#numbers.formatDecimal(service.price(), 1, 2)} + ' EUR'">
+              0.00 EUR
+            </p>
+          </div>
 
-    </div>
-  </div>
+          <div class="quick-points">
+            <div class="quick-point">
+              <div class="quick-point-icon">
+                <i class="bi bi-shield-check"></i>
+              </div>
+              <div>Reliable technical service for computers, laptops and office equipment.</div>
+            </div>
 
-  <!-- REQUEST FORM -->
-  <div class="card shadow-sm" th:if="${session.ACCESS_TOKEN != null}">
-    <div class="card-body">
+            <div class="quick-point">
+              <div class="quick-point-icon">
+                <i class="bi bi-tools"></i>
+              </div>
+              <div>Professional diagnostics, repair and support tailored to your specific issue.</div>
+            </div>
 
-      <h3 class="mb-3">Submit service request</h3>
+            <div class="quick-point">
+              <div class="quick-point-icon">
+                <i class="bi bi-headset"></i>
+              </div>
+              <div>Fast communication and convenient service request process for every customer.</div>
+            </div>
+          </div>
 
-      <!-- GENERAL ERROR -->
-      <div class="alert alert-danger"
-           th:if="${error}">
-        <b>Validation error.</b>
-        Please check the fields below.
+          <div class="details-text-block">
+            <div class="details-mini-title">About this service</div>
+
+            <p class="description-text"
+               th:if="${service.description() != null and !#strings.isEmpty(service.description())}"
+               th:text="${service.description()}">
+              Service description
+            </p>
+
+            <p class="empty-state"
+               th:if="${service.description() == null or #strings.isEmpty(service.description())}">
+              No description available for this service.
+            </p>
+          </div>
+
+          <div th:if="${session.ACCESS_TOKEN != null}" class="request-form-wrap">
+            <h3 class="request-card-title">Submit service request</h3>
+            <p class="request-card-desc">
+              Fill in the details below and we will contact you regarding your request.
+            </p>
+
+            <div class="soft-alert"
+                 th:if="${error}">
+              <b>Validation error.</b> Please check the fields below.
+            </div>
+
+            <form class="service-request-form"
+                  th:action="@{/services/{id}/request(id=${service.id()})}"
+                  method="post">
+
+              <div class="mb-3">
+                <label class="form-label">Phone number</label>
+
+                <input type="text"
+                       name="customerPhone"
+                       class="form-control"
+                       required
+                       pattern="^\+?[0-9]{8,15}$"
+                       placeholder="+359888123456"
+                       th:value="${requestForm.customerPhone}"
+                       th:classappend="${fieldErrors != null and fieldErrors.containsKey('customerPhone')} ? ' is-invalid'">
+
+                <div class="invalid-feedback"
+                     th:if="${fieldErrors != null and fieldErrors.containsKey('customerPhone')}"
+                     th:text="${fieldErrors.get('customerPhone')}">
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label">Description</label>
+
+                <textarea name="description"
+                          rows="5"
+                          class="form-control"
+                          minlength="10"
+                          maxlength="5000"
+                          required
+                          placeholder="Describe the problem with your device..."
+                          th:text="${requestForm.description}"
+                          th:classappend="${fieldErrors != null and fieldErrors.containsKey('description')} ? ' is-invalid'"></textarea>
+
+                <div class="invalid-feedback"
+                     th:if="${fieldErrors != null and fieldErrors.containsKey('description')}"
+                     th:text="${fieldErrors.get('description')}">
+                </div>
+              </div>
+
+              <button type="submit" class="request-btn">
+                Submit request
+              </button>
+            </form>
+          </div>
+
+          <div th:if="${session.ACCESS_TOKEN == null}" class="mt-3">
+            <a th:href="@{/login(returnUrl=${'/services/' + service.id()})}"
+               class="login-request-btn">
+              Request service
+            </a>
+          </div>
+        </div>
+
+        <div class="image-side">
+          <img src="/images/service-details-cover.png"
+               alt="Service support"
+               class="service-image">
+        </div>
+
       </div>
+    </section>
 
-      <form th:action="@{/services/{id}/request(id=${service.id()})}" method="post">
-
-        <!-- PHONE -->
-        <div class="mb-3">
-
-          <label class="form-label">Phone number</label>
-
-          <input type="text"
-                 name="customerPhone"
-                 class="form-control"
-                 required
-                 pattern="^\+?[0-9]{8,15}$"
-                 placeholder="+359888123456"
-                 th:value="${requestForm.customerPhone}"
-                 th:classappend="${fieldErrors != null and fieldErrors.containsKey('customerPhone')} ? ' is-invalid'">
-
-          <div class="invalid-feedback"
-               th:if="${fieldErrors != null and fieldErrors.containsKey('customerPhone')}"
-               th:text="${fieldErrors.get('customerPhone')}">
-          </div>
-
-        </div>
-
-        <!-- DESCRIPTION -->
-        <div class="mb-3">
-
-          <label class="form-label">Description</label>
-
-          <textarea name="description"
-                    rows="5"
-                    class="form-control"
-                    minlength="10"
-                    maxlength="5000"
-                    required
-                    placeholder="Describe the problem with your device..."
-                    th:text="${requestForm.description}"
-                    th:classappend="${fieldErrors != null and fieldErrors.containsKey('description')} ? ' is-invalid'">
-                    </textarea>
-
-          <div class="invalid-feedback"
-               th:if="${fieldErrors != null and fieldErrors.containsKey('description')}"
-               th:text="${fieldErrors.get('description')}">
-          </div>
-
-        </div>
-
-        <button type="submit"
-                class="btn btn-primary">
-          Submit request
-        </button>
-
-      </form>
-
-    </div>
   </div>
-
-  <!-- LOGIN MESSAGE -->
-  <div class="alert alert-info"
-       th:if="${session.ACCESS_TOKEN == null}">
-    Please <a href="/login">log in</a> to submit a service request.
-  </div>
-
 </div>
+
 <div th:replace="~{fragments/footer :: footer}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
