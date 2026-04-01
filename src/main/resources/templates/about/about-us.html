@@ -1,0 +1,859 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>EchtaTech • About us</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        :root{
+            --bg:#f5f7fb;
+            --surface:#ffffff;
+            --surface-2:#f1f5fb;
+            --text:#0f172a;
+            --muted:#5f6b7a;
+            --line:rgba(15,23,42,.08);
+            --brand:#0d4dad;
+            --brand-dark:#0a377b;
+            --brand-soft:#eaf1ff;
+            --shadow:0 18px 60px rgba(15,23,42,.08);
+            --radius-xl:34px;
+            --radius-lg:24px;
+            --radius-md:18px;
+            --max:1380px;
+        }
+
+        *{
+            box-sizing:border-box;
+        }
+
+        html{
+            scroll-behavior:smooth;
+        }
+
+        body{
+            margin:0;
+            font-family:Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color:var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(13,77,173,.08), transparent 22%),
+                linear-gradient(180deg, #eef3fb 0%, #f8fbff 42%, #f5f7fb 100%);
+        }
+
+        .about-page{
+            width:min(var(--max), calc(100% - 40px));
+            margin:0 auto;
+            padding:18px 0 80px;
+        }
+
+        .about-hero{
+            position:relative;
+            overflow:hidden;
+            min-height:620px;
+            border-radius:36px;
+            background:
+                radial-gradient(circle at 12% 18%, rgba(255,255,255,.20), transparent 20%),
+                radial-gradient(circle at 84% 22%, rgba(255,255,255,.14), transparent 18%),
+                linear-gradient(135deg, #081c42 0%, #0d4dad 46%, #0a377b 100%);
+            box-shadow:0 28px 90px rgba(10,30,70,.18);
+            isolation:isolate;
+        }
+
+        .about-hero::before{
+            content:"";
+            position:absolute;
+            inset:0;
+            background:
+                linear-gradient(125deg, rgba(255,255,255,.06), transparent 35%),
+                linear-gradient(300deg, rgba(255,255,255,.05), transparent 38%);
+            pointer-events:none;
+        }
+
+        .hero-grid{
+            position:relative;
+            z-index:1;
+            display:grid;
+            grid-template-columns:1.08fr .92fr;
+            gap:24px;
+            min-height:620px;
+            padding:54px;
+        }
+
+        .hero-copy{
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            color:#fff;
+            max-width:760px;
+        }
+
+        .hero-kicker{
+            display:inline-flex;
+            align-items:center;
+            gap:10px;
+            width:max-content;
+            padding:10px 16px;
+            margin-bottom:24px;
+            border:1px solid rgba(255,255,255,.16);
+            border-radius:999px;
+            background:rgba(255,255,255,.09);
+            font-size:.84rem;
+            font-weight:700;
+            letter-spacing:.08em;
+            text-transform:uppercase;
+        }
+
+        .hero-title{
+            margin:0 0 18px;
+            font-size:clamp(2.8rem, 5vw, 5.5rem);
+            line-height:.96;
+            font-weight:800;
+            letter-spacing:-.04em;
+        }
+
+        .hero-text{
+            max-width:640px;
+            margin:0 0 28px;
+            font-size:1.08rem;
+            line-height:1.9;
+            color:rgba(255,255,255,.86);
+        }
+
+        .hero-actions{
+            display:flex;
+            flex-wrap:wrap;
+            gap:14px;
+            margin-bottom:34px;
+        }
+
+        .hero-link{
+            display:inline-flex;
+            align-items:center;
+            gap:10px;
+            min-height:54px;
+            padding:0 22px;
+            border-radius:15px;
+            text-decoration:none;
+            font-weight:700;
+            transition:.22s ease;
+        }
+
+        .hero-link.primary{
+            background:#fff;
+            color:var(--brand);
+        }
+
+        .hero-link.primary:hover{
+            transform:translateY(-2px);
+            background:#f7faff;
+            color:var(--brand-dark);
+        }
+
+        .hero-link.secondary{
+            color:#fff;
+            border:1px solid rgba(255,255,255,.18);
+            background:rgba(255,255,255,.08);
+        }
+
+        .hero-link.secondary:hover{
+            transform:translateY(-2px);
+            background:rgba(255,255,255,.13);
+            color:#fff;
+        }
+
+        .hero-meta{
+            display:grid;
+            grid-template-columns:repeat(3, minmax(0,1fr));
+            gap:14px;
+            max-width:760px;
+        }
+
+        .hero-meta-item{
+            padding:18px 18px 16px;
+            border-radius:20px;
+            border:1px solid rgba(255,255,255,.14);
+            background:rgba(255,255,255,.10);
+            backdrop-filter:blur(6px);
+        }
+
+        .hero-meta-title{
+            margin-bottom:6px;
+            font-size:1rem;
+            font-weight:800;
+            color:#fff;
+        }
+
+        .hero-meta-text{
+            font-size:.95rem;
+            line-height:1.6;
+            color:rgba(255,255,255,.76);
+        }
+
+        .hero-panel{
+            display:flex;
+            align-items:flex-end;
+            justify-content:flex-end;
+        }
+
+        .hero-floating{
+            width:min(470px, 100%);
+            padding:20px;
+            border-radius:28px;
+            background:rgba(255,255,255,.12);
+            border:1px solid rgba(255,255,255,.14);
+            backdrop-filter:blur(10px);
+            box-shadow:0 18px 50px rgba(0,0,0,.12);
+        }
+
+        .hero-image{
+            height:420px;
+            border-radius:22px;
+            overflow:hidden;
+            background:
+                linear-gradient(135deg, rgba(255,255,255,.28), rgba(255,255,255,.06)),
+                url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
+            position:relative;
+        }
+
+        .hero-image::after{
+            content:"";
+            position:absolute;
+            inset:auto 18px 18px 18px;
+            height:86px;
+            border-radius:18px;
+            background:linear-gradient(180deg, rgba(8,28,66,0), rgba(8,28,66,.72));
+        }
+
+        .hero-note{
+            position:absolute;
+            left:30px;
+            bottom:34px;
+            right:30px;
+            z-index:2;
+            color:#fff;
+        }
+
+        .hero-note strong{
+            display:block;
+            font-size:1.12rem;
+            font-weight:800;
+            margin-bottom:6px;
+        }
+
+        .hero-note span{
+            font-size:.95rem;
+            color:rgba(255,255,255,.82);
+        }
+
+        .section{
+            padding:90px 0 0;
+        }
+
+        .section-intro{
+            max-width:860px;
+            margin-bottom:30px;
+        }
+
+        .section-kicker{
+            margin-bottom:12px;
+            color:var(--brand);
+            text-transform:uppercase;
+            letter-spacing:.08em;
+            font-size:.82rem;
+            font-weight:800;
+        }
+
+        .section-title{
+            margin:0 0 14px;
+            font-size:clamp(2rem, 3vw, 3.35rem);
+            line-height:1.05;
+            font-weight:800;
+            letter-spacing:-.03em;
+        }
+
+        .section-text{
+            margin:0;
+            max-width:760px;
+            color:var(--muted);
+            font-size:1.04rem;
+            line-height:1.9;
+        }
+
+        .editorial{
+            display:grid;
+            grid-template-columns:1.1fr .9fr;
+            gap:26px;
+            align-items:stretch;
+        }
+
+        .editorial-main{
+            padding:10px 0 0;
+        }
+
+        .editorial-main p{
+            margin:0 0 18px;
+            color:#425066;
+            font-size:1.06rem;
+            line-height:1.95;
+        }
+
+        .editorial-aside{
+            display:flex;
+            flex-direction:column;
+            gap:18px;
+        }
+
+        .aside-card{
+            background:rgba(255,255,255,.72);
+            border:1px solid rgba(255,255,255,.82);
+            border-radius:28px;
+            padding:28px;
+            box-shadow:var(--shadow);
+        }
+
+        .aside-card h3{
+            margin:0 0 12px;
+            font-size:1.18rem;
+            font-weight:800;
+        }
+
+        .aside-card p{
+            margin:0;
+            color:var(--muted);
+            line-height:1.8;
+        }
+
+        .mini-list{
+            display:grid;
+            gap:14px;
+            margin-top:16px;
+        }
+
+        .mini-item{
+            display:flex;
+            gap:12px;
+            align-items:flex-start;
+        }
+
+        .mini-icon{
+            flex:0 0 40px;
+            width:40px;
+            height:40px;
+            border-radius:12px;
+            background:var(--brand-soft);
+            color:var(--brand);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:1rem;
+        }
+
+        .mini-item strong{
+            display:block;
+            margin-bottom:4px;
+            font-size:.98rem;
+        }
+
+        .mini-item span{
+            color:var(--muted);
+            line-height:1.65;
+            font-size:.95rem;
+        }
+
+        .feature-band{
+            display:grid;
+            grid-template-columns:repeat(3, minmax(0,1fr));
+            gap:18px;
+        }
+
+        .feature-block{
+            position:relative;
+            overflow:hidden;
+            min-height:280px;
+            padding:28px;
+            border-radius:30px;
+            background:#fff;
+            border:1px solid var(--line);
+            box-shadow:var(--shadow);
+        }
+
+        .feature-index{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            width:44px;
+            height:44px;
+            border-radius:13px;
+            background:var(--brand-soft);
+            color:var(--brand);
+            font-weight:800;
+            margin-bottom:18px;
+        }
+
+        .feature-block h3{
+            margin:0 0 12px;
+            font-size:1.35rem;
+            font-weight:800;
+            letter-spacing:-.02em;
+        }
+
+        .feature-block p{
+            margin:0;
+            color:var(--muted);
+            line-height:1.85;
+        }
+
+        .image-slice{
+            display:grid;
+            grid-template-columns:.95fr 1.05fr;
+            gap:24px;
+            align-items:center;
+        }
+
+        .slice-visual{
+            min-height:520px;
+            border-radius:34px;
+            overflow:hidden;
+            background:
+                linear-gradient(180deg, rgba(13,77,173,.08), rgba(13,77,173,.02)),
+                url('https://images.unsplash.com/photo-1496171367470-9ed9a91ea931?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
+            box-shadow:var(--shadow);
+        }
+
+        .slice-copy{
+            padding:12px 6px 12px 10px;
+        }
+
+        .slice-copy h2{
+            margin:0 0 18px;
+            font-size:clamp(2rem, 3vw, 3rem);
+            line-height:1.05;
+            font-weight:800;
+            letter-spacing:-.03em;
+        }
+
+        .slice-copy p{
+            margin:0 0 18px;
+            color:var(--muted);
+            line-height:1.95;
+            font-size:1.04rem;
+        }
+
+        .vertical-points{
+            display:grid;
+            gap:18px;
+            margin-top:24px;
+        }
+
+        .point{
+            display:grid;
+            grid-template-columns:64px 1fr;
+            gap:18px;
+            align-items:start;
+            padding-bottom:18px;
+            border-bottom:1px solid var(--line);
+        }
+
+        .point:last-child{
+            border-bottom:none;
+            padding-bottom:0;
+        }
+
+        .point-no{
+            width:64px;
+            height:64px;
+            border-radius:18px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background:linear-gradient(180deg, #eff5ff, #e2ecff);
+            color:var(--brand);
+            font-weight:800;
+            font-size:1.1rem;
+        }
+
+        .point h4{
+            margin:0 0 8px;
+            font-size:1.1rem;
+            font-weight:800;
+        }
+
+        .point p{
+            margin:0;
+            color:var(--muted);
+            line-height:1.8;
+        }
+
+        .closing{
+            position:relative;
+            overflow:hidden;
+            margin-top:90px;
+            border-radius:34px;
+            padding:42px;
+            background:
+                radial-gradient(circle at 12% 18%, rgba(255,255,255,.18), transparent 18%),
+                linear-gradient(135deg, #0a377b 0%, #0d4dad 52%, #081c42 100%);
+            color:#fff;
+            box-shadow:0 26px 80px rgba(10,30,70,.16);
+        }
+
+        .closing-grid{
+            display:grid;
+            grid-template-columns:1.08fr .92fr;
+            gap:22px;
+            align-items:end;
+        }
+
+        .closing h2{
+            margin:0 0 14px;
+            font-size:clamp(2rem, 3vw, 3.2rem);
+            line-height:1.02;
+            font-weight:800;
+            letter-spacing:-.03em;
+        }
+
+        .closing p{
+            margin:0;
+            max-width:720px;
+            color:rgba(255,255,255,.84);
+            line-height:1.9;
+            font-size:1.04rem;
+        }
+
+        .closing-actions{
+            display:flex;
+            justify-content:flex-end;
+            gap:14px;
+            flex-wrap:wrap;
+        }
+
+        .closing-btn{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            min-height:52px;
+            padding:0 22px;
+            border-radius:15px;
+            text-decoration:none;
+            font-weight:700;
+            transition:.22s ease;
+        }
+
+        .closing-btn.light{
+            background:#fff;
+            color:var(--brand);
+        }
+
+        .closing-btn.light:hover{
+            background:#f8fbff;
+            color:var(--brand-dark);
+        }
+
+        .closing-btn.glass{
+            background:rgba(255,255,255,.09);
+            border:1px solid rgba(255,255,255,.18);
+            color:#fff;
+        }
+
+        .closing-btn.glass:hover{
+            background:rgba(255,255,255,.14);
+            color:#fff;
+        }
+
+        @media (max-width: 1200px){
+            .hero-grid,
+            .editorial,
+            .image-slice,
+            .closing-grid{
+                grid-template-columns:1fr;
+            }
+
+            .hero-panel{
+                justify-content:flex-start;
+            }
+
+            .feature-band{
+                grid-template-columns:1fr;
+            }
+        }
+
+        @media (max-width: 900px){
+            .about-page{
+                width:min(var(--max), calc(100% - 24px));
+            }
+
+            .about-hero{
+                min-height:auto;
+                border-radius:26px;
+            }
+
+            .hero-grid{
+                padding:30px 20px;
+                min-height:auto;
+            }
+
+            .hero-meta{
+                grid-template-columns:1fr;
+            }
+
+            .hero-image{
+                height:320px;
+            }
+
+            .slice-visual{
+                min-height:320px;
+                border-radius:24px;
+            }
+
+            .closing{
+                padding:28px 20px;
+                border-radius:26px;
+            }
+
+            .closing-actions{
+                justify-content:flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="about-page">
+
+    <section class="about-hero">
+        <div class="hero-grid">
+            <div class="hero-copy">
+                <div class="hero-kicker">
+                    <i class="bi bi-stars"></i>
+                    About EchtaTech
+                </div>
+
+                <h1 class="hero-title">
+                    Technology, chosen with purpose.
+                </h1>
+
+                <p class="hero-text">
+                    EchtaTech is a modern computer equipment store built around flexibility, clarity and customer trust.
+                    We work with different product categories and brands so users can find solutions that match their
+                    actual needs, whether for home, study, gaming or business.
+                </p>
+
+                <div class="hero-actions">
+                    <a th:href="@{/products}" class="hero-link primary">
+                        Explore products
+                    </a>
+                    <a th:href="@{/services}" class="hero-link secondary">
+                        Our services
+                    </a>
+                </div>
+
+                <div class="hero-meta">
+                    <div class="hero-meta-item">
+                        <div class="hero-meta-title">Multi-brand approach</div>
+                        <div class="hero-meta-text">More choice, more flexibility and better matching for every customer.</div>
+                    </div>
+                    <div class="hero-meta-item">
+                        <div class="hero-meta-title">Products + services</div>
+                        <div class="hero-meta-text">A store experience that goes beyond the purchase itself.</div>
+                    </div>
+                    <div class="hero-meta-item">
+                        <div class="hero-meta-title">Built for real use</div>
+                        <div class="hero-meta-text">Solutions for everyday users, students, professionals and gamers.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-panel">
+                <div class="hero-floating">
+                    <div class="hero-image">
+                        <div class="hero-note">
+                            <strong>Reliable technology, better decisions</strong>
+                            <span>Products and support designed around real customer needs.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-intro">
+            <div class="section-kicker">Who we are</div>
+            <h2 class="section-title">A store concept that combines product variety with practical value</h2>
+        </div>
+
+        <div class="editorial">
+            <div class="editorial-main">
+                <p>
+                    EchtaTech was created with the idea that technology shopping should feel more understandable,
+                    more curated and more useful. Instead of focusing on only one manufacturer, we offer a broader
+                    selection of computer equipment and accessories, allowing customers to compare, choose and build
+                    a setup that truly fits their goals and budget.
+                </p>
+
+                <p>
+                    Our platform is designed to connect products with service. That means customers do not simply browse
+                    listings — they can also rely on additional support and related services that improve the full
+                    experience before, during and after a purchase.
+                </p>
+
+                <p>
+                    The result is a more complete digital store: visually modern, easy to navigate and centered around
+                    trust, convenience and long-term value.
+                </p>
+            </div>
+
+            <aside class="editorial-aside">
+                <div class="aside-card">
+                    <h3>What defines us</h3>
+                    <div class="mini-list">
+                        <div class="mini-item">
+                            <div class="mini-icon"><i class="bi bi-grid"></i></div>
+                            <div>
+                                <strong>Wide category coverage</strong>
+                                <span>From core computer equipment to useful accessories and complementary services.</span>
+                            </div>
+                        </div>
+
+                        <div class="mini-item">
+                            <div class="mini-icon"><i class="bi bi-shield-check"></i></div>
+                            <div>
+                                <strong>Clear customer focus</strong>
+                                <span>Recommendations should be useful, practical and easy to understand.</span>
+                            </div>
+                        </div>
+
+                        <div class="mini-item">
+                            <div class="mini-icon"><i class="bi bi-lightning-charge"></i></div>
+                            <div>
+                                <strong>Modern experience</strong>
+                                <span>A cleaner and more polished way to explore technology online.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="aside-card">
+                    <h3>Our perspective</h3>
+                    <p>
+                        Technology should not feel overwhelming. A good online store helps users move from uncertainty
+                        to confidence with better structure, relevant choices and useful support.
+                    </p>
+                </div>
+            </aside>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-intro">
+            <div class="section-kicker">What we offer</div>
+            <h2 class="section-title">More than products — a complete technology experience</h2>
+            <p class="section-text">
+                Our store model is based on three connected ideas: thoughtful product selection, practical support and
+                a digital experience that feels professional and easy to use.
+            </p>
+        </div>
+
+        <div class="feature-band">
+            <article class="feature-block">
+                <div class="feature-index">01</div>
+                <h3>Carefully selected products</h3>
+                <p>
+                    We aim to provide categories and items that reflect real customer demand, from everyday computing
+                    needs to more specialized setups for work and gaming.
+                </p>
+            </article>
+
+            <article class="feature-block">
+                <div class="feature-index">02</div>
+                <h3>Useful complementary services</h3>
+                <p>
+                    A strong store does not stop at selling. Services add confidence, convenience and stronger
+                    long-term value to the overall customer journey.
+                </p>
+            </article>
+
+            <article class="feature-block">
+                <div class="feature-index">03</div>
+                <h3>Clean and intuitive navigation</h3>
+                <p>
+                    The platform is designed to make browsing easier through structured categories, detailed pages and
+                    a presentation style that supports faster decisions.
+                </p>
+            </article>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="image-slice">
+            <div class="slice-visual"></div>
+
+            <div class="slice-copy">
+                <div class="section-kicker">Why choose us</div>
+                <h2>Why EchtaTech fits a modern multi-brand store model</h2>
+
+                <p>
+                    Unlike brand-specific presentation pages, EchtaTech is built around flexibility. Customers are not
+                    pushed toward one ecosystem only. Instead, they can explore different solutions and choose what
+                    works best for their own preferences, use cases and financial limits.
+                </p>
+
+                <div class="vertical-points">
+                    <div class="point">
+                        <div class="point-no">01</div>
+                        <div>
+                            <h4>Choice with clarity</h4>
+                            <p>Different brands and categories presented in a more understandable and structured way.</p>
+                        </div>
+                    </div>
+
+                    <div class="point">
+                        <div class="point-no">02</div>
+                        <div>
+                            <h4>Support with context</h4>
+                            <p>Products are part of a broader service experience, not isolated listings on a page.</p>
+                        </div>
+                    </div>
+
+                    <div class="point">
+                        <div class="point-no">03</div>
+                        <div>
+                            <h4>Design with purpose</h4>
+                            <p>A cleaner digital presentation improves trust, usability and the overall brand identity.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="closing">
+        <div class="closing-grid">
+            <div>
+                <h2>Built to make technology shopping feel smarter, easier and more reliable.</h2>
+                <p>
+                    EchtaTech brings together products, services and a modern customer experience in one place.
+                    Explore the store, discover the categories and choose solutions that fit the way you work, play
+                    and live.
+                </p>
+            </div>
+
+            <div class="closing-actions">
+                <a th:href="@{/products}" class="closing-btn light">Shop products</a>
+                <a th:href="@{/services}" class="closing-btn glass">Browse services</a>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

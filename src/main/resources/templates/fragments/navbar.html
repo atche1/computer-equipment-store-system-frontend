@@ -27,15 +27,15 @@
     }
 
     .store-logo-wrap{
-      display:flex;
-      align-items:center;
-      min-height:110px;
-    }
+  display:flex;
+  align-items:center;
+  min-height:140px;
+}
 
-    .store-logo-img{
-      height:110px;
-      object-fit:contain;
-    }
+.store-logo-img{
+  height:140px;
+  object-fit:contain;
+}
 
     .store-search{
       width:100%;
@@ -311,7 +311,7 @@
   </div>
 
   <nav class="navbar navbar-expand-lg store-menu navbar-dark">
-    <div class="container">
+    <div class="container-fluid px-0">
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
         <span class="navbar-toggler-icon"></span>
@@ -319,6 +319,9 @@
 
       <div class="collapse navbar-collapse" id="menu">
         <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/}">Home</a>
+          </li>
 
           <li class="nav-item dropdown">
             <div class="store-products-dropdown">
@@ -355,9 +358,8 @@
           <li class="nav-item">
             <a class="nav-link" th:href="@{/services}">Services</a>
           </li>
-
           <li class="nav-item">
-            <a class="nav-link" th:href="@{/products(inStock=true)}">In-Stock Product</a>
+            <a class="nav-link" th:href="@{/about}">About us</a>
           </li>
 
         </ul>
