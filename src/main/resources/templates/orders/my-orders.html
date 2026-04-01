@@ -418,9 +418,8 @@
                                   th:classappend="${
                                       o.status() == 'NEW' ? ' status-new' :
                                       o.status() == 'PROCESSING' ? ' status-processing' :
-                                      o.status() == 'PAID' ? ' status-paid' :
-                                      o.status() == 'COMPLETED' ? ' status-completed' :
-                                      o.status() == 'CANCELLED' ? ' status-cancelled' :
+                                      o.status() == 'SHIPPED' ? ' status-shipped':
+                                      o.status() == 'DELIVERED' ? ' status-delivered' :
                                       ' status-default'
                                   }">
                                 NEW

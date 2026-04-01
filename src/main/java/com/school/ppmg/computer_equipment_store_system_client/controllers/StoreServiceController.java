@@ -9,7 +9,13 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -19,8 +25,33 @@ public class StoreServiceController {
     private final AdminGuard adminGuard;
 
     @GetMapping("/services")
-    public String servicesPage(Model model) {
-        model.addAttribute("services", storeServiceClient.getAllActive());
+    public String servicesPage(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size,
+            @RequestParam(required = false) String sort,
+            @RequestParam MultiValueMap<String, String> params,
+            Model model
+    ) {
+        if (sort == null || sort.isBlank()) {
+            sort = "createdAt,desc";
+        }
+
+        var result = storeServiceClient.getAllActive(q, minPrice, maxPrice, page, size, sort);
+
+        model.addAttribute("services", result.getContent() != null ? result.getContent() : List.of());
+        model.addAttribute("page", result);
+
+        model.addAttribute("q", q);
+        model.addAttribute("minPrice", minPrice);
+        model.addAttribute("maxPrice", maxPrice);
+        model.addAttribute("size", size);
+        model.addAttribute("sort", sort);
+
+        model.addAttribute("queryString", buildQueryString(params, sort, size));
+
         return "services/list-services";
     }
 
@@ -120,5 +151,34 @@ public class StoreServiceController {
 
         storeServiceClient.delete(id);
         return "redirect:/admin/services";
+    }
+    private String buildQueryString(MultiValueMap<String, String> params,
+                                    String sort,
+                                    int size) {
+        StringBuilder sb = new StringBuilder();
+
+        params.forEach((key, values) -> {
+            if ("page".equals(key)) return;
+            if (values == null) return;
+
+            for (String value : values) {
+                if (value != null && !value.isBlank()) {
+                    sb.append("&")
+                            .append(URLEncoder.encode(key, StandardCharsets.UTF_8))
+                            .append("=")
+                            .append(URLEncoder.encode(value, StandardCharsets.UTF_8));
+                }
+            }
+        });
+
+        if (!params.containsKey("sort") && sort != null && !sort.isBlank()) {
+            sb.append("&sort=").append(URLEncoder.encode(sort, StandardCharsets.UTF_8));
+        }
+
+        if (!params.containsKey("size")) {
+            sb.append("&size=").append(size);
+        }
+
+        return sb.toString();
     }
 }

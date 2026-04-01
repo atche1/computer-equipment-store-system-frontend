@@ -409,8 +409,7 @@
                     th:classappend="${
                       r.status() == 'NEW' ? ' status-new' :
                       r.status() == 'IN_PROGRESS' ? ' status-in-progress' :
-                      r.status() == 'COMPLETED' ? ' status-completed' :
-                      r.status() == 'CANCELLED' ? ' status-cancelled' :
+                      r.status() == 'DONE' ? ' status-done' :
                       ' status-default'
                     }">
                 NEW

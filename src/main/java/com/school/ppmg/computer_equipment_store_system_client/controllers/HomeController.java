@@ -59,7 +59,7 @@ public class HomeController {
             latestProductImages.put(product.id(), imageUrl);
         }
 
-        List<ServiceResponse> latestServices = storeServiceClient.getAllActive()
+        List<ServiceResponse> latestServices = storeServiceClient.getAllActiveList()
                 .stream()
                 .sorted(Comparator.comparing(ServiceResponse::createdAt,
                         Comparator.nullsLast(Comparator.reverseOrder())))

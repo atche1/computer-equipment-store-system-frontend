@@ -395,9 +395,8 @@
           th:classappend="${
               order.status().name() == 'NEW' ? ' status-new' :
               order.status().name() == 'PROCESSING' ? ' status-processing' :
-              order.status().name() == 'PAID' ? ' status-paid' :
-              order.status().name() == 'COMPLETED' ? ' status-completed' :
-              order.status().name() == 'CANCELLED' ? ' status-cancelled' :
+              order.status().name() == 'SHIPPED' ? ' status-shipped' :
+              order.status().name() == 'DELIVERED' ? ' status-delivered' :
               ''
           }">
       NEW

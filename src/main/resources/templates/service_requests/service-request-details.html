@@ -265,8 +265,7 @@
           th:classappend="${
               serviceRequest.status() == 'NEW' ? ' status-new' :
               serviceRequest.status() == 'IN_PROGRESS' ? ' status-in-progress' :
-              serviceRequest.status() == 'COMPLETED' ? ' status-completed' :
-              serviceRequest.status() == 'CANCELLED' ? ' status-cancelled' :
+              serviceRequest.status() == 'DONE' ? ' status-done' :
               ''
           }">
       NEW

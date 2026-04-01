@@ -195,11 +195,6 @@
             </div>
 
             <div class="detail-item">
-              <div class="detail-label">Role</div>
-              <div class="detail-value" th:text="${account.role()}">USER</div>
-            </div>
-
-            <div class="detail-item">
               <div class="detail-label">Account created</div>
               <div class="detail-value"
                    th:text="${#temporals.format(account.createdAt(), 'dd.MM.yyyy HH:mm')}">

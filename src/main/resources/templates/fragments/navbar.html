@@ -6,6 +6,7 @@
   <style>
     :root{
       --main-blue:#0d4dad;
+      --main-blue-dark:#0a3d8c;
     }
 
     .store-topbar{
@@ -144,6 +145,57 @@
       color:#fff;
     }
 
+    .store-products-dropdown{
+      display:flex;
+      align-items:center;
+    }
+
+    .store-products-main-link{
+      border-radius:0;
+      margin-right:0;
+    }
+
+    .store-products-toggle{
+      color:#fff;
+      background:transparent;
+      border:0;
+      padding:16px 10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .store-products-toggle:hover,
+    .store-products-toggle:focus{
+      background:rgba(255,255,255,.12);
+      color:#fff;
+      box-shadow:none;
+    }
+
+    .store-products-toggle::after{
+      display:none;
+    }
+
+    .store-products-menu{
+      min-width:300px;
+      border:0;
+      border-radius:0 0 14px 14px;
+      box-shadow:0 18px 40px rgba(15,23,42,.14);
+      padding:10px 0;
+      margin-top:0;
+    }
+
+    .store-products-menu .dropdown-item{
+      padding:12px 22px;
+      color:#374151;
+      font-size:1rem;
+    }
+
+    .store-products-menu .dropdown-item:hover{
+      background:#f3f6fb;
+      color:var(--main-blue);
+    }
+
     @media(max-width:991px){
       .store-right-panel{
         flex-wrap:wrap;
@@ -157,6 +209,20 @@
 
       .store-search{
         max-width:100%;
+      }
+
+      .store-products-dropdown{
+        width:100%;
+        justify-content:space-between;
+      }
+
+      .store-products-main-link{
+        flex:1;
+      }
+
+      .store-products-menu{
+        width:100%;
+        min-width:100%;
       }
     }
   </style>
@@ -215,7 +281,6 @@
             </span>
 
             <div class="store-actions">
-              <!-- Guest -->
               <a class="store-icon-link"
                  th:if="${session.ACCESS_TOKEN == null}"
                  th:href="@{/login}"
@@ -223,7 +288,6 @@
                 <i class="bi bi-person-circle"></i>
               </a>
 
-              <!-- Logged -->
               <a class="store-icon-link"
                  th:if="${session.ACCESS_TOKEN != null}"
                  th:href="@{/my-account}"
@@ -231,7 +295,6 @@
                 <i class="bi bi-person-circle"></i>
               </a>
 
-              <!-- Cart -->
               <a class="store-icon-link" th:href="@{/cart}" title="Cart">
                 <i class="bi bi-cart3"></i>
                 <span class="store-cart-badge"
@@ -257,8 +320,36 @@
       <div class="collapse navbar-collapse" id="menu">
         <ul class="navbar-nav me-auto">
 
-          <li class="nav-item">
-            <a class="nav-link" th:href="@{/products}">Products</a>
+          <li class="nav-item dropdown">
+            <div class="store-products-dropdown">
+              <a class="nav-link store-products-main-link"
+                 th:href="@{/products}">
+                Products
+              </a>
+
+              <button class="dropdown-toggle store-products-toggle"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false">
+                <i class="bi bi-chevron-down"></i>
+              </button>
+
+              <ul class="dropdown-menu store-products-menu">
+                <li>
+                  <a class="dropdown-item" th:href="@{/products}">
+                    All products
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li th:each="c : ${categories}">
+                  <a class="dropdown-item"
+                     th:href="@{/products(categoryId=${c.id()})}"
+                     th:text="${c.name()}">
+                    Category
+                  </a>
+                </li>
+              </ul>
+            </div>
           </li>
 
           <li class="nav-item">
@@ -275,5 +366,4 @@
   </nav>
 
 </div>
-
 </html>

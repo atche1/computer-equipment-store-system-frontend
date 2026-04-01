@@ -53,13 +53,13 @@ public class ProductController {
             @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) Boolean inStock,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "12") int size,
             @RequestParam(required = false) String sort,
             @RequestParam org.springframework.util.MultiValueMap<String, String> params,
             Model model
     ) {
         if (sort == null || sort.isBlank()) {
-            sort = "name,asc";
+            sort = "createdAt,desc";
         }
 
         List<com.school.ppmg.computer_equipment_store_system_client.dtos.attribute.AttributeResponse> filterableAttributes = List.of();
@@ -130,9 +130,12 @@ public class ProductController {
         );
 
         List<CategoryResponse> categories = categoryClient.listActive();
+        List<ProductResponse> products = result.getContent() != null ? result.getContent() : List.of();
+        Map<Long, String> productImages = buildProductImageMap(products);
 
         model.addAttribute("page", result);
-        model.addAttribute("products", result.getContent());
+        model.addAttribute("products", products);
+        model.addAttribute("productImages", productImages);
         model.addAttribute("categories", categories);
 
         model.addAttribute("q", q);
@@ -436,9 +439,14 @@ public class ProductController {
                         .findFirst()
                         .orElse(productImages.isEmpty() ? null : productImages.get(0));
 
-                imageMap.put(p.id(), main != null ? main.imageUrl() : null);
+                imageMap.put(
+                        p.id(),
+                        (main != null && main.imageUrl() != null && !main.imageUrl().isBlank())
+                                ? main.imageUrl()
+                                : "/images/placeholder.png"
+                );
             } catch (Exception ex) {
-                imageMap.put(p.id(), null);
+                imageMap.put(p.id(), "/images/placeholder.png");
             }
         }
 
