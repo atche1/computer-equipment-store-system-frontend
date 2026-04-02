@@ -6,6 +6,7 @@ import com.school.ppmg.computer_equipment_store_system_client.dtos.service.Servi
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @FeignClient(
@@ -19,9 +20,19 @@ public interface StoreServiceClient {
 
     @GetMapping("/{id}")
     ServiceResponse getById(@PathVariable Long id);
+    @GetMapping("/active-list")
+    List<ServiceResponse> getAllActiveList();
 
     @GetMapping("/active")
-    List<ServiceResponse> getAllActive();
+    PageResponse<ServiceResponse> getAllActive(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size,
+            @RequestParam(required = false) String sort
+    );
+
 
     @GetMapping
     PageResponse<ServiceResponse> getAllForAdmin(

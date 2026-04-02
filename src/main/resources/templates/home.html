@@ -1,200 +1,1261 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
 <head>
-    <meta charset="UTF-8">
-    <title>Computer Equipment Store</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>EchtaTech • Home</title>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
+        :root{
+            --brand:#0d4dad;
+            --brand-dark:#0a3d8c;
+            --soft-bg:#f5f7fb;
+            --text-muted:#6b7280;
+            --page-bg:#eef3fb;
+            --accent:#f2d200;
+        }
 
         body{
-            background: linear-gradient(180deg,#eef2ff 0%,#f7f8fc 100%);
+            background: linear-gradient(180deg, #edf3fb 0%, #f8fbff 100%);
             min-height:100vh;
         }
 
-        .hero{
-            padding:90px 0 70px 0;
-            text-align:center;
+        .page-shell{
+            max-width: 1820px;
+            margin: 0 auto;
+            padding: 0 18px;
         }
 
-        .hero h1{
-            font-weight:700;
-            font-size:46px;
+        /* HERO / CAROUSEL */
+        .hero-wrap{
+            padding: 22px 0 20px;
         }
 
-        .hero p{
-            font-size:18px;
-            color:#6c757d;
+        .hero-carousel{
+            border-radius: 34px;
+            overflow: hidden;
+            background: #dfe8f6;
+            box-shadow: 0 22px 60px rgba(15, 35, 75, 0.14);
+            position: relative;
         }
 
-        .product-card{
+        .hero-slide{
+            position: relative;
+            min-height: 760px;
+            background: #dfe8f6;
+        }
+
+        .hero-slide img{
+            width:100%;
+            height:760px;
+            object-fit: cover;
+            display:block;
+        }
+
+        .hero-dots{
+            position:absolute;
+            top:34px;
+            left:34px;
+            display:grid;
+            grid-template-columns:repeat(4, 12px);
+            gap:10px;
+            z-index:5;
+            pointer-events:none;
+        }
+
+        .hero-dots span{
+            width:4px;
+            height:4px;
+            border-radius:50%;
+            background:#111827;
+            display:block;
+        }
+
+        .carousel-indicators{
+            margin-bottom: 1.35rem;
+            z-index: 6;
+        }
+
+        .carousel-indicators [data-bs-target]{
+            width:12px;
+            height:12px;
+            border-radius:50%;
             border:0;
-            border-radius:16px;
-            box-shadow:0 8px 22px rgba(0,0,0,0.08);
-            transition:all .2s ease;
+            margin:0 6px;
+            background:#c6cfdd;
+            opacity:1;
         }
 
-        .product-card:hover{
+        .carousel-indicators .active{
+            background:var(--brand);
+        }
+
+        .carousel-control-prev,
+        .carousel-control-next{
+            width: 7.5%;
+            z-index: 6;
+        }
+
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon{
+            width: 3.1rem;
+            height: 3.1rem;
+            border-radius: 50%;
+            background-color: rgba(13,77,173,.82);
+            background-size: 50% 50%;
+            box-shadow: 0 10px 25px rgba(13,77,173,.22);
+        }
+
+        .carousel-control-prev-icon:hover,
+        .carousel-control-next-icon:hover{
+            background-color: rgba(10,61,140,.92);
+        }
+
+        /* GENERAL SECTIONS */
+        .section-block{
+            padding: 44px 0;
+        }
+
+        .section-head{
+            text-align:center;
+            margin-bottom:30px;
+        }
+
+        .section-eyebrow{
+            color:var(--brand);
+            font-weight:700;
+            text-transform:uppercase;
+            letter-spacing:.08em;
+            font-size:.84rem;
+            margin-bottom:10px;
+        }
+
+        .section-title{
+            font-size: clamp(1.8rem, 2.6vw, 2.7rem);
+            font-weight:800;
+            color:#0f172a;
+            margin-bottom:10px;
+        }
+
+        .section-desc{
+            max-width:780px;
+            margin:0 auto;
+            color:var(--text-muted);
+            font-size:1.05rem;
+        }
+
+        /* CATEGORY CAROUSEL */
+        .categories-carousel-wrap{
+            padding-top: 6px;
+        }
+
+        .category-slider-shell{
+            position: relative;
+        }
+
+        .category-slider{
+            display:flex;
+            gap:28px;
+            overflow-x:auto;
+            scroll-behavior:smooth;
+            padding: 10px 6px 16px;
+            scrollbar-width: none;
+        }
+
+        .category-slider::-webkit-scrollbar{
+            display:none;
+        }
+
+        .category-slide{
+            flex: 0 0 calc(33.333% - 19px);
+            min-width: calc(33.333% - 19px);
+        }
+
+        .category-card{
+            position:relative;
+            min-height: 640px;
+            border-radius: 0;
+            overflow:hidden;
+            background:
+                    radial-gradient(circle at 85% 20%, rgba(255,255,255,.16), transparent 22%),
+                    linear-gradient(145deg, #123b78 0%, #0a2045 55%, #08152d 100%);
+            box-shadow: 0 18px 42px rgba(15, 23, 42, .14);
+            text-decoration:none;
+            display:block;
+        }
+
+        .category-card::before{
+            content:"";
+            position:absolute;
+            inset:0;
+            background:
+                    linear-gradient(180deg, rgba(0,0,0,.06) 0%, rgba(0,0,0,.18) 45%, rgba(0,0,0,.48) 100%);
+            z-index:1;
+        }
+
+        .category-card::after{
+            content:"";
+            position:absolute;
+            inset:0;
+            background:
+                    linear-gradient(135deg, rgba(255,255,255,.06), transparent 38%),
+                    linear-gradient(315deg, rgba(255,255,255,.04), transparent 34%);
+            z-index:1;
+        }
+
+        .category-card:hover{
+            transform: translateY(-4px);
+            transition: .25s ease;
+            box-shadow: 0 24px 52px rgba(15, 23, 42, .18);
+        }
+
+        .category-top-badge{
+            position:absolute;
+            top:0;
+            left:0;
+            width: 56%;
+            height: 48%;
+            background: var(--brand);
+            border-bottom-right-radius: 220px;
+            border: 0;
+            z-index:2;
+            overflow:hidden;
+        }
+
+        .category-top-badge::after{
+            content:"";
+            position:absolute;
+            right:-14px;
+            top:-10px;
+            width: 44px;
+            height: calc(100% + 40px);
+            background: var(--accent);
+            border-radius: 999px;
+            transform: rotate(7deg);
+        }
+
+        .category-badge-content{
+            position:absolute;
+            inset:0;
+            padding: 30px 28px;
+            z-index:3;
+            display:flex;
+            flex-direction:column;
+            align-items:flex-start;
+        }
+
+        .category-mini-title{
+            font-size: .96rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color:#ffffff;
+            margin-bottom: 30px;
+            line-height:1.2;
+            max-width: 220px;
+        }
+
+        .category-icon-wrap{
+            width: 108px;
+            height: 108px;
+            border-radius: 24px;
+            background: rgba(255,255,255,.14);
+            backdrop-filter: blur(3px);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#fff;
+            font-size: 3.2rem;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,.14);
+        }
+
+        .category-pattern{
+            position:absolute;
+            inset:0;
+            z-index:0;
+            background-image:
+                    linear-gradient(rgba(255,255,255,.055) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px);
+            background-size: 34px 34px;
+            opacity:.33;
+        }
+
+        .category-glow{
+            position:absolute;
+            right:-60px;
+            bottom:-80px;
+            width:260px;
+            height:260px;
+            border-radius:50%;
+            background: radial-gradient(circle, rgba(13,77,173,.55) 0%, rgba(13,77,173,0) 70%);
+            z-index:0;
+        }
+
+        .category-content{
+            position:absolute;
+            left:0;
+            right:0;
+            bottom:0;
+            z-index:3;
+            padding: 34px 28px 28px;
+            color:#fff;
+        }
+
+        .category-title{
+            font-size: clamp(1.9rem, 2.2vw, 2.5rem);
+            font-weight: 800;
+            margin-bottom: 10px;
+            line-height:1.08;
+        }
+
+        .category-text{
+            color: rgba(255,255,255,.84);
+            font-size: 1rem;
+            max-width: 78%;
+            margin-bottom: 22px;
+        }
+
+        .category-shop-btn{
+            background: var(--brand);
+            border:0;
+            color:#fff;
+            border-radius: 8px;
+            padding: 15px 34px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-decoration:none;
+            display:inline-block;
+            transition:.2s ease;
+        }
+
+        .category-shop-btn:hover{
+            background: var(--brand-dark);
+            color:#fff;
+        }
+
+        .category-arrow{
+            position:absolute;
+            top:50%;
+            transform: translateY(-50%);
+            width:68px;
+            height:68px;
+            border:none;
+            background:#fff;
+            border-radius:12px;
+            box-shadow: 0 10px 26px rgba(15,23,42,.12);
+            z-index:10;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#4b5563;
+            font-size:2rem;
+        }
+
+        .category-arrow:hover{
+            color:var(--brand);
+        }
+
+        .category-arrow.prev{
+            left:-14px;
+        }
+
+        .category-arrow.next{
+            right:-14px;
+        }
+
+        /* INFO CARDS */
+        .info-card{
+            border:0;
+            border-radius:24px;
+            background:#fff;
+            box-shadow:0 10px 28px rgba(15,23,42,.08);
+            height:100%;
+            transition:.22s ease;
+        }
+
+        .info-card:hover{
             transform:translateY(-4px);
-            box-shadow:0 12px 30px rgba(0,0,0,0.12);
+            box-shadow:0 16px 36px rgba(15,23,42,.12);
         }
 
-        .price{
-            font-size:20px;
-            font-weight:600;
+        .info-icon{
+            width:64px;
+            height:64px;
+            border-radius:18px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background:rgba(13,77,173,.10);
+            color:var(--brand);
+            font-size:1.7rem;
+            margin-bottom:16px;
         }
 
-        footer{
-            margin-top:60px;
+        .info-title{
+            font-size:1.1rem;
+            font-weight:700;
+            margin-bottom:8px;
+            color:#0f172a;
         }
 
+        .info-text{
+            color:var(--text-muted);
+            margin-bottom:0;
+        }
+
+
+              /* LATEST PRODUCTS */
+.latest-products-section{
+    padding-top: 8px;
+}
+
+.latest-products-grid{
+    row-gap: 28px;
+}
+
+.latest-product-card{
+    height: 100%;
+    background: #eef3fb;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    box-shadow: 0 6px 18px rgba(15,23,42,.05);
+    transition: .22s ease;
+    padding: 22px 22px 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.latest-product-card:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(15,23,42,.08);
+}
+
+.latest-product-link{
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.latest-product-link:hover{
+    color: inherit;
+}
+
+.latest-product-image-wrap{
+    height: 210px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom: 22px;
+    background: transparent;
+}
+
+.latest-product-image{
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display:block;
+}
+
+.latest-product-brand{
+    font-size: .92rem;
+    color:#6b7280;
+    margin-bottom: 8px;
+}
+
+.latest-product-title{
+    font-size: 1.05rem;
+    line-height: 1.4;
+    font-weight: 500;
+    color:#2b2f36;
+    min-height: 58px;
+    margin-bottom: 18px;
+}
+
+.latest-product-stock{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: .9rem;
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+
+.latest-product-stock.in{
+    background:#e7f4e8;
+    color:#3d7f45;
+}
+
+.latest-product-stock.out{
+    background:#fdecec;
+    color:#b42318;
+}
+
+.latest-product-stock::before{
+    content:"";
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background: currentColor;
+    display:block;
+}
+
+.latest-product-price{
+    font-size: 1.1rem;
+    font-weight: 800;
+    color:#1f2937;
+    margin-bottom: 18px;
+}
+
+.latest-product-btn{
+    display:block;
+    width:100%;
+    border:1.5px solid #0d6efd;
+    color:#0d4dad;
+    background: transparent;
+    text-align:center;
+    padding:14px 16px;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration:none;
+    transition:.2s ease;
+}
+
+.latest-product-btn:hover:not(:disabled){
+    background:#0d4dad;
+    border-color:#0d4dad;
+    color:#fff;
+}
+
+.latest-product-btn:disabled{
+    opacity: .6;
+    cursor: not-allowed;
+}
+/* LATEST SERVICES */
+.latest-services-section{
+    padding-top: 4px;
+}
+
+.latest-services-grid{
+    row-gap: 28px;
+}
+
+.latest-service-card{
+    position: relative;
+    height: 100%;
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    box-shadow: 0 8px 22px rgba(15,23,42,.06);
+    transition: .22s ease;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.latest-service-card:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 16px 34px rgba(15,23,42,.10);
+}
+
+.latest-service-card::before{
+    content:"";
+    position:absolute;
+    top:0;
+    right:0;
+    width:140px;
+    height:140px;
+    background: radial-gradient(circle, rgba(13,77,173,.14) 0%, rgba(13,77,173,0) 72%);
+    pointer-events:none;
+}
+
+.latest-service-top{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:18px;
+}
+
+.latest-service-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 14px;
+    border-radius:999px;
+    background: rgba(13,77,173,.08);
+    color: var(--brand);
+    font-size: .84rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.latest-service-icon{
+    width:68px;
+    height:68px;
+    border-radius:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:
+            linear-gradient(145deg, #0d4dad 0%, #123b78 100%);
+    color:#fff;
+    font-size:1.8rem;
+    box-shadow: 0 12px 24px rgba(13,77,173,.20);
+    flex-shrink:0;
+}
+
+.latest-service-link{
+    text-decoration:none;
+    color:inherit;
+    display:block;
+    position:relative;
+    z-index:2;
+}
+
+.latest-service-link:hover{
+    color:inherit;
+}
+
+.latest-service-title{
+    font-size: 1.18rem;
+    line-height: 1.35;
+    font-weight: 700;
+    color:#0f172a;
+    margin-bottom: 12px;
+    min-height: 52px;
+}
+
+.latest-service-desc{
+    color:#6b7280;
+    font-size: .97rem;
+    line-height:1.65;
+    margin-bottom: 18px;
+    min-height: 78px;
+}
+
+.latest-service-meta{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    margin-bottom: 20px;
+    flex-wrap:wrap;
+}
+
+.latest-service-price{
+    font-size: 1.15rem;
+    font-weight: 800;
+    color:#111827;
+}
+
+.latest-service-note{
+    font-size:.88rem;
+    color:#64748b;
+}
+
+.latest-service-btn{
+    display:block;
+    width:100%;
+    border:1.5px solid #0d4dad;
+    color:#0d4dad;
+    background: transparent;
+    text-align:center;
+    padding:14px 16px;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration:none;
+    transition:.2s ease;
+    margin-top:auto;
+    position:relative;
+    z-index:2;
+}
+
+.latest-service-btn:hover{
+    background:#0d4dad;
+    border-color:#0d4dad;
+    color:#fff;
+}
+
+        /* CTA */
+        .cta-banner{
+            border-radius:30px;
+            background:linear-gradient(135deg,#0d4dad 0%,#103b7b 100%);
+            color:#fff;
+            padding:42px;
+            box-shadow:0 18px 45px rgba(13,77,173,.22);
+        }
+
+        .cta-banner h3{
+            font-weight:800;
+            margin-bottom:10px;
+        }
+
+        .cta-banner p{
+            margin-bottom:0;
+            color:rgba(255,255,255,.88);
+        }
+        /* PARTNERS */
+.partners-section{
+    padding-top: 10px;
+}
+
+.partners-grid{
+    display:grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 24px;
+}
+
+.partner-card{
+    background:#fff;
+    border:1px solid rgba(15,23,42,.10);
+    min-height:170px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    box-shadow:0 6px 18px rgba(15,23,42,.05);
+    transition:.2s ease;
+}
+
+.partner-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 14px 30px rgba(15,23,42,.08);
+}
+
+.partner-card img{
+    max-width:100%;
+    max-height:90px;
+    object-fit:contain;
+    opacity:.85;
+    transition:.25s ease;
+}
+
+.partner-card:hover img{
+    transform: scale(1.05);
+    opacity:1;
+}
+
+@media (max-width: 1400px){
+    .partners-grid{
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 991px){
+    .partners-grid{
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .partner-card{
+        min-height:150px;
+    }
+}
+
+@media (max-width: 767px){
+    .partners-grid{
+        grid-template-columns: repeat(2, 1fr);
+        gap:16px;
+    }
+
+    .partner-card{
+        min-height:130px;
+        padding:18px;
+    }
+
+    .partner-card img{
+        max-height:64px;
+    }
+}
+
+        /* RESPONSIVE */
+        @media (max-width: 1600px){
+            .hero-slide,
+            .hero-slide img{
+                height: 700px;
+                min-height: 700px;
+            }
+
+            .category-card{
+                min-height: 560px;
+            }
+        }
+
+        @media (max-width: 1400px){
+            .category-slide{
+                flex: 0 0 calc(50% - 14px);
+                min-width: calc(50% - 14px);
+            }
+        }
+
+        @media (max-width: 1200px){
+            .hero-slide,
+            .hero-slide img{
+                height: 620px;
+                min-height: 620px;
+            }
+
+            .category-card{
+                min-height: 500px;
+            }
+        }
+
+        @media (max-width: 991px){
+            .page-shell{
+                padding: 0 14px;
+            }
+
+            .hero-wrap{
+                padding-top: 18px;
+            }
+
+            .hero-slide,
+            .hero-slide img{
+                height: 500px;
+                min-height: 500px;
+            }
+
+            .hero-dots{
+                top:24px;
+                left:24px;
+            }
+
+            .carousel-control-prev-icon,
+            .carousel-control-next-icon{
+                width: 2.7rem;
+                height: 2.7rem;
+            }
+
+            .category-slide{
+                flex: 0 0 82%;
+                min-width: 82%;
+            }
+
+            .category-arrow{
+                width:58px;
+                height:58px;
+                font-size:1.7rem;
+            }
+
+            .category-card{
+                min-height: 480px;
+            }
+
+            .category-top-badge{
+                width: 62%;
+                height: 44%;
+            }
+        }
+
+        @media (max-width: 767px){
+            .hero-carousel{
+                border-radius: 24px;
+            }
+
+            .hero-slide,
+            .hero-slide img{
+                height: 300px;
+                min-height: 300px;
+            }
+
+            .hero-dots{
+                top:18px;
+                left:18px;
+                grid-template-columns:repeat(4, 9px);
+                gap:8px;
+            }
+
+            .carousel-control-prev,
+            .carousel-control-next{
+                width: 12%;
+            }
+
+            .carousel-control-prev-icon,
+            .carousel-control-next-icon{
+                width: 2.25rem;
+                height: 2.25rem;
+            }
+
+            .category-slide{
+                flex: 0 0 92%;
+                min-width: 92%;
+            }
+
+            .category-card{
+                min-height: 430px;
+            }
+
+            .category-top-badge{
+                width: 72%;
+                height: 40%;
+                border-bottom-right-radius: 180px;
+            }
+
+            .category-badge-content{
+                padding: 22px 20px;
+            }
+
+            .category-mini-title{
+                font-size: .84rem;
+                margin-bottom: 18px;
+                max-width: 170px;
+            }
+
+            .category-icon-wrap{
+                width: 78px;
+                height: 78px;
+                font-size: 2.25rem;
+                border-radius: 18px;
+            }
+
+            .category-content{
+                padding: 24px 20px 22px;
+            }
+
+            .category-title{
+                font-size: 1.7rem;
+            }
+
+            .category-text{
+                max-width: 100%;
+                font-size: .94rem;
+            }
+
+            .category-shop-btn{
+                padding: 12px 22px;
+                font-size: 1rem;
+            }
+
+            .category-arrow{
+                display:none;
+            }
+
+            .cta-banner{
+                padding:28px 22px;
+            }
+
+            .section-block{
+                padding: 34px 0;
+            }
+        }
+
+        .minimal-head{
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.minimal-head .section-title{
+    font-size: 2rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 8px;
+}
+
+.minimal-head .section-desc{
+    font-size: 0.95rem;
+    color: #6b7280;
+    margin: 0 auto;
+    max-width: 520px;
+    line-height: 1.6;
+}
     </style>
-
 </head>
-
 <body>
 
-<!-- =========================
-     NAVBAR
-     ========================= -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div th:replace="fragments/navbar"></div>
+<div class="page-shell">
 
+    <section class="hero-wrap">
+        <div id="homeHeroCarousel" class="carousel slide hero-carousel" data-bs-ride="carousel" data-bs-interval="5000">
 
-<!-- =========================
-     HERO SECTION
-     ========================= -->
+            <div class="hero-dots" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+            </div>
 
-<section class="hero">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#homeHeroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#homeHeroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#homeHeroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
 
-    <div class="container">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="hero-slide">
+                        <img th:src="@{/images/hero-1.png}" alt="Hero slide 1">
+                    </div>
+                </div>
 
-        <h1>Computer Equipment Store</h1>
+                <div class="carousel-item">
+                    <div class="hero-slide">
+                        <img th:src="@{/images/hero-2.png}" alt="Hero slide 2">
+                    </div>
+                </div>
 
-        <p class="mt-3 mb-4">
-            Browse and order computer components and devices easily.
-        </p>
+                <div class="carousel-item">
+                    <div class="hero-slide">
+                        <img th:src="@{/images/hero-3.png}" alt="Hero slide 3">
+                    </div>
+                </div>
+            </div>
 
-        <a class="btn btn-primary btn-lg"
-           href="#products">
-            Browse Products
-        </a>
+            <button class="carousel-control-prev" type="button" data-bs-target="#homeHeroCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
 
-    </div>
+            <button class="carousel-control-next" type="button" data-bs-target="#homeHeroCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </section>
 
-</section>
+    <!-- CATEGORY CAROUSEL -->
+    <section class="section-block pt-2 categories-carousel-wrap">
+        <div class="container-fluid px-0">
+            <div class="section-head minimal-head">
+                <h2 class="section-title">Popular categories</h2>
+                <p class="section-desc">
+                    Browse the most important product groups quickly and go directly to the items you need.
+                </p>
+            </div>
 
+            <div class="category-slider-shell" th:if="${categories != null and !#lists.isEmpty(categories)}">
+                <button class="category-arrow prev" type="button" onclick="scrollCategorySlider(-1)">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
 
-<!-- =========================
-     PRODUCTS
-     ========================= -->
+                <div class="category-slider" id="categorySlider">
+                    <div class="category-slide" th:each="c : ${categories}">
+                        <a th:href="@{/products(categoryId=${c.id()})}" class="category-card">
 
-<section id="products" class="pb-5">
+                            <div class="category-pattern"></div>
+                            <div class="category-glow"></div>
 
-    <div class="container">
+                            <div class="category-top-badge">
+                                <div class="category-badge-content">
+                                    <div class="category-mini-title"
+                                         th:text="${#strings.toUpperCase(c.name())}">
+                                        CATEGORY
+                                    </div>
 
-        <h2 class="mb-4 text-center">
-            Products
-        </h2>
+                                    <div class="category-icon-wrap">
+                                        <i th:classappend="${
+                                            #strings.containsIgnoreCase(c.name(),'laptop') ? 'bi bi-laptop' :
+                                            #strings.containsIgnoreCase(c.name(),'computer') ? 'bi bi-pc-display' :
+                                            #strings.containsIgnoreCase(c.name(),'monitor') ? 'bi bi-display' :
+                                            #strings.containsIgnoreCase(c.name(),'printer') ? 'bi bi-printer' :
+                                            #strings.containsIgnoreCase(c.name(),'keyboard') ? 'bi bi-keyboard' :
+                                            #strings.containsIgnoreCase(c.name(),'mouse') ? 'bi bi-mouse' :
+                                            #strings.containsIgnoreCase(c.name(),'headphone') ? 'bi bi-headphones' :
+                                            #strings.containsIgnoreCase(c.name(),'audio') ? 'bi bi-headphones' :
+                                            #strings.containsIgnoreCase(c.name(),'camera') ? 'bi bi-camera-video' :
+                                            #strings.containsIgnoreCase(c.name(),'gaming') ? 'bi bi-controller' :
+                                            #strings.containsIgnoreCase(c.name(),'network') ? 'bi bi-router' :
+                                            #strings.containsIgnoreCase(c.name(),'storage') ? 'bi bi-device-ssd' :
+                                            #strings.containsIgnoreCase(c.name(),'ssd') ? 'bi bi-device-ssd' :
+                                            #strings.containsIgnoreCase(c.name(),'hdd') ? 'bi bi-device-hdd' :
+                                            #strings.containsIgnoreCase(c.name(),'component') ? 'bi bi-cpu' :
+                                            #strings.containsIgnoreCase(c.name(),'accessor') ? 'bi bi-usb-plug' :
+                                            #strings.containsIgnoreCase(c.name(),'service') ? 'bi bi-tools' :
+                                            'bi bi-grid-1x2-fill'
+                                        }"></i>
+                                    </div>
+                                </div>
+                            </div>
 
-        <div class="row g-4">
+                            <div class="category-content">
+                                <h3 class="category-title" th:text="${c.name()}">Category name</h3>
 
-            <!-- PRODUCT CARD -->
+                                <p class="category-text">
+                                    Discover quality products, reliable solutions and practical equipment for your setup.
+                                </p>
 
-            <div class="col-lg-3 col-md-4 col-sm-6"
-                 th:each="p : ${productsPage.content}">
+                                <span class="category-shop-btn">Shop now</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
 
-                <div class="card product-card h-100">
+                <button class="category-arrow next" type="button" onclick="scrollCategorySlider(1)">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            </div>
 
-                    <div class="card-body d-flex flex-column">
+            <div class="alert alert-light border rounded-4 text-center shadow-sm"
+                 th:if="${categories == null or #lists.isEmpty(categories)}">
+                No categories available right now.
+            </div>
+        </div>
+    </section>
+    <section class="section-block latest-products-section">
+        <div class="container-fluid px-0">
+            <div class="section-head minimal-head">
+                <h2 class="section-title">Latest products</h2>
+                <p class="section-desc">
+                    Discover the newest products.
+                </p>
+            </div>
 
-                        <h5 class="card-title">
-                            <a th:href="@{/products/{id}(id=${p.id()})}"
-                               th:text="${p.name()}"
-                               class="text-decoration-none text-dark">
+            <div class="row latest-products-grid">
+                <div class="col-sm-6 col-xl-3"
+                     th:each="p : ${latestProducts}">
+                    <div class="latest-product-card">
+
+                        <a th:href="@{/products/{id}(id=${p.id()})}" class="latest-product-link">
+                            <div class="latest-product-image-wrap">
+                                <img class="latest-product-image"
+                                     th:src="${latestProductImages[p.id()]}"
+                                     th:alt="${p.name()}">
+                            </div>
+
+                            <div class="latest-product-brand"
+                                 th:text="${p.categoryName() != null ? p.categoryName() : 'EchtaTech'}">
+                                Category
+                            </div>
+
+                            <div class="latest-product-title"
+                                 th:text="${p.name()}">
                                 Product name
-                            </a>
-                        </h5>
+                            </div>
 
-                        <p class="text-muted small mb-2">
-                            In stock:
-                            <b th:text="${p.quantity()}">0</b>
-                        </p>
+                            <div th:if="${p.quantity() != null and p.quantity() > 0}"
+                                 class="latest-product-stock in">
+                                IN STOCK
+                            </div>
 
-                        <p class="price mb-3"
-                           th:text="${p.price()}">
-                            0.00
-                        </p>
-                        <a class="btn btn-outline-secondary w-100 mb-2"
-                           th:href="@{/products/{id}(id=${p.id()})}">
-                            View details
+                            <div th:if="${p.quantity() == null or p.quantity() <= 0}"
+                                 class="latest-product-stock out">
+                                OUT OF STOCK
+                            </div>
+
+                            <div class="latest-product-price"
+                                 th:text="${#numbers.formatDecimal(p.price(),1,2)} + ' EUR'">
+                                0.00 EUR
+                            </div>
                         </a>
 
-                        <!-- ADD TO CART -->
+                        <form method="post" action="/cart/add" class="mt-auto">
+                            <input type="hidden" name="productId" th:value="${p.id()}"/>
+                            <input type="hidden" name="qty" value="1"/>
 
-                        <form method="post"
-                              action="/cart/add"
-                              class="mt-auto">
-
-                            <input type="hidden"
-                                   name="productId"
-                                   th:value="${p.id()}"/>
-
-                            <input type="hidden"
-                                   name="qty"
-                                   value="1"/>
-
-                            <button class="btn btn-primary w-100"
-                                    th:disabled="${p.quantity() != null and p.quantity() <= 0}">
+                            <button type="submit"
+                                    class="latest-product-btn"
+                                    th:disabled="${p.quantity() == null or p.quantity() <= 0}">
                                 Add to cart
                             </button>
-
                         </form>
-
                     </div>
-
                 </div>
 
-            </div>
-
-
-            <!-- NO PRODUCTS -->
-
-            <div class="col-12"
-                 th:if="${productsPage == null || #lists.isEmpty(productsPage.content)}">
-
-                <div class="alert alert-warning text-center">
-
-                    No products found.
-
+                <div class="col-12" th:if="${latestProducts == null or #lists.isEmpty(latestProducts)}">
+                    <div class="alert alert-light border rounded-4 text-center shadow-sm">
+                        No latest products available right now.
+                    </div>
                 </div>
-
             </div>
-
         </div>
+    </section>
+    <section class="section-block latest-services-section">
+        <div class="container-fluid px-0">
+            <div class="section-head minimal-head">
+                <h2 class="section-title">Latest services</h2>
+                <p class="section-desc">
+                    Explore the newest services and send a request for the one you need.
+                </p>
+            </div>
 
-    </div>
+            <div class="row latest-services-grid">
+                <div class="col-sm-6 col-xl-3"
+                     th:each="s : ${latestServices}">
+                    <div class="latest-service-card">
 
-</section>
+                        <a th:href="@{/services/{id}(id=${s.id()})}" class="latest-service-link">
+                            <div class="latest-service-top">
+                            <span class="latest-service-badge">
+                                <i class="bi bi-stars"></i>
+                                New service
+                            </span>
 
+                                <div class="latest-service-icon">
+                                    <i th:classappend="${
+                                    #strings.containsIgnoreCase(s.name(),'repair') ? 'bi bi-tools' :
+                                    #strings.containsIgnoreCase(s.name(),'diagnostic') ? 'bi bi-search' :
+                                    #strings.containsIgnoreCase(s.name(),'install') ? 'bi bi-cpu' :
+                                    #strings.containsIgnoreCase(s.name(),'upgrade') ? 'bi bi-arrow-up-circle' :
+                                    #strings.containsIgnoreCase(s.name(),'clean') ? 'bi bi-droplet-half' :
+                                    #strings.containsIgnoreCase(s.name(),'software') ? 'bi bi-window-stack' :
+                                    #strings.containsIgnoreCase(s.name(),'network') ? 'bi bi-router' :
+                                    #strings.containsIgnoreCase(s.name(),'laptop') ? 'bi bi-laptop' :
+                                    'bi bi-gear-wide-connected'
+                                }"></i>
+                                </div>
+                            </div>
 
-<!-- =========================
-     FOOTER
-     ========================= -->
+                            <div class="latest-service-title"
+                                 th:text="${s.name()}">
+                                Service name
+                            </div>
 
-<footer class="text-center text-muted pb-4">
+                            <div class="latest-service-desc"
+                                 th:text="${s.description() != null && s.description().length() > 120
+                                        ? #strings.substring(s.description(), 0, 120) + '...'
+                                        : (s.description() != null && !#strings.isEmpty(s.description())
+                                            ? s.description()
+                                            : 'Professional service for your device with reliable execution and personal support.')}">
+                                Service description
+                            </div>
 
-    Computer Equipment Store System © 2026
+                            <div class="latest-service-meta">
+                                <div class="latest-service-price"
+                                     th:text="${#numbers.formatDecimal(s.price(),1,2)} + ' EUR'">
+                                    0.00 EUR
+                                </div>
+                            </div>
+                        </a>
 
-</footer>
+                        <a th:href="@{/services/{id}(id=${s.id()})}"
+                           class="latest-service-btn">
+                            Request service
+                        </a>
+                    </div>
+                </div>
 
+                <div class="col-12" th:if="${latestServices == null or #lists.isEmpty(latestServices)}">
+                    <div class="alert alert-light border rounded-4 text-center shadow-sm">
+                        No latest services available right now.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div th:replace="~{fragments/partners :: partnersSection}"></div>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function scrollCategorySlider(direction){
+        const slider = document.getElementById('categorySlider');
+        if(!slider) return;
 
+        const card = slider.querySelector('.category-slide');
+        const scrollAmount = card ? card.offsetWidth + 28 : 420;
+
+        slider.scrollBy({
+            left: direction * scrollAmount,
+            behavior: 'smooth'
+        });
+    }
+</script>
 </body>
 </html>

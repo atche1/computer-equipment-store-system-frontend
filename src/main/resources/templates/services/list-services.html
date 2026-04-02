@@ -4,33 +4,811 @@
     <meta charset="UTF-8">
     <title>Services</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        :root{
+            --brand:#0d4dad;
+            --brand-dark:#0a3d8c;
+            --soft-bg:#f5f7fb;
+            --text-muted:#6b7280;
+            --page-bg:#eef3fb;
+            --panel-bg:#f7faff;
+            --panel-line:#dbe7f5;
+            --panel-card:#ffffff;
+            --panel-title:#0f172a;
+            --panel-soft:#edf4ff;
+        }
+
+        body{
+            background: linear-gradient(180deg, #edf3fb 0%, #f8fbff 100%);
+            min-height:100vh;
+        }
+
+        .page-shell{
+            max-width: 1820px;
+            margin: 0 auto;
+            padding: 0 18px 40px;
+        }
+
+        .services-toolbar{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:16px;
+            flex-wrap:wrap;
+            margin-bottom:26px;
+        }
+
+        .services-title-wrap h1{
+            font-size:2rem;
+            font-weight:800;
+            color:#0f172a;
+            margin-bottom:6px;
+        }
+
+        .services-title-wrap p{
+            margin:0;
+            color:var(--text-muted);
+        }
+
+        .services-actions{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            flex-wrap:wrap;
+        }
+
+        .services-filter-btn{
+            border:1px solid rgba(13,77,173,.18);
+            background:#fff;
+            color:var(--brand);
+            font-weight:700;
+            border-radius:14px;
+            padding:12px 18px;
+            box-shadow:0 6px 18px rgba(15,23,42,.05);
+        }
+
+        .services-filter-btn:hover{
+            background:#f4f8ff;
+            color:var(--brand-dark);
+        }
+
+        .services-sort-form{
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
+
+        .services-sort-form .form-select{
+            min-width:220px;
+            border-radius:14px;
+            border:1px solid #dbe3ef;
+            min-height:48px;
+            box-shadow:none;
+        }
+
+        .services-meta{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:14px;
+            flex-wrap:wrap;
+            margin-bottom:18px;
+            color:#475569;
+            font-size:.96rem;
+        }
+
+        .services-grid{
+            row-gap:28px;
+        }
+
+        .latest-service-card{
+            position: relative;
+            height: 100%;
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.10);
+            box-shadow: 0 8px 22px rgba(15,23,42,.06);
+            transition: .22s ease;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .latest-service-card:hover{
+            transform: translateY(-4px);
+            box-shadow: 0 16px 34px rgba(15,23,42,.10);
+        }
+
+        .latest-service-card::before{
+            content:"";
+            position:absolute;
+            top:0;
+            right:0;
+            width:140px;
+            height:140px;
+            background: radial-gradient(circle, rgba(13,77,173,.14) 0%, rgba(13,77,173,0) 72%);
+            pointer-events:none;
+        }
+
+        .latest-service-top{
+            display:flex;
+            align-items:flex-start;
+            justify-content:space-between;
+            gap:16px;
+            margin-bottom:18px;
+        }
+
+        .latest-service-badge{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            padding:8px 14px;
+            border-radius:999px;
+            background: rgba(13,77,173,.08);
+            color: var(--brand);
+            font-size: .84rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        .latest-service-icon{
+            width:68px;
+            height:68px;
+            border-radius:20px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background: linear-gradient(145deg, #0d4dad 0%, #123b78 100%);
+            color:#fff;
+            font-size:1.8rem;
+            box-shadow: 0 12px 24px rgba(13,77,173,.20);
+            flex-shrink:0;
+        }
+
+        .latest-service-link{
+            text-decoration:none;
+            color:inherit;
+            display:block;
+            position:relative;
+            z-index:2;
+        }
+
+        .latest-service-link:hover{
+            color:inherit;
+        }
+
+        .latest-service-title{
+            font-size: 1.18rem;
+            line-height: 1.35;
+            font-weight: 700;
+            color:#0f172a;
+            margin-bottom: 12px;
+            min-height: 52px;
+        }
+
+        .latest-service-desc{
+            color:#6b7280;
+            font-size: .97rem;
+            line-height:1.65;
+            margin-bottom: 18px;
+            min-height: 78px;
+        }
+
+        .latest-service-meta{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:14px;
+            margin-bottom: 20px;
+            flex-wrap:wrap;
+        }
+
+        .latest-service-price{
+            font-size: 1.15rem;
+            font-weight: 800;
+            color:#111827;
+        }
+
+        .latest-service-note{
+            font-size:.88rem;
+            color:#64748b;
+        }
+
+        .latest-service-btn{
+            display:block;
+            width:100%;
+            border:1.5px solid #0d4dad;
+            color:#0d4dad;
+            background: transparent;
+            text-align:center;
+            padding:14px 16px;
+            font-size: 1rem;
+            font-weight: 700;
+            text-decoration:none;
+            transition:.2s ease;
+            margin-top:auto;
+            position:relative;
+            z-index:2;
+        }
+
+        .latest-service-btn:hover{
+            background:#0d4dad;
+            border-color:#0d4dad;
+            color:#fff;
+        }
+
+        .empty-box{
+            background:#fff;
+            border:1px solid rgba(15,23,42,.10);
+            border-radius:20px;
+            padding:34px;
+            text-align:center;
+            box-shadow:0 8px 22px rgba(15,23,42,.05);
+        }
+
+        .catalog-pagination{
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            gap:10px;
+            flex-wrap:wrap;
+            margin-top:34px;
+        }
+
+        .catalog-page-link{
+            min-width:48px;
+            height:48px;
+            border-radius:50%;
+            border:1px solid #d7deea;
+            background:#fff;
+            color:#334155;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            text-decoration:none;
+            font-weight:700;
+            transition:.2s ease;
+        }
+
+        .catalog-page-link:hover{
+            border-color:var(--brand);
+            color:var(--brand);
+        }
+
+        .catalog-page-link.active{
+            background:var(--brand);
+            border-color:var(--brand);
+            color:#fff;
+        }
+
+        .catalog-page-link.disabled{
+            pointer-events:none;
+            opacity:.45;
+        }
+
+        /* FILTER PANEL */
+        .offcanvas.services-filter-panel{
+            width:min(430px, 100%);
+            background:
+                    radial-gradient(circle at top right, rgba(13,77,173,.10), transparent 28%),
+                    linear-gradient(180deg, #f7fbff 0%, #f2f7ff 100%);
+            border-right:1px solid var(--panel-line);
+            box-shadow: 20px 0 50px rgba(15,23,42,.12);
+        }
+
+        .services-filter-panel .offcanvas-header{
+            padding:0;
+            border-bottom:0;
+        }
+
+        .filter-hero{
+            position:relative;
+            width:100%;
+            padding:26px 22px 22px;
+            background: linear-gradient(135deg, #0d4dad 0%, #103b7b 100%);
+            color:#fff;
+            overflow:hidden;
+        }
+
+        .filter-hero::before{
+            content:"";
+            position:absolute;
+            top:-50px;
+            right:-50px;
+            width:180px;
+            height:180px;
+            border-radius:50%;
+            background:rgba(255,255,255,.10);
+        }
+
+        .filter-hero::after{
+            content:"";
+            position:absolute;
+            bottom:-40px;
+            right:60px;
+            width:120px;
+            height:120px;
+            border-radius:50%;
+            background:rgba(255,255,255,.06);
+        }
+
+        .filter-hero-top{
+            position:relative;
+            z-index:2;
+            display:flex;
+            align-items:flex-start;
+            justify-content:space-between;
+            gap:14px;
+        }
+
+        .filter-hero-badge{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            padding:8px 14px;
+            border-radius:999px;
+            background:rgba(255,255,255,.14);
+            color:#fff;
+            font-size:.82rem;
+            font-weight:700;
+            text-transform:uppercase;
+            letter-spacing:.05em;
+            margin-bottom:14px;
+            backdrop-filter: blur(4px);
+        }
+
+        .filter-hero-title{
+            font-size:1.45rem;
+            font-weight:800;
+            margin-bottom:8px;
+            line-height:1.2;
+        }
+
+        .filter-hero-text{
+            margin:0;
+            color:rgba(255,255,255,.86);
+            font-size:.96rem;
+            line-height:1.6;
+            max-width:290px;
+        }
+
+        .services-filter-panel .btn-close{
+            margin:0;
+            opacity:1;
+            filter: invert(1) brightness(100%);
+            background-size: .9rem;
+            box-shadow:none;
+        }
+
+        .services-filter-panel .offcanvas-body{
+            padding:22px;
+        }
+
+        .filter-form{
+            padding:0;
+        }
+
+        .filter-block{
+            background:rgba(255,255,255,.72);
+            border:1px solid rgba(219,231,245,.95);
+            border-radius:22px;
+            padding:18px;
+            box-shadow:0 10px 26px rgba(15,23,42,.05);
+            backdrop-filter: blur(8px);
+            margin-bottom:16px;
+        }
+
+        .filter-block-title{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            font-size:.92rem;
+            font-weight:800;
+            text-transform:uppercase;
+            letter-spacing:.05em;
+            color:#475569;
+            margin-bottom:14px;
+        }
+
+        .filter-block-title i{
+            width:32px;
+            height:32px;
+            border-radius:10px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background:var(--panel-soft);
+            color:var(--brand);
+            font-size:1rem;
+        }
+
+        .filter-form .form-label{
+            font-size:.90rem;
+            font-weight:700;
+            color:#334155;
+            margin-bottom:8px;
+        }
+
+        .filter-form .form-control,
+        .filter-form .form-select{
+            border-radius:14px;
+            border:1px solid #d8e4f2;
+            min-height:48px;
+            background:#fff;
+            color:#1f2937;
+            box-shadow:none;
+            transition:border-color .2s ease, box-shadow .2s ease, background .2s ease;
+        }
+
+        .filter-form .form-control::placeholder{
+            color:#94a3b8;
+        }
+
+        .filter-form .form-control:focus,
+        .filter-form .form-select:focus{
+            border-color:rgba(13,77,173,.45);
+            box-shadow:0 0 0 4px rgba(13,77,173,.10);
+            background:#fff;
+        }
+
+        .filter-helper{
+            font-size:.83rem;
+            color:#64748b;
+            margin-top:8px;
+            line-height:1.5;
+        }
+
+        .filter-actions{
+            display:flex;
+            gap:12px;
+            margin-top:20px;
+            position:sticky;
+            bottom:0;
+            padding-top:10px;
+            background:linear-gradient(180deg, rgba(242,247,255,0) 0%, rgba(242,247,255,1) 35%);
+        }
+
+        .filter-actions .btn{
+            border-radius:14px;
+            min-height:50px;
+            font-weight:700;
+            font-size:.98rem;
+        }
+
+        .filter-actions .btn-primary{
+            background:linear-gradient(135deg, #0d4dad 0%, #103b7b 100%);
+            border:none;
+            box-shadow:0 12px 24px rgba(13,77,173,.20);
+        }
+
+        .filter-actions .btn-primary:hover{
+            background:linear-gradient(135deg, #0a3d8c 0%, #0f3369 100%);
+        }
+
+        .filter-actions .btn-outline-secondary{
+            border:1px solid #cfd8e6;
+            color:#475569;
+            background:#fff;
+        }
+
+        .filter-actions .btn-outline-secondary:hover{
+            background:#f8fafc;
+            color:#1f2937;
+            border-color:#b8c5d8;
+        }
+
+        @media (max-width: 767px){
+            .page-shell{
+                padding:0 14px 32px;
+            }
+
+            .services-title-wrap h1{
+                font-size:1.7rem;
+            }
+
+            .services-sort-form{
+                width:100%;
+            }
+
+            .services-sort-form .form-select{
+                width:100%;
+                min-width:unset;
+            }
+
+            .offcanvas.services-filter-panel{
+                width:100%;
+            }
+
+            .filter-hero{
+                padding:24px 18px 20px;
+            }
+
+            .services-filter-panel .offcanvas-body{
+                padding:18px;
+            }
+
+            .filter-block{
+                padding:16px;
+                border-radius:18px;
+            }
+
+            .filter-actions{
+                flex-direction:column;
+            }
+        }
+    </style>
 </head>
 <body>
+
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container py-4">
-    <h1 class="mb-4">Services</h1>
+<div class="page-shell py-4">
 
-    <div class="row g-4" th:if="${services != null and !#lists.isEmpty(services)}">
-        <div class="col-md-6 col-lg-4" th:each="service : ${services}">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title" th:text="${service.name()}">Service name</h5>
-                    <p class="card-text text-muted"
-                       th:text="${service.description() != null ? service.description() : 'No description available.'}">
-                        Description
-                    </p>
-                    <p class="fw-bold mb-3" th:text="'Price: ' + ${service.price()} + ' BGN'">Price</p>
-                    <a class="btn btn-primary" th:href="@{/services/{id}(id=${service.id()})}">View details</a>
-                </div>
+    <div class="services-toolbar">
+        <div class="services-title-wrap">
+            <p>
+                Explore professional services for your devices, systems and technical needs.
+            </p>
+        </div>
+
+        <div class="services-actions">
+            <button class="btn services-filter-btn"
+                    type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#servicesFilters"
+                    aria-controls="servicesFilters">
+                <i class="bi bi-sliders me-2"></i>Filters
+            </button>
+
+            <form method="get" th:action="@{/services}" class="services-sort-form">
+                <input type="hidden" name="q" th:value="${q}">
+                <input type="hidden" name="minPrice" th:value="${minPrice}">
+                <input type="hidden" name="maxPrice" th:value="${maxPrice}">
+                <input type="hidden" name="size" th:value="${size}">
+
+                <select class="form-select" name="sort" onchange="this.form.submit()">
+                    <option value="createdAt,desc" th:selected="${sort == 'createdAt,desc'}">Newest first</option>
+                    <option value="name,asc" th:selected="${sort == 'name,asc'}">Name A-Z</option>
+                    <option value="name,desc" th:selected="${sort == 'name,desc'}">Name Z-A</option>
+                    <option value="price,asc" th:selected="${sort == 'price,asc'}">Price low to high</option>
+                    <option value="price,desc" th:selected="${sort == 'price,desc'}">Price high to low</option>
+                </select>
+            </form>
+        </div>
+    </div>
+
+    <div class="services-meta" th:if="${page != null}">
+        <div>
+            Showing
+            <b th:text="${page.numberOfElements}">0</b>
+            services on page
+            <b th:text="${page.number + 1}">1</b>
+            of
+            <b th:text="${page.totalPages}">1</b>
+        </div>
+
+        <div>
+            Total services:
+            <b th:text="${page.totalElements}">0</b>
+        </div>
+    </div>
+
+    <div class="row services-grid" th:if="${services != null and !#lists.isEmpty(services)}">
+        <div class="col-sm-6 col-lg-4 col-xl-3" th:each="service : ${services}">
+            <div class="latest-service-card">
+
+                <a th:href="@{/services/{id}(id=${service.id()})}" class="latest-service-link">
+                    <div class="latest-service-top">
+                        <span class="latest-service-badge">
+                            <i class="bi bi-stars"></i>
+                            Service
+                        </span>
+
+                        <div class="latest-service-icon">
+                            <i th:classappend="${
+                                #strings.containsIgnoreCase(service.name(),'repair') ? 'bi bi-tools' :
+                                #strings.containsIgnoreCase(service.name(),'diagnostic') ? 'bi bi-search' :
+                                #strings.containsIgnoreCase(service.name(),'install') ? 'bi bi-cpu' :
+                                #strings.containsIgnoreCase(service.name(),'upgrade') ? 'bi bi-arrow-up-circle' :
+                                #strings.containsIgnoreCase(service.name(),'clean') ? 'bi bi-droplet-half' :
+                                #strings.containsIgnoreCase(service.name(),'software') ? 'bi bi-window-stack' :
+                                #strings.containsIgnoreCase(service.name(),'network') ? 'bi bi-router' :
+                                #strings.containsIgnoreCase(service.name(),'laptop') ? 'bi bi-laptop' :
+                                'bi bi-gear-wide-connected'
+                            }"></i>
+                        </div>
+                    </div>
+
+                    <div class="latest-service-title"
+                         th:text="${service.name()}">
+                        Service name
+                    </div>
+
+                    <div class="latest-service-desc"
+                         th:text="${service.description() != null && service.description().length() > 120
+                                ? #strings.substring(service.description(), 0, 120) + '...'
+                                : (service.description() != null && !#strings.isEmpty(service.description())
+                                    ? service.description()
+                                    : 'Professional service for your device with reliable execution and personal support.')}">
+                        Service description
+                    </div>
+
+                    <div class="latest-service-meta">
+                        <div class="latest-service-price"
+                             th:text="${#numbers.formatDecimal(service.price(),1,2)} + ' EUR'">
+                            0.00 EUR
+                        </div>
+
+                        <div class="latest-service-note">
+                            Professional support
+                        </div>
+                    </div>
+                </a>
+
+                <a th:href="@{/services/{id}(id=${service.id()})}"
+                   class="latest-service-btn">
+                    Request service
+                </a>
             </div>
         </div>
     </div>
 
-    <div class="alert alert-info" th:if="${services == null or #lists.isEmpty(services)}">
-        No active services found.
+    <div class="empty-box" th:if="${services == null or #lists.isEmpty(services)}">
+        <h5 class="mb-2">No services found</h5>
+        <p class="text-muted mb-0">Try changing the filters or search keywords.</p>
+    </div>
+
+    <div class="catalog-pagination" th:if="${page != null and page.totalPages > 1}">
+        <a class="catalog-page-link"
+           th:classappend="${page.first} ? ' disabled'"
+           th:href="${'/services?page=' + (page.number - 1) + queryString}">
+            <i class="bi bi-chevron-left"></i>
+        </a>
+
+        <th:block th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}">
+            <a class="catalog-page-link"
+               th:classappend="${i == page.number} ? ' active'"
+               th:href="${'/services?page=' + i + queryString}"
+               th:text="${i + 1}">
+                1
+            </a>
+        </th:block>
+
+        <a class="catalog-page-link"
+           th:classappend="${page.last} ? ' disabled'"
+           th:href="${'/services?page=' + (page.number + 1) + queryString}">
+            <i class="bi bi-chevron-right"></i>
+        </a>
+    </div>
+
+</div>
+
+<div class="offcanvas offcanvas-start services-filter-panel"
+     tabindex="-1"
+     id="servicesFilters"
+     aria-labelledby="servicesFiltersLabel">
+
+    <div class="offcanvas-header">
+        <div class="filter-hero w-100">
+            <div class="filter-hero-top">
+                <div>
+                    <div class="filter-hero-badge">
+                        <i class="bi bi-funnel"></i>
+                        Smart filters
+                    </div>
+
+                    <h5 class="filter-hero-title" id="servicesFiltersLabel">Refine your service search</h5>
+                    <p class="filter-hero-text">
+                        Search by name or description, choose price range and change the sorting.
+                    </p>
+                </div>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="offcanvas"
+                        aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="offcanvas-body">
+        <form method="get" th:action="@{/services}" class="filter-form">
+
+            <div class="filter-block">
+                <div class="filter-block-title">
+                    <i class="bi bi-search"></i>
+                    Search
+                </div>
+
+                <div class="mb-0">
+                    <label class="form-label">Name or description</label>
+                    <input type="text"
+                           name="q"
+                           class="form-control"
+                           placeholder="Search services..."
+                           th:value="${q}">
+                    <div class="filter-helper">
+                        You can search by service name or description.
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-block">
+                <div class="filter-block-title">
+                    <i class="bi bi-currency-euro"></i>
+                    Price range
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-6">
+                        <label class="form-label">Min price</label>
+                        <input type="text"
+                               name="minPrice"
+                               class="form-control"
+                               placeholder="e.g. 30"
+                               th:value="${minPrice}">
+                    </div>
+
+                    <div class="col-6">
+                        <label class="form-label">Max price</label>
+                        <input type="text"
+                               name="maxPrice"
+                               class="form-control"
+                               placeholder="e.g. 250"
+                               th:value="${maxPrice}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-block">
+                <div class="filter-block-title">
+                    <i class="bi bi-arrow-down-up"></i>
+                    Sort & layout
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Sort</label>
+                    <select class="form-select" name="sort">
+                        <option value="createdAt,desc" th:selected="${sort == 'createdAt,desc'}">Newest first</option>
+                        <option value="name,asc" th:selected="${sort == 'name,asc'}">Name A-Z</option>
+                        <option value="name,desc" th:selected="${sort == 'name,desc'}">Name Z-A</option>
+                        <option value="price,asc" th:selected="${sort == 'price,asc'}">Price low to high</option>
+                        <option value="price,desc" th:selected="${sort == 'price,desc'}">Price high to low</option>
+                    </select>
+                </div>
+
+                <div class="mb-0">
+                    <label class="form-label">Services per page</label>
+                    <select class="form-select" name="size">
+                        <option value="8" th:selected="${size == 8}">8</option>
+                        <option value="12" th:selected="${size == 12}">12</option>
+                        <option value="16" th:selected="${size == 16}">16</option>
+                    </select>
+                    <div class="filter-helper">
+                        Choose how many services to display on one page.
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-actions">
+                <button class="btn btn-primary flex-fill" type="submit">
+                    <i class="bi bi-check2-circle me-2"></i>Apply filters
+                </button>
+                <a th:href="@{/services}" class="btn btn-outline-secondary flex-fill">
+                    <i class="bi bi-arrow-counterclockwise me-2"></i>Clear
+                </a>
+            </div>
+        </form>
     </div>
 </div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

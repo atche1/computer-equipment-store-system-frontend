@@ -8,5 +8,6 @@ public record CartItemResponse(
         String productName,
         BigDecimal unitPrice,
         Integer quantity,
-        Integer availableQuantity
+        Integer availableQuantity,
+        String imageUrl
 ) {}

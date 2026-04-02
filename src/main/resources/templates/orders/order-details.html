@@ -4,68 +4,489 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Order Details</title>
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <style>
+    :root{
+      --brand:#0d4dad;
+      --brand-dark:#0a3d8c;
+      --page-top:#edf3fb;
+      --page-bottom:#f8fbff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --line:rgba(15,23,42,.08);
+
+      --surface:rgba(255,255,255,.38);
+      --surface-strong:rgba(255,255,255,.55);
+      --surface-border:rgba(255,255,255,.52);
+      --row-bg:rgba(255,255,255,.36);
+    }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      background:linear-gradient(180deg, var(--page-top) 0%, var(--page-bottom) 100%);
+      color:var(--text);
+      font-family:Arial, sans-serif;
+    }
+
+    .order-page{
+      padding:42px 0 70px;
+    }
+
+    .back-link{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      color:#334155;
+      text-decoration:none;
+      font-size:15px;
+      font-weight:700;
+      padding:10px 16px;
+      border-radius:999px;
+      border:1px solid rgba(217,227,239,.95);
+      background:rgba(255,255,255,.6);
+      margin-bottom:22px;
+      transition:.18s ease;
+    }
+
+    .back-link:hover{
+      color:var(--brand);
+      border-color:var(--brand);
+      background:rgba(255,255,255,.9);
+    }
+
+    .order-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:18px;
+      margin-bottom:26px;
+    }
+
+    .order-kicker{
+      display:inline-block;
+      font-size:12px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:#7b8794;
+      margin-bottom:10px;
+    }
+
+    .order-title{
+      font-size:clamp(2rem, 2.7vw, 3rem);
+      font-weight:800;
+      color:#111827;
+      margin:0 0 10px;
+      line-height:1.08;
+    }
+
+    .order-subtitle{
+      margin:0;
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.8;
+    }
+
+    .order-number{
+      color:#111827;
+      font-weight:800;
+    }
+
+    .status-badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:8px 14px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      line-height:1;
+      white-space:nowrap;
+      text-transform:uppercase;
+      background:#eef2f6;
+      color:#475467;
+      letter-spacing:.03em;
+    }
+
+    .status-new{
+      background:#e8f1ff;
+      color:#0d4dad;
+    }
+
+    .status-processing{
+      background:#fff4e5;
+      color:#b26a00;
+    }
+
+    .status-paid{
+      background:#e7f8ee;
+      color:#198754;
+    }
+
+    .status-completed{
+      background:#e7f8ee;
+      color:#198754;
+    }
+
+    .status-cancelled{
+      background:#fdecec;
+      color:#dc3545;
+    }
+
+    .soft-surface{
+      background:linear-gradient(180deg, var(--surface-strong) 0%, var(--surface) 100%);
+      border:1px solid var(--surface-border);
+      border-radius:30px;
+      backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
+      overflow:hidden;
+    }
+
+    .section-head{
+      padding:24px 28px 18px;
+      border-bottom:1px solid var(--line);
+    }
+
+    .section-title{
+      font-size:1.2rem;
+      font-weight:800;
+      color:#111827;
+      margin:0 0 6px;
+    }
+
+    .section-subtitle{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.7;
+    }
+
+    .section-body{
+      padding:18px;
+    }
+
+    .details-grid{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0, 1fr));
+      gap:14px;
+    }
+
+    .detail-box{
+      background:rgba(255,255,255,.34);
+      border:1px solid rgba(255,255,255,.42);
+      border-radius:22px;
+      padding:18px;
+      min-width:0;
+    }
+
+    .detail-label{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:#7b8794;
+      font-weight:800;
+      margin-bottom:8px;
+    }
+
+    .detail-value{
+      font-size:16px;
+      color:#111827;
+      font-weight:700;
+      line-height:1.6;
+      word-break:break-word;
+    }
+
+    .section-spacer{
+      height:22px;
+    }
+
+    .items-list{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+
+    .item-card{
+      display:flex;
+      gap:18px;
+      align-items:center;
+      background:var(--row-bg);
+      border:1px solid rgba(255,255,255,.45);
+      border-radius:24px;
+      padding:18px;
+    }
+
+    .item-image-wrap{
+      width:104px;
+      height:104px;
+      flex:0 0 104px;
+      border-radius:18px;
+      overflow:hidden;
+      background:rgba(255,255,255,.5);
+      border:1px solid rgba(255,255,255,.45);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .item-image{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .item-main{
+      min-width:0;
+      flex:1 1 auto;
+    }
+
+    .item-name{
+      font-size:1.08rem;
+      font-weight:800;
+      color:#111827;
+      margin-bottom:12px;
+      line-height:1.4;
+    }
+
+    .item-meta{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0, 1fr));
+      gap:12px;
+    }
+
+    .item-meta-box{
+      background:rgba(255,255,255,.22);
+      border-radius:16px;
+      padding:12px 14px;
+    }
+
+    .item-meta-label{
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:#7b8794;
+      font-weight:800;
+      margin-bottom:5px;
+    }
+
+    .item-meta-value{
+      font-size:15px;
+      color:#111827;
+      font-weight:800;
+      line-height:1.4;
+    }
+
+    .order-total-box{
+      margin-top:18px;
+      display:flex;
+      justify-content:flex-end;
+    }
+
+    .order-total-card{
+      min-width:280px;
+      background:rgba(255,255,255,.4);
+      border:1px solid rgba(255,255,255,.48);
+      border-radius:22px;
+      padding:18px 20px;
+    }
+
+    .order-total-label{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:#7b8794;
+      font-weight:800;
+      margin-bottom:8px;
+    }
+
+    .order-total-value{
+      font-size:2rem;
+      font-weight:800;
+      color:#111827;
+      line-height:1.1;
+    }
+
+    @media (max-width: 991.98px){
+      .order-head{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+
+      .details-grid{
+        grid-template-columns:1fr;
+      }
+
+      .item-meta{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media (max-width: 767.98px){
+      .order-page{
+        padding:30px 0 50px;
+      }
+
+      .back-link{
+        margin-bottom:18px;
+      }
+
+      .soft-surface{
+        border-radius:24px;
+      }
+
+      .section-head{
+        padding:20px 18px 16px;
+      }
+
+      .section-body{
+        padding:14px;
+      }
+
+      .item-card{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+
+      .item-image-wrap{
+        width:100%;
+        max-width:240px;
+        height:220px;
+        flex:0 0 auto;
+      }
+
+      .order-total-box{
+        justify-content:stretch;
+      }
+
+      .order-total-card{
+        width:100%;
+        min-width:0;
+      }
+    }
+  </style>
 </head>
 <body>
 
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container py-4">
-  <div class="card p-4">
-    <div class="d-flex justify-content-between align-items-start mb-4">
-      <div>
-        <h2 class="mb-1">Order Details</h2>
-        <div class="text-muted">
-          Order number: <b th:text="${order.orderNumber()}">ORD-...</b>
+<div class="container order-page">
+
+  <a th:href="@{/orders}" class="back-link">
+    <i class="bi bi-arrow-left"></i>
+    Back to My Orders
+  </a>
+
+  <div class="order-head">
+    <div>
+      <h1 class="order-title">Order Details</h1>
+      <p class="order-subtitle">
+        Order number:
+        <span class="order-number" th:text="${order.orderNumber()}">ORD-...</span>
+      </p>
+    </div>
+
+    <span class="status-badge"
+          th:text="${order.status()}"
+          th:classappend="${
+              order.status().name() == 'NEW' ? ' status-new' :
+              order.status().name() == 'PROCESSING' ? ' status-processing' :
+              order.status().name() == 'SHIPPED' ? ' status-shipped' :
+              order.status().name() == 'DELIVERED' ? ' status-delivered' :
+              ''
+          }">
+      NEW
+    </span>
+  </div>
+
+  <div class="soft-surface">
+    <div class="section-head">
+      <h2 class="section-title">Delivery information</h2>
+      <p class="section-subtitle">
+        Review the delivery details associated with this order.
+      </p>
+    </div>
+
+    <div class="section-body">
+      <div class="details-grid">
+        <div class="detail-box">
+          <div class="detail-label">Delivery Name</div>
+          <div class="detail-value" th:text="${order.deliveryName()}">Name</div>
         </div>
-      </div>
-      <span class="badge text-bg-primary" th:text="${order.status()}">NEW</span>
-    </div>
 
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div><b>Delivery name:</b></div>
-        <div th:text="${order.deliveryName()}">Name</div>
-      </div>
-      <div class="col-md-4">
-        <div><b>Delivery phone:</b></div>
-        <div th:text="${order.deliveryPhone()}">Phone</div>
-      </div>
-      <div class="col-md-4">
-        <div><b>Delivery address:</b></div>
-        <div th:text="${order.deliveryAddress()}">Address</div>
-      </div>
-    </div>
+        <div class="detail-box">
+          <div class="detail-label">Delivery Phone</div>
+          <div class="detail-value" th:text="${order.deliveryPhone()}">Phone</div>
+        </div>
 
-    <div class="table-responsive">
-      <table class="table align-middle">
-        <thead>
-        <tr>
-          <th>Product</th>
-          <th class="text-end">Unit price</th>
-          <th class="text-center">Quantity</th>
-          <th class="text-end">Line total</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="i : ${order.items()}">
-          <td th:text="${i.productNameSnapshot()}">Product</td>
-          <td class="text-end" th:text="${i.unitPrice()}">0.00</td>
-          <td class="text-center" th:text="${i.quantity()}">1</td>
-          <td class="text-end" th:text="${i.lineTotal()}">0.00</td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="d-flex justify-content-end mt-3">
-      <div class="fs-5">
-        Total:
-        <b th:text="${order.totalAmount()}">0.00</b>
+        <div class="detail-box">
+          <div class="detail-label">Delivery Address</div>
+          <div class="detail-value" th:text="${order.deliveryAddress()}">Address</div>
+        </div>
       </div>
     </div>
   </div>
+
+  <div class="section-spacer"></div>
+
+  <div class="soft-surface">
+    <div class="section-head">
+      <h2 class="section-title">Ordered products</h2>
+      <p class="section-subtitle">
+        All products included in this order are listed below.
+      </p>
+    </div>
+
+    <div class="section-body">
+      <div class="items-list">
+        <div class="item-card" th:each="i : ${order.items()}">
+
+          <div class="item-image-wrap">
+            <img class="item-image"
+                 th:src="${i.productImageUrl() != null and !#strings.isEmpty(i.productImageUrl()) ? i.productImageUrl() : '/images/placeholder.png'}"
+                 alt="Product image"
+                 onerror="this.onerror=null;this.src='/images/placeholder.png';">
+          </div>
+
+          <div class="item-main">
+            <div class="item-name" th:text="${i.productNameSnapshot()}">Product</div>
+
+            <div class="item-meta">
+              <div class="item-meta-box">
+                <div class="item-meta-label">Unit price</div>
+                <div class="item-meta-value" th:text="${i.unitPrice()} + ' EUR'">0.00 EUR</div>
+              </div>
+
+              <div class="item-meta-box">
+                <div class="item-meta-label">Quantity</div>
+                <div class="item-meta-value" th:text="${i.quantity()}">1</div>
+              </div>
+
+              <div class="item-meta-box">
+                <div class="item-meta-label">Line total</div>
+                <div class="item-meta-value" th:text="${i.lineTotal()} + ' EUR'">0.00 EUR</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="order-total-box">
+        <div class="order-total-card">
+          <div class="order-total-label">Total</div>
+          <div class="order-total-value" th:text="${order.totalAmount()} + ' EUR'">0.00 EUR</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

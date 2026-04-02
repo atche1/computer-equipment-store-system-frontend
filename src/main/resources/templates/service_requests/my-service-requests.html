@@ -4,48 +4,504 @@
   <meta charset="UTF-8">
   <title>My Service Requests</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <style>
+    :root{
+      --brand:#0d4dad;
+      --brand-dark:#0a3d8c;
+      --page-top:#edf3fb;
+      --page-bottom:#f8fbff;
+      --text:#1f2937;
+      --muted:#6b7280;
+
+      --surface:rgba(255,255,255,.38);
+      --surface-strong:rgba(255,255,255,.55);
+      --surface-border:rgba(255,255,255,.52);
+    }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--text);
+      background:linear-gradient(180deg, var(--page-top) 0%, var(--page-bottom) 100%);
+      font-family:Arial, sans-serif;
+    }
+
+    .requests-page{
+      padding:42px 0 70px;
+    }
+
+    .page-head{
+      margin-bottom:26px;
+    }
+
+    .requests-kicker{
+      display:inline-block;
+      font-size:12px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:#7b8794;
+      margin-bottom:10px;
+    }
+
+    .requests-title{
+      font-size:clamp(2rem, 2.7vw, 3rem);
+      font-weight:800;
+      color:#111827;
+      margin-bottom:10px;
+      line-height:1.1;
+    }
+
+    .requests-subtitle{
+      margin:0;
+      max-width:760px;
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.8;
+    }
+
+    .requests-surface{
+      background:linear-gradient(180deg, var(--surface-strong) 0%, var(--surface) 100%);
+      border:1px solid var(--surface-border);
+      border-radius:30px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      overflow:hidden;
+    }
+
+    .requests-surface-head{
+      padding:24px 28px 18px;
+      border-bottom:1px solid rgba(15,23,42,.06);
+    }
+
+    .requests-surface-title{
+      font-size:1.2rem;
+      font-weight:800;
+      color:#111827;
+      margin:0 0 6px;
+    }
+
+    .requests-surface-text{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.7;
+    }
+
+    .requests-table-wrap{
+      padding:8px 16px 16px;
+    }
+
+    .table{
+      margin-bottom:0;
+      --bs-table-bg:transparent;
+      --bs-table-striped-bg:transparent;
+      --bs-table-hover-bg:transparent;
+      --bs-table-border-color:transparent;
+    }
+
+    .table thead th{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:#7b8794;
+      font-weight:800;
+      background:transparent;
+      border-bottom:1px solid rgba(15,23,42,.07);
+      padding:16px 18px 14px;
+      white-space:nowrap;
+    }
+
+    .table tbody tr{
+      transition:.18s ease;
+    }
+
+    .table tbody tr:hover{
+      transform:translateY(-1px);
+    }
+
+    .table tbody td{
+      padding:14px 18px;
+      vertical-align:middle;
+      border-top:0;
+      font-size:15px;
+      color:#334155;
+    }
+
+    .request-row td{
+      background:rgba(255,255,255,.36);
+    }
+
+    .request-row td:first-child{
+      border-top-left-radius:18px;
+      border-bottom-left-radius:18px;
+    }
+
+    .request-row td:last-child{
+      border-top-right-radius:18px;
+      border-bottom-right-radius:18px;
+    }
+
+    .row-gap{
+      height:10px;
+    }
+
+    .request-id{
+      font-weight:800;
+      color:#111827;
+    }
+
+    .service-name{
+      font-weight:700;
+      color:#111827;
+    }
+
+    .request-phone,
+    .request-date{
+      color:#667085;
+      white-space:nowrap;
+    }
+
+    .status-badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      line-height:1;
+      white-space:nowrap;
+      text-transform:uppercase;
+      letter-spacing:.03em;
+    }
+
+    .status-new{
+      background:#e8f1ff;
+      color:#0d4dad;
+    }
+
+    .status-in-progress{
+      background:#fff4e5;
+      color:#b26a00;
+    }
+
+    .status-completed{
+      background:#e7f8ee;
+      color:#198754;
+    }
+
+    .status-cancelled{
+      background:#fdecec;
+      color:#dc3545;
+    }
+
+    .status-default{
+      background:#eef2f6;
+      color:#475467;
+    }
+
+    .btn-request-details{
+      min-width:100px;
+      height:42px;
+      border-radius:12px;
+      border:1.5px solid var(--brand);
+      color:var(--brand);
+      background:transparent;
+      font-weight:700;
+      padding:8px 16px;
+    }
+
+    .btn-request-details:hover{
+      background:var(--brand);
+      border-color:var(--brand);
+      color:#fff;
+    }
+
+    .empty-state{
+      padding:54px 28px 58px;
+      text-align:center;
+    }
+
+    .empty-icon{
+      width:72px;
+      height:72px;
+      margin:0 auto 18px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:rgba(255,255,255,.55);
+      color:var(--brand);
+      font-size:28px;
+    }
+
+    .empty-state-title{
+      font-size:1.5rem;
+      font-weight:800;
+      color:#111827;
+      margin-bottom:8px;
+    }
+
+    .empty-state-text{
+      color:var(--muted);
+      margin:0 auto 22px;
+      font-size:15px;
+      line-height:1.75;
+      max-width:460px;
+    }
+
+    .btn-services{
+      min-width:190px;
+      height:48px;
+      border:0;
+      border-radius:14px;
+      background:linear-gradient(135deg, var(--brand) 0%, #1e6cf0 100%);
+      font-weight:700;
+      padding:10px 20px;
+      box-shadow:0 10px 22px rgba(13,77,173,.14);
+    }
+
+    .btn-services:hover{
+      background:linear-gradient(135deg, var(--brand-dark) 0%, #125fdd 100%);
+    }
+
+    .mobile-requests{
+      display:none;
+      padding:14px;
+    }
+
+    .mobile-request-card{
+      background:rgba(255,255,255,.36);
+      border:1px solid rgba(255,255,255,.45);
+      border-radius:22px;
+      padding:18px;
+      margin-bottom:14px;
+    }
+
+    .mobile-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .mobile-request-id{
+      font-size:1rem;
+      font-weight:800;
+      color:#111827;
+      margin-bottom:4px;
+    }
+
+    .mobile-service-name{
+      color:#475467;
+      font-size:14px;
+      font-weight:700;
+    }
+
+    .mobile-meta{
+      display:grid;
+      gap:10px;
+      margin-bottom:16px;
+    }
+
+    .mobile-meta-row{
+      display:flex;
+      justify-content:space-between;
+      gap:14px;
+      font-size:14px;
+    }
+
+    .mobile-meta-label{
+      color:#6b7280;
+      font-weight:700;
+    }
+
+    .mobile-meta-value{
+      color:#111827;
+      font-weight:700;
+      text-align:right;
+    }
+
+    @media (max-width: 991.98px){
+      .requests-table-wrap{
+        display:none;
+      }
+
+      .mobile-requests{
+        display:block;
+      }
+    }
+
+    @media (max-width: 767.98px){
+      .requests-page{
+        padding:30px 0 50px;
+      }
+
+      .page-head{
+        margin-bottom:20px;
+      }
+
+      .requests-surface{
+        border-radius:24px;
+      }
+
+      .requests-surface-head{
+        padding:20px 18px 16px;
+      }
+
+      .empty-state{
+        padding:42px 18px 46px;
+      }
+    }
+  </style>
 </head>
 <body>
+
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container py-4">
-  <h1 class="mb-4">My Service Requests</h1>
+<div class="container requests-page">
 
-  <div class="card shadow-sm">
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0">
+  <div class="page-head">
+    <h1 class="requests-title">My Service Requests</h1>
+    <p class="requests-subtitle">
+      Review all submitted service requests, follow their current status and open the full details whenever you need them.
+    </p>
+  </div>
+
+  <div class="requests-surface">
+
+    <div class="requests-surface-head">
+      <h2 class="requests-surface-title">Service request history</h2>
+      <p class="requests-surface-text">
+        Your submitted requests are listed below in a clear and easy-to-follow view.
+      </p>
+    </div>
+
+    <!-- DESKTOP TABLE -->
+    <div class="requests-table-wrap"
+         th:if="${requestsPage != null and requestsPage.content != null and !#lists.isEmpty(requestsPage.content)}">
+      <table class="table align-middle">
         <thead>
         <tr>
-          <th>ID</th>
           <th>Service</th>
           <th>Status</th>
           <th>Phone</th>
-          <th>Created At</th>
-          <th></th>
+          <th>Created</th>
+          <th class="text-end">Action</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:if="${requestsPage == null or requestsPage.content == null or #lists.isEmpty(requestsPage.content)}">
-          <td colspan="6" class="text-center text-muted py-4">No service requests found.</td>
-        </tr>
-        <tr th:each="r : ${requestsPage.content}">
-          <td th:text="${r.id()}">1</td>
-          <td th:text="${r.serviceName()}">Service</td>
-          <td th:text="${r.status()}">NEW</td>
-          <td th:text="${r.customerPhone()}">phone</td>
-          <td th:text="${#temporals.format(r.createdAt(), 'dd.MM.yyyy HH:mm')}">date</td>
-          <td>
-            <a class="btn btn-sm btn-outline-primary"
-               th:href="@{/my-service-requests/{id}(id=${r.id()})}">
-              Details
-            </a>
-          </td>
-        </tr>
+        <th:block th:each="r, iter : ${requestsPage.content}">
+          <tr class="request-row">
+            <td>
+              <span class="service-name" th:text="${r.serviceName()}">Service</span>
+            </td>
+
+            <td>
+              <span class="status-badge status-default"
+                    th:text="${r.status()}"
+                    th:classappend="${
+                      r.status() == 'NEW' ? ' status-new' :
+                      r.status() == 'IN_PROGRESS' ? ' status-in-progress' :
+                      r.status() == 'DONE' ? ' status-done' :
+                      ' status-default'
+                    }">
+                NEW
+              </span>
+            </td>
+
+            <td>
+              <span class="request-phone" th:text="${r.customerPhone()}">phone</span>
+            </td>
+
+            <td>
+              <span class="request-date"
+                    th:text="${#temporals.format(r.createdAt(), 'dd.MM.yyyy HH:mm')}">date</span>
+            </td>
+
+            <td class="text-end">
+              <a class="btn btn-sm btn-request-details"
+                 th:href="@{/my-service-requests/{id}(id=${r.id()})}">
+                Details
+              </a>
+            </td>
+          </tr>
+
+          <tr class="row-gap" th:if="${!iter.last}">
+            <td colspan="6"></td>
+          </tr>
+        </th:block>
         </tbody>
       </table>
     </div>
+
+    <!-- MOBILE CARDS -->
+    <div class="mobile-requests"
+         th:if="${requestsPage != null and requestsPage.content != null and !#lists.isEmpty(requestsPage.content)}">
+      <div class="mobile-request-card"
+           th:each="r : ${requestsPage.content}">
+
+        <div class="mobile-top">
+          <div>
+            <div class="mobile-request-id">Request #<span th:text="${r.id()}">1</span></div>
+            <div class="mobile-service-name" th:text="${r.serviceName()}">Service</div>
+          </div>
+
+          <span class="status-badge status-default"
+                th:text="${r.status()}"
+                th:classappend="${
+                  r.status() == 'NEW' ? ' status-new' :
+                  r.status() == 'IN_PROGRESS' ? ' status-in-progress' :
+                  r.status() == 'COMPLETED' ? ' status-completed' :
+                  r.status() == 'CANCELLED' ? ' status-cancelled' :
+                  ' status-default'
+                }">
+            NEW
+          </span>
+        </div>
+
+        <div class="mobile-meta">
+          <div class="mobile-meta-row">
+            <span class="mobile-meta-label">Phone</span>
+            <span class="mobile-meta-value" th:text="${r.customerPhone()}">phone</span>
+          </div>
+
+          <div class="mobile-meta-row">
+            <span class="mobile-meta-label">Created</span>
+            <span class="mobile-meta-value"
+                  th:text="${#temporals.format(r.createdAt(), 'dd.MM.yyyy HH:mm')}">date</span>
+          </div>
+        </div>
+
+        <a class="btn btn-request-details w-100"
+           th:href="@{/my-service-requests/{id}(id=${r.id()})}">
+          Details
+        </a>
+      </div>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div class="empty-state"
+         th:if="${requestsPage == null or requestsPage.content == null or #lists.isEmpty(requestsPage.content)}">
+      <div class="empty-icon">
+        <i class="bi bi-tools"></i>
+      </div>
+      <div class="empty-state-title">No service requests yet</div>
+      <div class="empty-state-text">
+        You have not submitted any service requests yet. Browse the available services and request the one you need.
+      </div>
+      <a th:href="@{/services}" class="btn btn-primary btn-services">Browse services</a>
+    </div>
+
   </div>
 </div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

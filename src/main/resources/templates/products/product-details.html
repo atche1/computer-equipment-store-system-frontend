@@ -6,89 +6,698 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
-        body {
-            background: linear-gradient(180deg, #eef2ff 0%, #f7f8fc 100%);
-            min-height: 100vh;
+        :root{
+            --brand:#0d4dad;
+            --brand-dark:#0a3d8c;
+            --page-bg:#eef3fb;
+            --soft-bg:#f5f7fb;
+            --text:#1f2937;
+            --muted:#6b7280;
+            --line:#e5ebf3;
+
+            --success-bg:#e7f4e8;
+            --success-text:#3d7f45;
+            --warn-bg:#fff4db;
+            --warn-text:#a96a00;
+            --danger-bg:#fdecec;
+            --danger-text:#b42318;
         }
 
-        .details-card {
-            border: 0;
-            border-radius: 20px;
-            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
+        body{
+            background: linear-gradient(180deg, #edf3fb 0%, #f8fbff 100%);
+            min-height:100vh;
+            color:var(--text);
         }
 
-        .main-image-wrapper {
-            background: #ffffff;
-            border-radius: 18px;
-            padding: 20px;
-            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
-            min-height: 420px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .page-shell{
+            max-width:1820px;
+            margin:0 auto;
+            padding:0 18px 48px;
         }
 
-        .main-image {
-            max-width: 100%;
-            max-height: 360px;
-            object-fit: contain;
+        .details-page{
+            padding-top:26px;
         }
 
-        .image-placeholder {
-            color: #6c757d;
-            font-size: 18px;
-            font-weight: 500;
+        .back-btn{
+            border-radius:999px;
+            font-weight:600;
+            padding:9px 18px;
+            border:1px solid #d9e3ef;
+            background:rgba(255,255,255,.72);
+            color:#334155;
         }
 
-        .thumb-image {
-    width: 100%;
-    height: 90px;
-    object-fit: contain;
-    background: #fff;
-    border-radius: 12px;
-    padding: 8px;
-    border: 2px solid #e9ecef;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.thumb-image:hover {
-    border-color: #0d6efd;
-    transform: translateY(-2px);
-}
-
-.thumb-image.active-thumb {
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
-}
-
-        .price {
-            font-size: 30px;
-            font-weight: 700;
-            color: #0d6efd;
+        .back-btn:hover{
+            border-color:var(--brand);
+            color:var(--brand);
+            background:#fff;
         }
 
-        .stock-badge {
-            font-size: 14px;
+        /* TOP AREA */
+        .product-hero{
+            padding-top:6px;
         }
 
-        .section-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 12px;
+        .product-grid{
+            display:grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(430px, .95fr);
+            gap:42px;
+            align-items:start;
         }
 
-        .spec-table td,
-        .spec-table th {
-            vertical-align: middle;
+        .gallery-side{
+            min-width:0;
         }
 
-        .spec-name {
-            font-weight: 600;
-            width: 40%;
+        .gallery-wrap{
+            display:grid;
+            grid-template-columns:84px minmax(0,1fr);
+            gap:18px;
+            align-items:start;
+        }
+
+        .thumbs-col{
+            display:flex;
+            flex-direction:column;
+            gap:12px;
+        }
+
+        .thumb-box{
+            width:84px;
+            height:84px;
+            border:1.5px solid #d9e2ee;
+            border-radius:18px;
+            background:rgba(255,255,255,.9);
+            padding:8px;
+            cursor:pointer;
+            overflow:hidden;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            transition:all .18s ease;
+        }
+
+        .thumb-box:hover{
+            border-color:var(--brand);
+            transform:translateY(-2px);
+        }
+
+        .thumb-box.active-thumb{
+            border-color:var(--brand);
+            box-shadow:0 0 0 3px rgba(13,77,173,.10);
+        }
+
+        .thumb-image{
+            width:100%;
+            height:100%;
+            object-fit:contain;
+        }
+
+        .main-image-panel{
+            min-height:640px;
+            border-radius:34px;
+            background:
+                    radial-gradient(circle at top right, rgba(13,77,173,.06), transparent 22%),
+                    linear-gradient(180deg, rgba(255,255,255,.76) 0%, rgba(255,255,255,.52) 100%);
+            border:1px solid rgba(255,255,255,.7);
+            padding:34px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            backdrop-filter: blur(10px);
+        }
+
+        .main-image{
+            max-width:100%;
+            max-height:560px;
+            object-fit:contain;
+        }
+
+        .image-placeholder{
+            color:var(--muted);
+            font-weight:600;
+            font-size:15px;
+        }
+
+        .summary-side{
+            padding-top:8px;
+        }
+
+        .brand-text{
+            font-size:13px;
+            color:#7b8794;
+            text-transform:uppercase;
+            letter-spacing:.08em;
+            font-weight:700;
+            margin-bottom:10px;
+        }
+
+        .product-title{
+            font-size:clamp(2rem, 2.6vw, 3.2rem);
+            line-height:1.1;
+            font-weight:800;
+            color:#111827;
+            margin-bottom:18px;
+        }
+
+        .top-meta{
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
+            align-items:center;
+            margin-bottom:22px;
+        }
+
+        .category-chip{
+            background:#eef4ff;
+            color:var(--brand);
+            border-radius:999px;
+            padding:8px 14px;
+            font-size:13px;
+            font-weight:700;
+        }
+
+        .stock-chip{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            padding:8px 14px;
+            border-radius:999px;
+            font-size:13px;
+            font-weight:700;
+        }
+
+        .stock-chip::before{
+            content:"";
+            width:8px;
+            height:8px;
+            border-radius:50%;
+            background:currentColor;
+        }
+
+        .stock-success{
+            background:var(--success-bg);
+            color:var(--success-text);
+        }
+
+        .stock-warning{
+            background:var(--warn-bg);
+            color:var(--warn-text);
+        }
+
+        .stock-danger{
+            background:var(--danger-bg);
+            color:var(--danger-text);
+        }
+
+        .price-line{
+            padding:10px 0 18px;
+            border-bottom:1px solid rgba(15,23,42,.08);
+            margin-bottom:20px;
+        }
+
+        .price-label{
+            font-size:12px;
+            text-transform:uppercase;
+            letter-spacing:.08em;
+            color:#7b8794;
+            font-weight:700;
+            margin-bottom:8px;
+        }
+
+        .price{
+            margin:0;
+            font-size:clamp(28px, 2vw, 40px);
+            font-weight:800;
+            color:#1d4ed8;
+        }
+
+        .quick-points{
+            display:grid;
+            gap:12px;
+            margin-bottom:22px;
+        }
+
+        .quick-point{
+            display:flex;
+            align-items:flex-start;
+            gap:12px;
+            color:#4b5563;
+            font-size:14px;
+            line-height:1.7;
+        }
+
+        .quick-point-icon{
+            width:36px;
+            height:36px;
+            min-width:36px;
+            border-radius:50%;
+            background:#edf4ff;
+            color:var(--brand);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:15px;
+        }
+
+        .purchase-area{
+            padding-top:2px;
+            margin-bottom:26px;
+        }
+
+        .cart-form{
+            display:flex;
+            gap:12px;
+            flex-wrap:wrap;
+            align-items:stretch;
+        }
+
+        .qty-wrap{
+            width:168px;
+            height:54px;
+            border:1px solid #d8e2ef;
+            border-radius:16px;
+            background:rgba(255,255,255,.9);
+            overflow:hidden;
+            display:flex;
+        }
+
+        .qty-btn{
+            width:46px;
+            border:0;
+            background:transparent;
+            font-size:20px;
+            font-weight:700;
+            color:#111827;
+        }
+
+        .qty-btn:hover{
+            background:#f7f9fc;
+        }
+
+        .qty-input{
+            border:0;
+            text-align:center;
+            font-size:17px;
+            font-weight:700;
+            box-shadow:none !important;
+            background:transparent;
+        }
+
+        .add-btn{
+            min-width:250px;
+            height:54px;
+            border:0;
+            border-radius:16px;
+            background:linear-gradient(135deg, var(--brand) 0%, #1e6cf0 100%);
+            font-size:17px;
+            font-weight:700;
+            box-shadow:0 10px 22px rgba(13,77,173,.16);
+        }
+
+        .add-btn:hover{
+            background:linear-gradient(135deg, var(--brand-dark) 0%, #125fdd 100%);
+        }
+
+        .details-text-block{
+            padding-top:4px;
+            max-width:720px;
+        }
+
+        .details-mini-title{
+            font-size:12px;
+            text-transform:uppercase;
+            letter-spacing:.08em;
+            color:#7b8794;
+            font-weight:700;
+            margin-bottom:10px;
+        }
+
+        .description-text{
+            color:#4b5563;
+            font-size:14px;
+            line-height:1.9;
+            margin:0;
+        }
+
+        .empty-state{
+            color:#6b7280;
+            font-size:14px;
+            margin:0;
+        }
+
+        /* SPECS / DESCRIPTION AREA */
+        .details-content{
+            padding-top:42px;
+        }
+
+        .details-content-grid{
+            display:grid;
+            grid-template-columns:minmax(0, 1.05fr) minmax(0, .95fr);
+            gap:48px;
+            align-items:start;
+        }
+
+        .content-block{
+            min-width:0;
+        }
+
+        .block-title{
+            font-size:1.45rem;
+            font-weight:800;
+            color:#111827;
+            margin-bottom:18px;
+        }
+
+        .spec-list{
+            display:flex;
+            flex-direction:column;
+            border-top:1px solid rgba(15,23,42,.08);
+        }
+
+        .spec-row{
+            display:flex;
+            justify-content:space-between;
+            gap:18px;
+            padding:14px 0;
+            border-bottom:1px solid rgba(15,23,42,.08);
+        }
+
+        .spec-name{
+            font-size:14px;
+            font-weight:700;
+            color:#111827;
+        }
+
+        .spec-value{
+            font-size:14px;
+            color:#4b5563;
+            text-align:right;
+        }
+
+        /* SECTION HEAD */
+        .section-block{
+            padding:56px 0 0;
+        }
+
+        .minimal-head{
+            text-align:center;
+            margin-bottom:28px;
+        }
+
+        .minimal-head .section-title{
+            font-size:2rem;
+            font-weight:700;
+            color:#111827;
+            margin-bottom:8px;
+        }
+
+        .minimal-head .section-desc{
+            font-size:.95rem;
+            color:#6b7280;
+            margin:0 auto;
+            max-width:520px;
+            line-height:1.6;
+        }
+
+        /* RELATED CAROUSEL */
+        .related-carousel-shell{
+            position:relative;
+        }
+
+        .related-track{
+            display:flex;
+            gap:16px;
+            overflow-x:auto;
+            scroll-behavior:smooth;
+            padding:4px 2px 14px;
+            scrollbar-width:none;
+        }
+
+        .related-track::-webkit-scrollbar{
+            display:none;
+        }
+
+        .related-slide{
+            flex:0 0 320px;
+            width:320px;
+            min-width:320px;
+        }
+
+        .related-nav{
+            position:absolute;
+            top:-66px;
+            right:0;
+            display:flex;
+            gap:10px;
+        }
+
+        .related-arrow{
+            width:42px;
+            height:42px;
+            border-radius:50%;
+            border:1px solid #dbe4ef;
+            background:#fff;
+            color:#334155;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            cursor:pointer;
+            transition:.18s ease;
+            box-shadow:0 8px 18px rgba(15,23,42,.05);
+        }
+
+        .related-arrow:hover{
+            border-color:var(--brand);
+            color:var(--brand);
+        }
+
+        /* SAME HOME PRODUCT DESIGN */
+        .latest-product-card{
+            height:100%;
+            background:#eef3fb;
+            border:1px solid rgba(15, 23, 42, 0.12);
+            box-shadow:0 6px 18px rgba(15,23,42,.05);
+            transition:.22s ease;
+            padding:22px 22px 20px;
+            display:flex;
+            flex-direction:column;
+        }
+
+        .latest-product-card:hover{
+            transform:translateY(-4px);
+            box-shadow:0 14px 30px rgba(15,23,42,.08);
+        }
+
+        .latest-product-link{
+            text-decoration:none;
+            color:inherit;
+            display:block;
+        }
+
+        .latest-product-link:hover{
+            color:inherit;
+        }
+
+        .latest-product-image-wrap{
+            height:210px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            margin-bottom:22px;
+            background:transparent;
+        }
+
+        .latest-product-image{
+            max-width:100%;
+            max-height:100%;
+            object-fit:contain;
+            display:block;
+        }
+
+        .latest-product-brand{
+            font-size:.92rem;
+            color:#6b7280;
+            margin-bottom:8px;
+        }
+
+        .latest-product-title{
+            font-size:1.05rem;
+            line-height:1.4;
+            font-weight:500;
+            color:#2b2f36;
+            min-height:58px;
+            margin-bottom:18px;
+        }
+
+        .latest-product-stock{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            padding:6px 14px;
+            border-radius:999px;
+            font-size:.9rem;
+            font-weight:700;
+            margin-bottom:18px;
+        }
+
+        .latest-product-stock.in{
+            background:#e7f4e8;
+            color:#3d7f45;
+        }
+
+        .latest-product-stock.out{
+            background:#fdecec;
+            color:#b42318;
+        }
+
+        .latest-product-stock::before{
+            content:"";
+            width:8px;
+            height:8px;
+            border-radius:50%;
+            background:currentColor;
+            display:block;
+        }
+
+        .latest-product-price{
+            font-size:1.1rem;
+            font-weight:800;
+            color:#1f2937;
+            margin-bottom:18px;
+        }
+
+        .latest-product-btn{
+            display:block;
+            width:100%;
+            border:1.5px solid #0d6efd;
+            color:#0d4dad;
+            background:transparent;
+            text-align:center;
+            padding:14px 16px;
+            font-size:1rem;
+            font-weight:700;
+            text-decoration:none;
+            transition:.2s ease;
+            margin-top:auto;
+        }
+
+        .latest-product-btn:hover:not(:disabled){
+            background:#0d4dad;
+            border-color:#0d4dad;
+            color:#fff;
+        }
+
+        .latest-product-btn:disabled{
+            opacity:.6;
+            cursor:not-allowed;
+        }
+
+        @media (max-width: 1500px){
+            .related-slide{
+                flex:0 0 300px;
+                width:300px;
+                min-width:300px;
+            }
+        }
+
+        @media (max-width: 1200px){
+            .product-grid{
+                grid-template-columns:1fr;
+                gap:30px;
+            }
+
+            .details-content-grid{
+                grid-template-columns:1fr;
+                gap:34px;
+            }
+
+            .main-image-panel{
+                min-height:520px;
+            }
+
+            .related-slide{
+                flex:0 0 280px;
+                width:280px;
+                min-width:280px;
+            }
+        }
+
+        @media (max-width: 991.98px){
+            .gallery-wrap{
+                grid-template-columns:1fr;
+            }
+
+            .thumbs-col{
+                flex-direction:row;
+                flex-wrap:wrap;
+                order:2;
+            }
+
+            .main-image-panel{
+                order:1;
+                min-height:400px;
+            }
+        }
+
+        @media (max-width: 767.98px){
+            .page-shell{
+                padding:0 14px 36px;
+            }
+
+            .details-page{
+                padding-top:18px;
+            }
+
+            .product-grid{
+                gap:24px;
+            }
+
+            .main-image-panel{
+                min-height:300px;
+                padding:18px;
+                border-radius:24px;
+            }
+
+            .main-image{
+                max-height:270px;
+            }
+
+            .thumb-box{
+                width:72px;
+                height:72px;
+                border-radius:14px;
+            }
+
+            .product-title{
+                font-size:1.9rem;
+            }
+
+            .cart-form{
+                flex-direction:column;
+            }
+
+            .qty-wrap,
+            .add-btn{
+                width:100%;
+            }
+
+            .related-slide{
+                flex:0 0 82%;
+                min-width:82%;
+            }
+
+            .related-nav{
+                display:none;
+            }
+
+            .section-block{
+                padding-top:44px;
+            }
         }
     </style>
 </head>
@@ -96,144 +705,145 @@
 
 <div th:replace="fragments/navbar"></div>
 
-<div class="container py-5">
+<div class="page-shell">
+    <div class="details-page">
 
-    <div class="mb-4">
-        <a th:href="@{/products}" class="btn btn-outline-secondary btn-sm">
-            Back to products
-        </a>
-    </div>
+        <section class="product-hero">
+            <div class="product-grid">
 
-    <div class="card details-card">
-        <div class="card-body p-4 p-lg-5">
-
-            <div class="row g-5">
-
-                <!-- LEFT SIDE -->
-                <div class="col-lg-5">
-
-                    <div class="main-image-wrapper mb-3">
-                        <img th:if="${mainImage != null}"
-                             th:src="${mainImage.imageUrl()}"
-                             th:alt="${product.name()}"
-                             class="main-image"
-                             id="mainProductImage">
-
-                        <div th:if="${mainImage == null}" class="image-placeholder" id="mainImagePlaceholder">
-                            No image available
-                        </div>
-                    </div>
-
-                    <div class="row g-2" th:if="${images != null and !#lists.isEmpty(images)}">
-                        <div class="col-4 col-sm-3" th:each="img : ${images}">
-                            <img th:src="${img.imageUrl()}"
-                                 th:alt="${product.name()}"
-                                 class="thumb-image product-thumb"
+                <div class="gallery-side">
+                    <div class="gallery-wrap">
+                        <div class="thumbs-col" th:if="${images != null and !#lists.isEmpty(images)}">
+                            <div class="thumb-box"
+                                 th:each="img : ${images}"
                                  th:attr="data-image-url=${img.imageUrl()}">
+                                <img th:src="${img.imageUrl()}"
+                                     th:alt="${product.name()}"
+                                     class="thumb-image product-thumb">
+                            </div>
+                        </div>
+
+                        <div class="main-image-panel">
+                            <img th:if="${mainImage != null}"
+                                 th:src="${mainImage.imageUrl()}"
+                                 th:alt="${product.name()}"
+                                 class="main-image"
+                                 id="mainProductImage">
+
+                            <div th:if="${mainImage == null}" class="image-placeholder" id="mainImagePlaceholder">
+                                No image available
+                            </div>
                         </div>
                     </div>
-
                 </div>
 
-                <!-- RIGHT SIDE -->
-                <div class="col-lg-7">
+                <div class="summary-side">
+                    <div class="brand-text" th:text="${brandName}">Brand</div>
 
-                    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-                        <span class="badge text-bg-primary"
+                    <h1 class="product-title" th:text="${product.name()}">Product name</h1>
+
+                    <div class="top-meta">
+                        <span class="category-chip"
                               th:text="${product.categoryName()} ?: 'Uncategorized'">
                             Category
                         </span>
 
-                        <span class="badge stock-badge"
-                              th:classappend="${product.quantity() != null and product.quantity() > 0} ? ' text-bg-success' : ' text-bg-danger'"
-                              th:text="${product.quantity() != null and product.quantity() > 0} ? 'In stock' : 'Out of stock'">
+                        <span th:if="${product.quantity() != null and product.quantity() > 10}"
+                              class="stock-chip stock-success">
                             In stock
                         </span>
 
-                        <span class="badge text-bg-secondary"
-                              th:if="${product.isActive() != null and !product.isActive()}">
-                            Inactive
+                        <span th:if="${product.quantity() != null and product.quantity() <= 10 and product.quantity() > 5}"
+                              class="stock-chip stock-warning">
+                            Limited stock
+                        </span>
+
+                        <span th:if="${product.quantity() != null and product.quantity() <= 5 and product.quantity() > 0}"
+                              class="stock-chip stock-warning">
+                            Only a few left
+                        </span>
+
+                        <span th:if="${product.quantity() == null or product.quantity() <= 0}"
+                              class="stock-chip stock-danger">
+                            Out of stock
                         </span>
                     </div>
 
-                    <h1 class="mb-3" th:text="${product.name()}">Product name</h1>
-
-                    <div class="price mb-4" th:text="${#numbers.formatDecimal(product.price(), 1, 2)} + ' BGN'">
-                        0.00 BGN
-                    </div>
-
-                    <div class="mb-4">
-                        <div class="section-title">Description</div>
-
-                        <p class="text-muted mb-0"
-                           th:if="${product.description() != null and !#strings.isEmpty(product.description())}"
-                           th:text="${product.description()}">
-                            Product description
-                        </p>
-
-                        <p class="text-muted mb-0"
-                           th:if="${product.description() == null or #strings.isEmpty(product.description())}">
-                            No description available for this product.
+                    <div class="price-line">
+                        <div class="price-label">Price</div>
+                        <p class="price"
+                           th:text="${#numbers.formatDecimal(product.price(), 1, 2)} + ' EUR'">
+                            0.00 EUR
                         </p>
                     </div>
 
-                    <div class="mb-4">
-                        <div class="section-title">Product Information</div>
+                    <div class="quick-points">
+                        <div class="quick-point">
+                            <div class="quick-point-icon">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+                            <div>Reliable equipment selected for home, office and professional use.</div>
+                        </div>
 
-                        <ul class="list-group list-group-flush rounded overflow-hidden">
-                            <li class="list-group-item d-flex justify-content-between">
-                                <span>Category</span>
-                                <strong th:text="${product.categoryName()} ?: 'Uncategorized'">Category</strong>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between">
-                                <span>Available Quantity</span>
-                                <strong th:text="${product.quantity()} ?: 0">0</strong>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between">
-                                <span>Status</span>
-                                <strong th:text="${product.isActive()} ? 'Active' : 'Inactive'">Active</strong>
-                            </li>
-                        </ul>
+                        <div class="quick-point">
+                            <div class="quick-point-icon">
+                                <i class="bi bi-truck"></i>
+                            </div>
+                            <div>Fast order processing and secure delivery for all available products.</div>
+                        </div>
                     </div>
 
-                    <div class="d-flex flex-column flex-sm-row gap-2 mb-4">
-                        <form method="post" action="/cart/add" class="d-flex gap-2 flex-grow-1">
+                    <div class="purchase-area">
+                        <form method="post" action="/cart/add" class="cart-form">
                             <input type="hidden" name="productId" th:value="${product.id()}"/>
 
-                            <input type="number"
-                                   name="qty"
-                                   value="1"
-                                   min="1"
-                                   class="form-control"
-                                   style="max-width: 120px;"
-                                   th:attr="max=${product.quantity() != null ? product.quantity() : null}">
+                            <div class="qty-wrap">
+                                <button type="button" class="qty-btn" id="decreaseQty">−</button>
+                                <input type="number"
+                                       id="qtyInput"
+                                       name="qty"
+                                       value="1"
+                                       min="1"
+                                       class="form-control qty-input"
+                                       th:attr="max=${product.quantity() != null ? product.quantity() : null}">
+                                <button type="button" class="qty-btn" id="increaseQty">+</button>
+                            </div>
 
-                            <button class="btn btn-primary flex-grow-1"
+                            <button class="btn btn-primary add-btn"
                                     th:disabled="${product.quantity() == null or product.quantity() <= 0 or (product.isActive() != null and !product.isActive())}">
                                 Add to cart
                             </button>
                         </form>
                     </div>
 
+                    <div class="details-text-block">
+                        <div class="details-mini-title">About this product</div>
+
+                        <p class="description-text"
+                           th:if="${product.description() != null and !#strings.isEmpty(product.description())}"
+                           th:text="${product.description()}">
+                            Product description
+                        </p>
+
+                        <p class="empty-state"
+                           th:if="${product.description() == null or #strings.isEmpty(product.description())}">
+                            No description available for this product.
+                        </p>
+                    </div>
                 </div>
+
             </div>
+        </section>
 
-            <!-- SPECIFICATIONS -->
-            <div class="mt-5">
-                <h2 class="section-title">Specifications</h2>
+        <section class="details-content">
+            <div class="details-content-grid">
+                <div class="content-block">
+                    <h2 class="block-title">Specifications</h2>
 
-                <div th:if="${attributes != null and !#lists.isEmpty(attributes)}" class="table-responsive">
-                    <table class="table table-bordered bg-white spec-table align-middle">
-                        <thead class="table-light">
-                        <tr>
-                            <th>Attribute</th>
-                            <th>Value</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="attr : ${attributes}">
-                            <td class="spec-name" th:text="${attr.attributeName()}">Attribute name</td>
-                            <td>
+                    <div th:if="${attributes != null and !#lists.isEmpty(attributes)}" class="spec-list">
+                        <div class="spec-row" th:each="attr : ${attributes}">
+                            <div class="spec-name" th:text="${attr.attributeName()}">Attribute</div>
+                            <div class="spec-value">
                                 <span th:if="${attr.dataType() != null and attr.dataType().name() == 'TEXT'}"
                                       th:text="${attr.valueText()}">
                                     Value
@@ -248,56 +858,240 @@
                                       th:text="${attr.valueBoolean()} ? 'Yes' : 'No'">
                                     Yes
                                 </span>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                <div th:if="${attributes == null or #lists.isEmpty(attributes)}" class="alert alert-secondary mb-0">
-                    No specifications available for this product.
+                    <p th:if="${attributes == null or #lists.isEmpty(attributes)}" class="empty-state">
+                        No specifications available for this product.
+                    </p>
                 </div>
             </div>
+        </section>
 
-        </div>
+        <section class="section-block"
+                 th:if="${sameCategoryProducts != null and !#lists.isEmpty(sameCategoryProducts)}">
+            <div class="container-fluid px-0">
+                <div class="minimal-head">
+                    <h2 class="section-title">Similar products</h2>
+                    <p class="section-desc">More products from the same category.</p>
+                </div>
+
+                <div class="related-carousel-shell">
+                    <div class="related-nav">
+                        <button class="related-arrow" type="button" onclick="scrollRelated('sameCategoryScroll', -1100)">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <button class="related-arrow" type="button" onclick="scrollRelated('sameCategoryScroll', 1100)">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="related-track" id="sameCategoryScroll">
+                        <div class="related-slide"
+                             th:each="p : ${sameCategoryProducts}">
+                            <div class="latest-product-card">
+
+                                <a th:href="@{/products/{id}(id=${p.id()})}" class="latest-product-link">
+                                    <div class="latest-product-image-wrap">
+                                        <img class="latest-product-image"
+                                             th:if="${sameCategoryProductImages[p.id()]} != null"
+                                             th:src="${sameCategoryProductImages[p.id()]}"
+                                             th:alt="${p.name()}">
+                                        <div th:if="${sameCategoryProductImages[p.id()]} == null"
+                                             class="text-muted small">
+                                            No image
+                                        </div>
+                                    </div>
+
+                                    <div class="latest-product-brand"
+                                         th:text="${p.categoryName() != null ? p.categoryName() : 'EchtaTech'}">
+                                        Category
+                                    </div>
+
+                                    <div class="latest-product-title"
+                                         th:text="${p.name()}">
+                                        Product name
+                                    </div>
+
+                                    <div th:if="${p.quantity() != null and p.quantity() > 0}"
+                                         class="latest-product-stock in">
+                                        IN STOCK
+                                    </div>
+
+                                    <div th:if="${p.quantity() == null or p.quantity() <= 0}"
+                                         class="latest-product-stock out">
+                                        OUT OF STOCK
+                                    </div>
+
+                                    <div class="latest-product-price"
+                                         th:text="${#numbers.formatDecimal(p.price(),1,2)} + ' EUR'">
+                                        0.00 EUR
+                                    </div>
+                                </a>
+
+                                <form method="post" action="/cart/add" class="mt-auto">
+                                    <input type="hidden" name="productId" th:value="${p.id()}"/>
+                                    <input type="hidden" name="qty" value="1"/>
+
+                                    <button type="submit"
+                                            class="latest-product-btn"
+                                            th:disabled="${p.quantity() == null or p.quantity() <= 0}">
+                                        Add to cart
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-block"
+                 th:if="${sameBrandProducts != null and !#lists.isEmpty(sameBrandProducts)}">
+            <div class="container-fluid px-0">
+                <div class="minimal-head">
+                    <h2 class="section-title">More from this brand</h2>
+                    <p class="section-desc" th:text="${brandName != null ? brandName : 'Brand products'}">Brand</p>
+                </div>
+
+                <div class="related-carousel-shell">
+                    <div class="related-nav">
+                        <button class="related-arrow" type="button" onclick="scrollRelated('sameBrandScroll', -1100)">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <button class="related-arrow" type="button" onclick="scrollRelated('sameBrandScroll', 1100)">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="related-track" id="sameBrandScroll">
+                        <div class="related-slide"
+                             th:each="p : ${sameBrandProducts}">
+                            <div class="latest-product-card">
+
+                                <a th:href="@{/products/{id}(id=${p.id()})}" class="latest-product-link">
+                                    <div class="latest-product-image-wrap">
+                                        <img class="latest-product-image"
+                                             th:if="${sameBrandProductImages[p.id()]} != null"
+                                             th:src="${sameBrandProductImages[p.id()]}"
+                                             th:alt="${p.name()}">
+                                        <div th:if="${sameBrandProductImages[p.id()]} == null"
+                                             class="text-muted small">
+                                            No image
+                                        </div>
+                                    </div>
+
+                                    <div class="latest-product-brand"
+                                         th:text="${brandName != null ? brandName : 'Brand'}">
+                                        Brand
+                                    </div>
+
+                                    <div class="latest-product-title"
+                                         th:text="${p.name()}">
+                                        Product name
+                                    </div>
+
+                                    <div th:if="${p.quantity() != null and p.quantity() > 0}"
+                                         class="latest-product-stock in">
+                                        IN STOCK
+                                    </div>
+
+                                    <div th:if="${p.quantity() == null or p.quantity() <= 0}"
+                                         class="latest-product-stock out">
+                                        OUT OF STOCK
+                                    </div>
+
+                                    <div class="latest-product-price"
+                                         th:text="${#numbers.formatDecimal(p.price(),1,2)} + ' EUR'">
+                                        0.00 EUR
+                                    </div>
+                                </a>
+
+                                <form method="post" action="/cart/add" class="mt-auto">
+                                    <input type="hidden" name="productId" th:value="${p.id()}"/>
+                                    <input type="hidden" name="qty" value="1"/>
+
+                                    <button type="submit"
+                                            class="latest-product-btn"
+                                            th:disabled="${p.quantity() == null or p.quantity() <= 0}">
+                                        Add to cart
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </div>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const mainImage = document.getElementById("mainProductImage");
         const placeholder = document.getElementById("mainImagePlaceholder");
-        const thumbs = document.querySelectorAll(".product-thumb");
+        const thumbBoxes = document.querySelectorAll(".thumb-box");
+        const qtyInput = document.getElementById("qtyInput");
+        const decreaseQty = document.getElementById("decreaseQty");
+        const increaseQty = document.getElementById("increaseQty");
 
-        if (!mainImage || thumbs.length === 0) {
-            return;
+        if (mainImage && thumbBoxes.length > 0) {
+            thumbBoxes.forEach((box) => {
+                const img = box.querySelector(".product-thumb");
+                const newUrl = box.getAttribute("data-image-url");
+
+                if (img && img.getAttribute("src") === mainImage.getAttribute("src")) {
+                    box.classList.add("active-thumb");
+                }
+
+                box.addEventListener("click", function () {
+                    if (!newUrl) return;
+
+                    mainImage.setAttribute("src", newUrl);
+
+                    if (placeholder) {
+                        placeholder.style.display = "none";
+                    }
+
+                    thumbBoxes.forEach(t => t.classList.remove("active-thumb"));
+                    this.classList.add("active-thumb");
+                });
+            });
         }
 
-        thumbs.forEach((thumb) => {
-            if (thumb.getAttribute("data-image-url") === mainImage.getAttribute("src")) {
-                thumb.classList.add("active-thumb");
-            }
+        if (qtyInput && decreaseQty && increaseQty) {
+            decreaseQty.addEventListener("click", function () {
+                let current = parseInt(qtyInput.value || "1");
+                let min = parseInt(qtyInput.min || "1");
 
-            thumb.addEventListener("click", function () {
-                const newUrl = this.getAttribute("data-image-url");
-
-                if (!newUrl) {
-                    return;
+                if (current > min) {
+                    qtyInput.value = current - 1;
                 }
-
-                mainImage.setAttribute("src", newUrl);
-
-                if (placeholder) {
-                    placeholder.style.display = "none";
-                }
-
-                thumbs.forEach(t => t.classList.remove("active-thumb"));
-                this.classList.add("active-thumb");
             });
-        });
+
+            increaseQty.addEventListener("click", function () {
+                let current = parseInt(qtyInput.value || "1");
+                let max = qtyInput.max ? parseInt(qtyInput.max) : null;
+
+                if (max === null || current < max) {
+                    qtyInput.value = current + 1;
+                }
+            });
+        }
     });
+
+    function scrollRelated(id, amount) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.scrollBy({ left: amount, behavior: 'smooth' });
+        }
+    }
 </script>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>
