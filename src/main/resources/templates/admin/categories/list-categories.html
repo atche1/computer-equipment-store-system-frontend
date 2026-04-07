@@ -5,288 +5,749 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Admin • Categories</title>
 
-  <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
   <style>
-    :root{
-      --brand: #0b5ed7;
-      --bg: #f6f7fb;
-      --sidebar: #0b1220;
-    }
-    body{ background: var(--bg); }
-    .sidebar{
-      min-height: 100vh;
-      background: var(--sidebar);
-    }
-    .sidebar .nav-link{
-      color: rgba(255,255,255,.78);
-      border-radius: .9rem;
-      padding: .6rem .8rem;
-    }
-    .sidebar .nav-link.active,
-    .sidebar .nav-link:hover{
-      color: #fff;
-      background: rgba(255,255,255,.08);
-    }
-    .brand-pill{
-      display:inline-flex;
-      align-items:center;
-      gap:.5rem;
-      padding:.25rem .6rem;
-      border-radius:999px;
-      font-size:.8rem;
-      background: rgba(11,94,215,.15);
-      border: 1px solid rgba(255,255,255,.12);
-      color:#d6e6ff;
-    }
-    .card{
-      border: 0;
-      border-radius: 1rem;
-      box-shadow: 0 10px 28px rgba(10, 20, 40, .06);
-    }
-    .table thead th{
-      background:#f2f5ff;
-      border-bottom:0;
-      font-weight:600;
-      color:#223;
-      white-space: nowrap;
-    }
-    .table td, .table th{ vertical-align: middle; }
-    .search-wrap{ position: relative; }
-    .search-icon{
-      position:absolute;
-      left:.9rem;
-      top:50%;
-      transform:translateY(-50%);
-      opacity:.55;
-      pointer-events:none;
-    }
-    .search-input{
-      padding-left: 2.4rem;
-      border-radius: 999px;
-    }
-    .rounded-pill-btn{ border-radius: 999px; }
-    .badge-soft{
-      background: #e7f1ff;
-      color: var(--brand);
-      border: 1px solid rgba(11,94,215,.25);
-    }
-  </style>
+        :root{
+            --main-blue:#0d4dad;
+            --main-blue-dark:#0a3d8c;
+            --page-bg:#f4f7fb;
+            --surface:#ffffff;
+            --surface-soft:#f8fbff;
+            --line:#dbe5f0;
+            --line-strong:#c8d7e8;
+            --text:#1f2937;
+            --muted:#6b7280;
+            --sidebar:#0f2747;
+            --sidebar-hover:rgba(255,255,255,.10);
+            --success-bg:#e9f8ef;
+            --success-text:#1f7a45;
+            --danger-text:#be123c;
+            --shadow:0 14px 34px rgba(15, 23, 42, .08);
+        }
+
+        html, body{
+            margin:0;
+            padding:0;
+            background:var(--page-bg);
+            color:var(--text);
+            font-family:Arial, sans-serif;
+        }
+
+        .admin-shell{
+            min-height:100vh;
+            padding-left:0 !important;
+            padding-right:0 !important;
+        }
+
+        .admin-layout-row{
+            min-height:100vh;
+            align-items:stretch;
+            margin-left:0;
+            margin-right:0;
+        }
+
+        .admin-sidebar-col{
+            padding-left:0 !important;
+            padding-right:0 !important;
+            display:flex;
+        }
+
+        .admin-sidebar{
+            width:100%;
+            min-height:100%;
+            background:linear-gradient(180deg, var(--sidebar) 0%, #0b1d36 100%);
+            color:#fff;
+            padding:24px 18px;
+            display:flex;
+            flex-direction:column;
+        }
+
+        .admin-brand{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            margin-bottom:28px;
+        }
+
+        .admin-brand-badge{
+            width:46px;
+            height:46px;
+            border-radius:14px;
+            background:rgba(255,255,255,.12);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:20px;
+            box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+        }
+
+        .admin-brand-title{
+            font-size:1rem;
+            font-weight:700;
+            line-height:1.2;
+        }
+
+        .admin-brand-subtitle{
+            font-size:.82rem;
+            color:rgba(255,255,255,.72);
+        }
+
+        .admin-menu-title{
+            font-size:.78rem;
+            letter-spacing:.08em;
+            text-transform:uppercase;
+            color:rgba(255,255,255,.48);
+            margin:18px 10px 10px;
+        }
+
+        .admin-nav{
+            display:flex;
+            flex-direction:column;
+            gap:6px;
+        }
+
+        .admin-nav .nav-link{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            color:rgba(255,255,255,.82);
+            border-radius:14px;
+            padding:12px 14px;
+            font-weight:600;
+            transition:all .18s ease;
+        }
+
+        .admin-nav .nav-link i{
+            font-size:1rem;
+            opacity:.9;
+        }
+
+        .admin-nav .nav-link:hover{
+            color:#fff;
+            background:var(--sidebar-hover);
+        }
+
+        .admin-nav .nav-link.active{
+            color:#fff;
+            background:linear-gradient(90deg, rgba(13,77,173,.95), rgba(13,77,173,.72));
+            box-shadow:0 10px 22px rgba(13,77,173,.22);
+        }
+
+        .admin-sidebar-footer{
+            margin-top:auto;
+            padding-top:18px;
+            border-top:1px solid rgba(255,255,255,.12);
+            color:rgba(255,255,255,.70);
+            font-size:.92rem;
+        }
+
+        .admin-sidebar-footer strong{
+            color:#fff;
+        }
+
+        .admin-main{
+            padding:28px;
+        }
+
+        .page-head{
+            display:flex;
+            align-items:flex-start;
+            justify-content:space-between;
+            gap:16px;
+            margin-bottom:22px;
+            flex-wrap:wrap;
+        }
+
+        .eyebrow{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            padding:7px 12px;
+            border-radius:999px;
+            background:#eaf2ff;
+            color:var(--main-blue);
+            font-weight:700;
+            font-size:.82rem;
+            margin-bottom:10px;
+        }
+
+        .page-title{
+            margin:0;
+            font-size:2rem;
+            font-weight:700;
+            line-height:1.15;
+        }
+
+        .page-subtitle{
+            margin-top:8px;
+            color:var(--muted);
+            font-size:1rem;
+        }
+
+        .stats-row{
+            display:grid;
+            grid-template-columns:repeat(3, minmax(0, 1fr));
+            gap:14px;
+            margin-bottom:20px;
+        }
+
+        .stat-box{
+            background:linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+            border:1px solid var(--line);
+            border-radius:18px;
+            padding:18px 18px 16px;
+            box-shadow:0 10px 24px rgba(15,23,42,.04);
+        }
+
+        .stat-label{
+            font-size:.88rem;
+            color:var(--muted);
+            margin-bottom:8px;
+        }
+
+        .stat-value{
+            font-size:1.55rem;
+            font-weight:700;
+            line-height:1;
+        }
+
+        .btn-admin-primary{
+            background:var(--main-blue);
+            border-color:var(--main-blue);
+            color:#fff;
+            border-radius:12px;
+            padding:11px 18px;
+            font-weight:700;
+        }
+
+        .btn-admin-primary:hover{
+            background:var(--main-blue-dark);
+            border-color:var(--main-blue-dark);
+            color:#fff;
+        }
+
+        .btn-admin-light{
+            background:#fff;
+            border:1px solid var(--line-strong);
+            color:var(--text);
+            border-radius:12px;
+            padding:11px 16px;
+            font-weight:600;
+        }
+
+        .btn-admin-light:hover{
+            background:#f8fbff;
+            border-color:#b9cbdf;
+            color:var(--text);
+        }
+
+        .admin-card{
+            background:var(--surface);
+            border:1px solid rgba(219,229,240,.95);
+            border-radius:22px;
+            box-shadow:var(--shadow);
+            overflow:hidden;
+        }
+
+        .filters-card{
+            margin-bottom:20px;
+        }
+
+        .filters-card .card-body{
+            padding:22px;
+        }
+
+        .section-title{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            margin-bottom:16px;
+        }
+
+        .section-title h2{
+            margin:0;
+            font-size:1.08rem;
+            font-weight:700;
+        }
+
+        .section-title .small-note{
+            color:var(--muted);
+            font-size:.92rem;
+        }
+
+        .form-label{
+            font-size:.9rem;
+            font-weight:600;
+            color:#334155;
+            margin-bottom:8px;
+        }
+
+        .form-control,
+        .form-select{
+            min-height:48px;
+            border-radius:14px;
+            border:1px solid var(--line-strong);
+            background:#fff;
+            box-shadow:none;
+        }
+
+        .form-control:focus,
+        .form-select:focus{
+            border-color:#9fc0ef;
+            box-shadow:0 0 0 .2rem rgba(13,77,173,.10);
+        }
+
+        .search-wrap{
+            position:relative;
+        }
+
+        .search-wrap .bi-search{
+            position:absolute;
+            left:16px;
+            top:50%;
+            transform:translateY(-50%);
+            color:#8aa0b8;
+            z-index:2;
+        }
+
+        .search-input{
+            padding-left:44px;
+        }
+
+        .filters-actions{
+            display:flex;
+            align-items:end;
+            gap:10px;
+            height:100%;
+        }
+
+        .table-card .card-header{
+            background:#fff;
+            border-bottom:1px solid var(--line);
+            padding:18px 22px;
+        }
+
+        .table-card .card-header h2{
+            margin:0;
+            font-size:1.08rem;
+            font-weight:700;
+        }
+
+        .table-card .card-header p{
+            margin:6px 0 0;
+            color:var(--muted);
+            font-size:.92rem;
+        }
+
+        .table-responsive{
+            overflow-x:auto;
+        }
+
+        .table{
+            margin-bottom:0;
+        }
+
+        .table thead th{
+            background:#f6f9fd;
+            color:#3b4a5c;
+            font-size:.88rem;
+            font-weight:700;
+            border-bottom:1px solid var(--line);
+            padding:15px 16px;
+            white-space:nowrap;
+        }
+
+        .table tbody td{
+            padding:16px;
+            vertical-align:middle;
+            border-color:#edf2f7;
+        }
+
+        .table tbody tr:hover{
+            background:#fbfdff;
+        }
+
+        .id-badge{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            min-width:54px;
+            padding:7px 10px;
+            border-radius:999px;
+            background:#eef4ff;
+            color:var(--main-blue);
+            font-weight:700;
+            font-size:.87rem;
+        }
+
+        .category-name{
+            font-weight:700;
+            color:#1f2937;
+            margin-bottom:4px;
+        }
+
+        .category-note{
+            color:var(--muted);
+            font-size:.88rem;
+        }
+
+        .slug-badge{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            padding:8px 12px;
+            border-radius:999px;
+            background:#eef5ff;
+            border:1px solid #d7e6fb;
+            color:var(--main-blue);
+            font-weight:600;
+            font-size:.87rem;
+        }
+
+        .status-badge{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            padding:8px 12px;
+            border-radius:999px;
+            font-weight:700;
+            font-size:.84rem;
+        }
+
+        .status-badge.active{
+            background:var(--success-bg);
+            color:var(--success-text);
+        }
+
+        .status-badge.inactive{
+            background:#eef2f7;
+            color:#607086;
+        }
+
+        .actions-wrap{
+            display:flex;
+            flex-wrap:wrap;
+            justify-content:flex-end;
+            gap:8px;
+            min-width:220px;
+        }
+
+        .btn-table{
+            border-radius:999px;
+            padding:8px 13px;
+            font-size:.86rem;
+            font-weight:600;
+        }
+
+        .btn-table-primary{
+            border:1px solid #bcd2f1;
+            background:#eef5ff;
+            color:var(--main-blue);
+        }
+
+        .btn-table-primary:hover{
+            background:#dfebff;
+            color:var(--main-blue-dark);
+            border-color:#aac5ed;
+        }
+
+        .btn-table-neutral{
+            border:1px solid #d9e3ee;
+            background:#fff;
+            color:#415468;
+        }
+
+        .btn-table-neutral:hover{
+            background:#f8fbff;
+            color:#22384f;
+        }
+
+        .btn-table-danger{
+            border:1px solid #ffd3db;
+            background:#fff5f6;
+            color:var(--danger-text);
+        }
+
+        .btn-table-danger:hover{
+            background:#ffe9ed;
+            color:#9f1239;
+        }
+
+        .empty-state{
+            padding:56px 20px;
+            text-align:center;
+            color:var(--muted);
+        }
+
+        .empty-state-icon{
+            width:72px;
+            height:72px;
+            margin:0 auto 14px;
+            border-radius:22px;
+            background:#eef5ff;
+            color:var(--main-blue);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:1.5rem;
+        }
+
+        .pagination-bar{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:14px;
+            padding:18px 22px;
+            border-top:1px solid var(--line);
+            background:#fff;
+        }
+
+        .pagination-meta{
+            color:var(--muted);
+            font-size:.93rem;
+        }
+
+        .pagination-actions{
+            display:flex;
+            gap:10px;
+        }
+
+        @media (max-width: 1199px){
+            .admin-layout-row{
+                min-height:auto;
+            }
+
+            .admin-sidebar-col{
+                display:block;
+            }
+
+            .admin-sidebar{
+                min-height:auto;
+            }
+        }
+
+        @media (max-width: 991px){
+            .admin-main{
+                padding:18px;
+            }
+
+            .page-head{
+                flex-direction:column;
+                align-items:stretch;
+            }
+
+            .stats-row{
+                grid-template-columns:1fr;
+            }
+
+            .pagination-bar{
+                flex-direction:column;
+                align-items:flex-start;
+            }
+
+            .filters-actions{
+                flex-direction:column;
+                align-items:stretch;
+            }
+        }
+    </style>
 </head>
 
 <body>
-<div class="container-fluid">
-  <div class="row g-0">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 
-    <!-- SIDEBAR -->
-    <aside class="col-12 col-lg-2 sidebar p-3">
-      <div class="d-flex align-items-center justify-content-between mb-4">
-        <div class="text-white fw-semibold">
-          Admin Panel
-          <span class="brand-pill ms-2">Computer Store</span>
-        </div>
-      </div>
+<div class="container-fluid admin-shell px-0">
+  <div class="row g-0 admin-layout-row">
 
-      <nav class="nav flex-column gap-1">
-        <a class="nav-link active" th:href="@{/categories}">Categories</a>
-        <a class="nav-link" th:href="@{/attributes}">Attributes</a>
-        <a class="nav-link"  th:href="@{/products}">Products</a>
-        <a class="nav-link" href="#">Orders</a>
-        <a class="nav-link" href="#">Customers</a>
-        <a class="nav-link" href="#">Settings</a>
-      </nav>
-
-      <hr class="border-light opacity-25 my-4">
-
-      <div class="text-white-50 small">
-        Logged in as:
-        <span class="text-white" th:text="${#authentication?.name}">admin</span>
-      </div>
+    <aside class="col-12 col-xl-2 p-0 admin-sidebar-col">
+      <div class="h-100"
+           th:replace="~{fragments/admin-sidebar :: adminSidebar(active='categories')}"></div>
     </aside>
 
-    <!-- MAIN -->
-    <main class="col-12 col-lg-10 p-3 p-lg-4">
-
-      <!-- PAGE TITLE -->
-      <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3">
+    <main class="col-12 col-xl-10 admin-main">
+      <div class="page-head">
         <div>
-          <h1 class="h3 mb-1">Categories</h1>
-          <div class="text-secondary">Manage your catalog categories.</div>
+          <div class="eyebrow">
+            <i class="bi bi-diagram-3"></i>
+            Catalog management
+          </div>
+          <h1 class="page-title">Categories</h1>
+          <div class="page-subtitle">
+            Manage the category structure of your product catalog.
+          </div>
         </div>
 
-        <div class="d-flex gap-2">
-          <a class="btn btn-primary rounded-pill-btn px-4"
-             th:href="@{/add-category}">
-            + New category
-          </a>
-        </div>
+        <a class="btn btn-admin-primary" th:href="@{/add-category}">
+          <i class="bi bi-plus-lg me-1"></i>
+          New category
+        </a>
       </div>
 
-      <!-- FILTERS -->
-      <div class="card mb-3">
+      <div class="admin-card filters-card">
         <div class="card-body">
-          <form class="row g-2 align-items-end" method="get" th:action="@{/categories}">
+          <div class="section-title">
+            <h2>Filter categories</h2>
+            <div class="small-note">Search and filter categories by name and status.</div>
+          </div>
 
-            <!-- Search -->
-            <div class="col-12 col-md-6">
-              <label class="form-label mb-1">Search</label>
+          <form class="row g-3 align-items-end" method="get" th:action="@{/categories}">
+            <div class="col-12 col-lg-6">
+              <label class="form-label">Search</label>
               <div class="search-wrap">
-                <span class="search-icon">🔎</span>
+                <i class="bi bi-search"></i>
                 <input class="form-control search-input"
                        type="text"
                        name="q"
-                       placeholder="Search by name..."
+                       placeholder="Search by category name..."
                        th:value="${q}">
               </div>
             </div>
 
-            <!-- Status -->
-            <div class="col-12 col-md-2">
-              <label class="form-label mb-1">Status</label>
-              <select class="form-select rounded-pill-btn" name="isActive">
-                <option th:selected="${isActive == null}" value="">All</option>
-                <option th:selected="${isActive != null and isActive}" value="true">Active</option>
-                <option th:selected="${isActive != null and !isActive}" value="false">Inactive</option>
+            <div class="col-12 col-md-4 col-lg-2">
+              <label class="form-label">Status</label>
+              <select class="form-select" name="isActive">
+                <option value="" th:selected="${isActive == null}">All</option>
+                <option value="true" th:selected="${isActive != null and isActive}">Active</option>
+                <option value="false" th:selected="${isActive != null and !isActive}">Inactive</option>
               </select>
             </div>
 
-            <!-- Size -->
-            <div class="col-12 col-md-2">
-              <label class="form-label mb-1">Size</label>
-              <select class="form-select rounded-pill-btn" name="size">
-                <option th:selected="${size == 5}" value="5">5</option>
-                <option th:selected="${size == 10}" value="10">10</option>
-                <option th:selected="${size == 20}" value="20">20</option>
+            <div class="col-12 col-md-4 col-lg-2">
+              <label class="form-label">Size</label>
+              <select class="form-select" name="size">
+                <option value="5" th:selected="${size == 5}">5</option>
+                <option value="10" th:selected="${size == 10}">10</option>
+                <option value="20" th:selected="${size == 20}">20</option>
               </select>
             </div>
 
-            <!-- Keep sort + reset page when applying filters -->
             <input type="hidden" name="sort" th:value="${sort}" />
             <input type="hidden" name="page" value="0" />
 
-            <!-- Buttons -->
-            <div class="col-12 col-md-2">
-              <div class="d-grid gap-2">
-                <button type="submit"
-                        class="btn btn-outline-primary rounded-pill-btn">
+            <div class="col-12 col-lg-2">
+              <div class="filters-actions">
+                <button type="submit" class="btn btn-admin-primary w-100">
+                  <i class="bi bi-funnel me-1"></i>
                   Apply
                 </button>
-                <a class="btn btn-outline-secondary rounded-pill-btn"
-                   th:href="@{/categories}">
+                <a class="btn btn-admin-light w-100" th:href="@{/categories}">
                   Reset
                 </a>
               </div>
             </div>
-
-            <!-- Total -->
-            <div class="col-12 col-md-12 text-md-end">
-              <div class="text-secondary small">
-                Total:
-                <strong th:text="${page != null ? page.totalElements : #lists.size(categories)}">0</strong>
-              </div>
-            </div>
-
           </form>
         </div>
       </div>
 
-      <!-- TABLE -->
-      <div class="card">
-        <div class="card-body p-0">
-          <div class="table-responsive">
-            <table class="table table-hover mb-0">
-              <thead>
-              <tr>
-                <th class="ps-3" style="width:90px;">ID</th>
-                <th>Name</th>
-                <th>Slug</th>
-                <th style="width:140px;">Status</th>
-                <th class="text-end pe-3" style="width:160px;">Actions</th>
-              </tr>
-              </thead>
-              <tbody>
-
-              <tr th:if="${#lists.isEmpty(categories)}">
-                <td colspan="5" class="text-center py-5 text-secondary">
-                  No categories found.
-                </td>
-              </tr>
-
-              <tr th:each="category : ${categories}">
-                <td class="ps-3 fw-semibold" th:text="${category.id}">1</td>
-
-                <td>
-                  <div class="fw-semibold" th:text="${category.name}">Category name</div>
-                  <div class="text-secondary small">Catalog category</div>
-                </td>
-
-                <td>
-                  <span class="badge badge-soft rounded-pill"
-                        th:text="${category.slug}">slug</span>
-                </td>
-
-                <td>
-                  <span th:if="${category.active}"
-                        class="badge text-bg-success rounded-pill">Active</span>
-                  <span th:unless="${category.active}"
-                        class="badge text-bg-secondary rounded-pill">Inactive</span>
-                </td>
-
-                <td class="text-end pe-3">
-                  <div class="d-inline-flex gap-2">
-                    <a class="btn btn-sm btn-outline-primary rounded-pill-btn"
-                       th:href="@{/edit-category/{id}(id=${category.id})}">
-                      Edit
-                    </a>
-                    <a class="btn btn-sm btn-outline-secondary rounded-pill-btn"
-                       th:href="@{/categories/{id}/attributes(id=${category.id})}">
-                      Attributes
-                    </a>
-                    <form th:action="@{/delete-category/{id}(id=${category.id})}"
-                          method="post"
-                          class="d-inline"
-                          onsubmit="return confirm('Сигурна ли си, че искаш да изтриеш тази категория?');">
-                      <button type="submit"
-                              class="btn btn-sm btn-outline-danger rounded-pill-btn">
-                        Delete
-                      </button>
-                    </form>
-                  </div>
-                </td>
-
-              </tr>
-
-              </tbody>
-            </table>
-          </div>
+      <div class="admin-card table-card">
+        <div class="card-header">
+          <h2>Category list</h2>
+          <p>Quick access to edit, manage attributes and remove categories.</p>
         </div>
 
-        <!-- PAGER -->
-        <div class="card-footer bg-white border-0"
-             th:if="${page != null}">
-          <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+            <tr>
+              <th style="width:100px;">ID</th>
+              <th>Name</th>
+              <th style="width:180px;">Slug</th>
+              <th style="width:140px;">Status</th>
+              <th class="text-end" style="width:240px;">Actions</th>
+            </tr>
+            </thead>
 
-            <div class="text-secondary small">
-              Page <strong th:text="${page.number + 1}">1</strong>
-              / <strong th:text="${page.totalPages}">1</strong>
-              • Total: <strong th:text="${page.totalElements}">0</strong>
-            </div>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(categories)}">
+              <td colspan="5">
+                <div class="empty-state">
+                  <div class="empty-state-icon">
+                    <i class="bi bi-diagram-3"></i>
+                  </div>
+                  <div class="fw-semibold mb-1">No categories found</div>
+                  <div>Try changing the filters or create a new category.</div>
+                </div>
+              </td>
+            </tr>
 
-            <div class="d-flex gap-2">
-              <a class="btn btn-outline-secondary rounded-pill-btn"
-                 th:classappend="${page.first} ? ' disabled' : ''"
-                 th:href="@{/categories(q=${q}, isActive=${isActive}, page=${page.number - 1}, size=${size}, sort=${sort})}">
-                ← Prev
-              </a>
+            <tr th:each="category : ${categories}">
+              <td>
+                <span class="id-badge" th:text="${category.id}">1</span>
+              </td>
 
-              <a class="btn btn-outline-secondary rounded-pill-btn"
-                 th:classappend="${page.last} ? ' disabled' : ''"
-                 th:href="@{/categories(q=${q}, isActive=${isActive}, page=${page.number + 1}, size=${size}, sort=${sort})}">
-                Next →
-              </a>
-            </div>
+              <td>
+                <div class="category-name" th:text="${category.name}">Category name</div>
+                <div class="category-note">Catalog category</div>
+              </td>
 
+              <td>
+                <span class="slug-badge" th:text="${category.slug}">slug</span>
+              </td>
+
+              <td>
+                                <span th:if="${category.active}" class="status-badge active">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    Active
+                                </span>
+                <span th:unless="${category.active}" class="status-badge inactive">
+                                    <i class="bi bi-pause-circle-fill"></i>
+                                    Inactive
+                                </span>
+              </td>
+
+              <td class="text-end">
+                <div class="actions-wrap">
+                  <a class="btn btn-table btn-table-primary"
+                     th:href="@{/edit-category/{id}(id=${category.id})}">
+                    <i class="bi bi-pencil-square me-1"></i>
+                    Edit
+                  </a>
+
+                  <a class="btn btn-table btn-table-neutral"
+                     th:href="@{/categories/{id}/attributes(id=${category.id})}">
+                    Attributes
+                  </a>
+
+                  <form th:action="@{/delete-category/{id}(id=${category.id})}"
+                        method="post"
+                        class="d-inline"
+                        onsubmit="return confirm('Сигурна ли си, че искаш да изтриеш тази категория?');">
+                    <button type="submit" class="btn btn-table btn-table-danger">
+                      <i class="bi bi-trash3 me-1"></i>
+                      Delete
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pagination-bar" th:if="${page != null}">
+          <div class="pagination-meta">
+            Page <strong th:text="${page.number + 1}">1</strong>
+            of <strong th:text="${page.totalPages}">1</strong>
+            • Total categories: <strong th:text="${page.totalElements}">0</strong>
+          </div>
+
+          <div class="pagination-actions">
+            <a class="btn btn-admin-light"
+               th:classappend="${page.first} ? ' disabled' : ''"
+               th:href="@{/categories(q=${q}, isActive=${isActive}, page=${page.number - 1}, size=${size}, sort=${sort})}">
+              <i class="bi bi-arrow-left me-1"></i>
+              Previous
+            </a>
+
+            <a class="btn btn-admin-light"
+               th:classappend="${page.last} ? ' disabled' : ''"
+               th:href="@{/categories(q=${q}, isActive=${isActive}, page=${page.number + 1}, size=${size}, sort=${sort})}">
+              Next
+              <i class="bi bi-arrow-right ms-1"></i>
+            </a>
           </div>
         </div>
       </div>
@@ -296,5 +757,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

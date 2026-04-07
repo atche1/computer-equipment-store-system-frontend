@@ -1,71 +1,483 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta charset="UTF-8">
   <title>Order Details</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <style>
+        :root{
+            --main-blue:#0d4dad;
+            --main-blue-dark:#0a3d8c;
+            --page-bg:#f4f7fb;
+            --surface:#ffffff;
+            --surface-soft:#f8fbff;
+            --line:#dbe5f0;
+            --line-strong:#c8d7e8;
+            --text:#1f2937;
+            --muted:#6b7280;
+            --sidebar:#0f2747;
+            --sidebar-hover:rgba(255,255,255,.10);
+            --shadow:0 14px 34px rgba(15, 23, 42, .08);
+        }
+
+        html, body{
+            margin:0;
+            padding:0;
+            background:var(--page-bg);
+            color:var(--text);
+            font-family:Arial, sans-serif;
+        }
+
+        .admin-layout{
+            display:flex;
+            align-items:stretch;
+            min-height:calc(100vh - 86px);
+        }
+
+        .admin-sidebar-wrap{
+            width:280px;
+            min-width:280px;
+            max-width:280px;
+            flex-shrink:0;
+            display:flex;
+            border-right:1px solid var(--line);
+        }
+
+        .admin-main{
+            flex:1;
+            min-width:0;
+            padding:28px;
+        }
+
+        .admin-sidebar{
+            width:100%;
+            min-height:100%;
+            background:linear-gradient(180deg, var(--sidebar) 0%, #0b1d36 100%);
+            color:#fff;
+            padding:24px 18px;
+            display:flex;
+            flex-direction:column;
+        }
+
+        .admin-brand{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            margin-bottom:28px;
+        }
+
+        .admin-brand-badge{
+            width:46px;
+            height:46px;
+            border-radius:14px;
+            background:rgba(255,255,255,.12);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:20px;
+            box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+        }
+
+        .admin-brand-title{
+            font-size:1rem;
+            font-weight:700;
+            line-height:1.2;
+            color:#fff;
+        }
+
+        .admin-menu-title{
+            font-size:.78rem;
+            letter-spacing:.08em;
+            text-transform:uppercase;
+            color:rgba(255,255,255,.48);
+            margin:18px 10px 10px;
+        }
+
+        .admin-nav{
+            display:flex;
+            flex-direction:column;
+            gap:6px;
+        }
+
+        .admin-nav .nav-link{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            color:rgba(255,255,255,.82);
+            border-radius:14px;
+            padding:12px 14px;
+            font-weight:600;
+            transition:all .18s ease;
+            text-decoration:none;
+        }
+
+        .admin-nav .nav-link i{
+            font-size:1rem;
+            opacity:.9;
+        }
+
+        .admin-nav .nav-link:hover{
+            color:#fff;
+            background:var(--sidebar-hover);
+        }
+
+        .admin-nav .nav-link.active{
+            color:#fff;
+            background:linear-gradient(90deg, rgba(13,77,173,.95), rgba(13,77,173,.72));
+            box-shadow:0 10px 22px rgba(13,77,173,.22);
+        }
+
+        .page-header{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:16px;
+            margin-bottom:24px;
+            flex-wrap:wrap;
+        }
+
+        .page-title{
+            margin:0;
+            font-size:2rem;
+            font-weight:700;
+        }
+
+        .page-subtitle{
+            margin-top:6px;
+            color:var(--muted);
+        }
+
+        .btn-soft{
+            border:1px solid var(--line-strong);
+            background:#fff;
+            color:var(--text);
+            border-radius:12px;
+            padding:.68rem 1rem;
+            font-weight:600;
+            text-decoration:none;
+        }
+
+        .btn-soft:hover{
+            border-color:var(--main-blue);
+            color:var(--main-blue);
+            background:#f8fbff;
+        }
+
+        .details-card{
+            background:#fff;
+            border:1px solid var(--line);
+            border-radius:22px;
+            box-shadow:var(--shadow);
+            overflow:hidden;
+        }
+
+        .details-top{
+            padding:24px 28px;
+            border-bottom:1px solid var(--line);
+            background:linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+        }
+
+        .details-body{
+            padding:28px;
+        }
+
+        .order-meta-wrap{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            gap:16px;
+            flex-wrap:wrap;
+        }
+
+        .status-badge{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            padding:8px 14px;
+            border-radius:999px;
+            font-size:.8rem;
+            font-weight:800;
+            background:#eaf2ff;
+            color:var(--main-blue);
+        }
+
+        .info-grid{
+            display:grid;
+            grid-template-columns:repeat(4, minmax(0, 1fr));
+            gap:16px;
+            margin-bottom:28px;
+        }
+
+        .info-box{
+            background:var(--surface-soft);
+            border:1px solid var(--line);
+            border-radius:16px;
+            padding:16px;
+        }
+
+        .info-label{
+            font-size:.82rem;
+            font-weight:800;
+            color:var(--main-blue);
+            text-transform:uppercase;
+            margin-bottom:8px;
+        }
+
+        .info-value{
+            font-size:1rem;
+            font-weight:600;
+            word-break:break-word;
+        }
+
+        .table-card{
+            border:1px solid var(--line);
+            border-radius:18px;
+            overflow:hidden;
+            background:#fff;
+        }
+
+        .table-header{
+            padding:16px 20px;
+            border-bottom:1px solid var(--line);
+            background:#f8fbff;
+            font-weight:700;
+        }
+
+        .table{
+            margin-bottom:0;
+        }
+
+        .table thead th{
+            background:#f8fbff;
+            font-size:.84rem;
+            text-transform:uppercase;
+            border-bottom:1px solid var(--line);
+            white-space:nowrap;
+            color:#475569;
+            font-weight:800;
+        }
+
+        .table tbody td{
+            vertical-align:middle;
+            padding:16px 14px;
+            border-color:#edf2f7;
+        }
+
+        .table tbody tr:hover{
+            background:#fbfdff;
+        }
+
+        .summary-row{
+            margin-top:22px;
+            display:flex;
+            justify-content:flex-end;
+        }
+
+        .summary-card{
+            min-width:320px;
+            background:#fff;
+            border:1px solid var(--line);
+            border-radius:16px;
+            padding:18px 20px;
+        }
+
+        .summary-line,
+        .summary-total{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:16px;
+        }
+
+        .summary-total{
+            margin-top:10px;
+            padding-top:12px;
+            border-top:1px solid var(--line);
+            font-size:1.1rem;
+            font-weight:700;
+        }
+
+        @media (max-width: 1199.98px){
+            .admin-layout{
+                display:block;
+                min-height:auto;
+            }
+
+            .admin-sidebar-wrap{
+                width:100%;
+                min-width:100%;
+                max-width:100%;
+                border-right:none;
+                border-bottom:1px solid var(--line);
+            }
+
+            .admin-main{
+                padding:22px 18px;
+            }
+        }
+
+        @media (max-width: 991.98px){
+            .info-grid{
+                grid-template-columns:1fr 1fr;
+            }
+        }
+
+        @media (max-width: 767.98px){
+            .info-grid{
+                grid-template-columns:1fr;
+            }
+
+            .details-top,
+            .details-body{
+                padding:20px;
+            }
+
+            .summary-card{
+                width:100%;
+                min-width:0;
+            }
+
+            .admin-main{
+                padding:18px 14px 28px;
+            }
+        }
+    </style>
 </head>
 <body>
 
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container py-4">
-  <div class="card p-4">
-    <div class="d-flex justify-content-between align-items-start mb-4">
+<div class="admin-layout">
+  <aside class="admin-sidebar-wrap">
+    <div th:replace="~{fragments/admin-sidebar :: adminSidebar(active='orders')}"></div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="page-header">
       <div>
-        <h2 class="mb-1">Order Details</h2>
-        <div class="text-muted">
-          Order number: <b th:text="${order.orderNumber()}">ORD-...</b>
+        <h1 class="page-title">Order Details</h1>
+        <div class="page-subtitle">Review full information for the selected order.</div>
+      </div>
+
+      <a th:href="@{/admin/orders}" class="btn-soft">
+        <i class="bi bi-arrow-left me-1"></i>
+        Back to Orders
+      </a>
+    </div>
+
+    <div class="details-card">
+      <div class="details-top">
+        <div class="order-meta-wrap">
+          <div>
+            <h2 class="mb-2 fw-bold">Customer Order</h2>
+            <div class="text-muted">
+              Order number:
+              <strong th:text="${order.orderNumber()}">ORD-0001</strong>
+            </div>
+          </div>
+
+          <span class="status-badge" th:text="${order.status()}">PENDING</span>
         </div>
       </div>
-      <span class="badge text-bg-primary" th:text="${order.status()}">NEW</span>
-    </div>
 
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div><b>Delivery name:</b></div>
-        <div th:text="${order.deliveryName()}">Name</div>
-      </div>
-      <div class="col-md-4">
-        <div><b>Delivery phone:</b></div>
-        <div th:text="${order.deliveryPhone()}">Phone</div>
-      </div>
-      <div class="col-md-4">
-        <div><b>Delivery address:</b></div>
-        <div th:text="${order.deliveryAddress()}">Address</div>
-      </div>
-    </div>
+      <div class="details-body">
 
-    <div class="table-responsive">
-      <table class="table align-middle">
-        <thead>
-        <tr>
-          <th>Product</th>
-          <th class="text-end">Unit price</th>
-          <th class="text-center">Quantity</th>
-          <th class="text-end">Line total</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="i : ${order.items()}">
-          <td th:text="${i.productNameSnapshot()}">Product</td>
-          <td class="text-end" th:text="${i.unitPrice()}">0.00</td>
-          <td class="text-center" th:text="${i.quantity()}">1</td>
-          <td class="text-end" th:text="${i.lineTotal()}">0.00</td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
+        <div class="info-grid">
+          <div class="info-box">
+            <div class="info-label">Order ID</div>
+            <div class="info-value" th:text="${order.id()}">1</div>
+          </div>
 
-    <div class="d-flex justify-content-end mt-3">
-      <div class="fs-5">
-        Total:
-        <b th:text="${order.totalAmount()}">0.00</b>
+          <div class="info-box">
+            <div class="info-label">Created At</div>
+            <div class="info-value"
+                 th:text="${#temporals.format(order.createdAt(), 'dd.MM.yyyy HH:mm')}">
+              07.04.2026 19:30
+            </div>
+          </div>
+
+          <div class="info-box">
+            <div class="info-label">Delivery Name</div>
+            <div class="info-value" th:text="${order.deliveryName()}">Name</div>
+          </div>
+
+          <div class="info-box">
+            <div class="info-label">Delivery Phone</div>
+            <div class="info-value" th:text="${order.deliveryPhone()}">Phone</div>
+          </div>
+        </div>
+
+        <div class="info-grid" style="grid-template-columns:1fr;">
+          <div class="info-box">
+            <div class="info-label">Delivery Address</div>
+            <div class="info-value" th:text="${order.deliveryAddress()}">Address</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-header">
+            <i class="bi bi-cart3 me-2"></i>
+            Ordered Products
+          </div>
+
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead>
+              <tr>
+                <th>Product</th>
+                <th class="text-end">Unit Price</th>
+                <th class="text-center">Quantity</th>
+                <th class="text-end">Line Total</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr th:each="item : ${order.items()}">
+                <td th:text="${item.productNameSnapshot()}">Product</td>
+                <td class="text-end"
+                    th:text="${#numbers.formatDecimal(item.unitPrice(), 1, 2)} + ' EUR'">
+                  0.00 EUR
+                </td>
+                <td class="text-center" th:text="${item.quantity()}">1</td>
+                <td class="text-end fw-semibold"
+                    th:text="${#numbers.formatDecimal(item.lineTotal(), 1, 2)} + ' EUR'">
+                  0.00 EUR
+                </td>
+              </tr>
+
+              <tr th:if="${#lists.isEmpty(order.items())}">
+                <td colspan="4" class="text-center text-muted py-4">
+                  No items found for this order.
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="summary-row">
+          <div class="summary-card">
+            <div class="summary-line">
+              <span>Total items</span>
+              <strong th:text="${#lists.size(order.items())}">0</strong>
+            </div>
+
+            <div class="summary-total">
+              <span>Total Amount</span>
+              <span th:text="${#numbers.formatDecimal(order.totalAmount(), 1, 2)} + ' EUR'">
+                                0.00 EUR
+                            </span>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
-  </div>
+  </main>
 </div>
-
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

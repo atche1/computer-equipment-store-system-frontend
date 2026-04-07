@@ -4,59 +4,738 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Admin Orders</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        :root{
+            --main-blue:#0d4dad;
+            --main-blue-dark:#0a3d8c;
+            --page-bg:#f4f7fb;
+            --surface:#ffffff;
+            --surface-soft:#f8fbff;
+            --line:#dbe5f0;
+            --line-strong:#c8d7e8;
+            --text:#1f2937;
+            --muted:#6b7280;
+            --sidebar:#0f2747;
+            --sidebar-hover:rgba(255,255,255,.10);
+            --success-bg:#eaf7ee;
+            --success-text:#1f7a3e;
+            --warn-bg:#fff4db;
+            --warn-text:#9a6700;
+            --danger-bg:#fdecec;
+            --danger-text:#b42318;
+            --info-bg:#eaf2ff;
+            --info-text:#0d4dad;
+            --shadow:0 14px 34px rgba(15, 23, 42, .08);
+        }
+
+        html, body{
+            margin:0;
+            padding:0;
+            background:var(--page-bg);
+            color:var(--text);
+            font-family:Arial, sans-serif;
+        }
+
+        .admin-shell{
+            min-height:100vh;
+            padding-left:0 !important;
+            padding-right:0 !important;
+        }
+
+        .admin-layout-row{
+            min-height:100vh;
+            align-items:stretch;
+            margin-left:0;
+            margin-right:0;
+        }
+
+        .admin-sidebar-col{
+            padding-left:0 !important;
+            padding-right:0 !important;
+            display:flex;
+        }
+
+        .admin-sidebar{
+            width:100%;
+            min-height:100%;
+            background:linear-gradient(180deg, var(--sidebar) 0%, #0b1d36 100%);
+            color:#fff;
+            padding:24px 18px;
+            display:flex;
+            flex-direction:column;
+        }
+
+        .admin-brand{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            margin-bottom:28px;
+        }
+
+        .admin-brand-badge{
+            width:46px;
+            height:46px;
+            border-radius:14px;
+            background:rgba(255,255,255,.12);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:20px;
+            box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+        }
+
+        .admin-brand-title{
+            font-size:1rem;
+            font-weight:700;
+            line-height:1.2;
+        }
+
+        .admin-menu-title{
+            font-size:.78rem;
+            letter-spacing:.08em;
+            text-transform:uppercase;
+            color:rgba(255,255,255,.48);
+            margin:18px 10px 10px;
+        }
+
+        .admin-nav{
+            display:flex;
+            flex-direction:column;
+            gap:6px;
+        }
+
+        .admin-nav .nav-link{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            color:rgba(255,255,255,.82);
+            border-radius:14px;
+            padding:12px 14px;
+            font-weight:600;
+            transition:all .18s ease;
+            text-decoration:none;
+        }
+
+        .admin-nav .nav-link i{
+            font-size:1rem;
+            opacity:.9;
+        }
+
+        .admin-nav .nav-link:hover{
+            color:#fff;
+            background:var(--sidebar-hover);
+        }
+
+        .admin-nav .nav-link.active{
+            color:#fff;
+            background:linear-gradient(90deg, rgba(13,77,173,.95), rgba(13,77,173,.72));
+            box-shadow:0 10px 22px rgba(13,77,173,.22);
+        }
+
+        .admin-main{
+            padding:28px;
+        }
+
+        .page-head{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            gap:18px;
+            margin-bottom:22px;
+            flex-wrap:wrap;
+        }
+
+        .eyebrow{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            padding:7px 12px;
+            border-radius:999px;
+            background:#eaf2ff;
+            color:var(--main-blue);
+            font-weight:700;
+            font-size:.82rem;
+            margin-bottom:10px;
+        }
+
+        .page-title{
+            margin:0;
+            font-size:2rem;
+            font-weight:700;
+            line-height:1.15;
+        }
+
+        .page-subtitle{
+            margin-top:8px;
+            color:var(--muted);
+            font-size:1rem;
+        }
+
+        .admin-card{
+            background:var(--surface);
+            border:1px solid rgba(219,229,240,.95);
+            border-radius:22px;
+            box-shadow:var(--shadow);
+            overflow:hidden;
+        }
+
+        .card-head{
+            padding:22px 24px;
+            border-bottom:1px solid var(--line);
+            background:linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:14px;
+            flex-wrap:wrap;
+        }
+
+        .card-head-title{
+            margin:0;
+            font-size:1.12rem;
+            font-weight:700;
+        }
+
+        .card-head-text{
+            margin:6px 0 0;
+            color:var(--muted);
+            font-size:.94rem;
+        }
+
+        .card-body-wrap{
+            padding:22px 24px 24px;
+        }
+
+        .filter-card{
+            background:#f8fbff;
+            border:1px solid #e2ebf5;
+            border-radius:18px;
+            padding:18px;
+            margin-bottom:20px;
+        }
+
+        .section-title{
+            font-size:.82rem;
+            text-transform:uppercase;
+            letter-spacing:.06em;
+            color:#64748b;
+            font-weight:800;
+            margin-bottom:14px;
+        }
+
+        .orders-table-wrap{
+            border:1px solid var(--line);
+            border-radius:18px;
+            overflow:hidden;
+            background:#fff;
+        }
+
+        .table{
+            margin-bottom:0;
+        }
+
+        .table thead th{
+            background:#f8fbff;
+            color:#475569;
+            font-size:.85rem;
+            font-weight:800;
+            text-transform:uppercase;
+            letter-spacing:.04em;
+            border-bottom:1px solid var(--line);
+            padding:16px 14px;
+            white-space:nowrap;
+        }
+
+        .table tbody td{
+            padding:16px 14px;
+            border-color:#edf2f7;
+            vertical-align:middle;
+        }
+
+        .table tbody tr:hover{
+            background:#fbfdff;
+        }
+
+        .order-number{
+            font-weight:700;
+            color:#0f172a;
+        }
+
+        .customer-name{
+            font-weight:600;
+            color:#1f2937;
+        }
+
+        .order-total{
+            font-weight:700;
+            color:#0f172a;
+        }
+
+        .status-badge{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            padding:7px 12px;
+            border-radius:999px;
+            font-size:.78rem;
+            font-weight:800;
+            letter-spacing:.02em;
+        }
+
+        .status-new{
+            background:var(--info-bg);
+            color:var(--info-text);
+        }
+
+        .status-processing{
+            background:var(--warn-bg);
+            color:var(--warn-text);
+        }
+
+        .status-completed,
+        .status-delivered{
+            background:var(--success-bg);
+            color:var(--success-text);
+        }
+
+        .status-cancelled,
+        .status-rejected{
+            background:var(--danger-bg);
+            color:var(--danger-text);
+        }
+
+        .status-default{
+            background:#eef2f7;
+            color:#475569;
+        }
+
+        .actions-cell{
+            min-width:360px;
+        }
+
+        .actions-wrap{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            flex-wrap:wrap;
+        }
+
+        .status-form{
+            display:flex;
+            gap:10px;
+            align-items:center;
+            flex:1 1 260px;
+        }
+
+        .status-form .form-select{
+            min-width:160px;
+            flex:1 1 auto;
+        }
+
+        .details-btn{
+            white-space:nowrap;
+        }
+
+        .form-label{
+            font-size:.9rem;
+            font-weight:700;
+            color:#334155;
+            margin-bottom:8px;
+        }
+
+        .form-select,
+        .form-control{
+            min-height:42px;
+            border-radius:12px;
+            border:1px solid var(--line-strong);
+            box-shadow:none;
+        }
+
+        .form-select:focus,
+        .form-control:focus{
+            border-color:#9fc0ef;
+            box-shadow:0 0 0 .2rem rgba(13,77,173,.10);
+        }
+
+        .btn-admin-primary{
+            background:var(--main-blue);
+            border-color:var(--main-blue);
+            color:#fff;
+            border-radius:12px;
+            padding:10px 16px;
+            font-weight:700;
+        }
+
+        .btn-admin-primary:hover{
+            background:var(--main-blue-dark);
+            border-color:var(--main-blue-dark);
+            color:#fff;
+        }
+
+        .btn-admin-light{
+            background:#fff;
+            border:1px solid var(--line-strong);
+            color:var(--text);
+            border-radius:12px;
+            padding:10px 16px;
+            font-weight:600;
+        }
+
+        .btn-admin-light:hover{
+            background:#f8fbff;
+            border-color:#b9cbdf;
+            color:var(--text);
+        }
+
+        .empty-state{
+            padding:50px 20px;
+            text-align:center;
+            color:var(--muted);
+        }
+
+        .empty-icon{
+            width:64px;
+            height:64px;
+            border-radius:18px;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            background:#eef4fb;
+            color:var(--main-blue);
+            font-size:1.5rem;
+            margin-bottom:14px;
+        }
+
+        .pagination-bar{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:14px;
+            margin-top:18px;
+            flex-wrap:wrap;
+        }
+
+        .pagination-info{
+            color:var(--muted);
+            font-size:.92rem;
+        }
+
+        .pagination-actions{
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+        }
+
+        @media (max-width: 1199px){
+            .admin-layout-row{
+                min-height:auto;
+            }
+
+            .admin-sidebar-col{
+                display:block;
+            }
+
+            .admin-sidebar{
+                min-height:auto;
+            }
+        }
+
+        @media (max-width: 991px){
+            .admin-main{
+                padding:18px;
+            }
+
+            .page-head{
+                flex-direction:column;
+                align-items:stretch;
+            }
+
+            .status-form{
+                flex-direction:column;
+                align-items:stretch;
+                flex:1 1 100%;
+            }
+
+            .status-form .btn,
+            .status-form .form-select{
+                width:100%;
+            }
+
+            .actions-wrap{
+                flex-direction:column;
+                align-items:stretch;
+            }
+
+            .actions-wrap .btn{
+                width:100%;
+            }
+
+            .pagination-bar{
+                flex-direction:column;
+                align-items:stretch;
+            }
+
+            .pagination-actions .btn{
+                width:100%;
+            }
+
+            .actions-cell{
+                min-width:280px;
+            }
+        }
+    </style>
 </head>
 <body>
 
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container py-4">
-    <h2 class="mb-4">Manage Orders</h2>
+<div class="container-fluid admin-shell px-0">
+    <div class="row g-0 admin-layout-row">
 
-    <div class="card p-3">
-        <div class="table-responsive">
-            <table class="table align-middle">
-                <thead>
-                <tr>
-                    <th>Order number</th>
-                    <th>Customer</th>
-                    <th>Status</th>
-                    <th class="text-end">Total</th>
-                    <th>Created</th>
-                    <th style="width:260px;">Change status</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:if="${ordersPage == null || #lists.isEmpty(ordersPage.content)}">
-                    <td colspan="6" class="text-center text-muted py-4">No orders found.</td>
-                </tr>
+        <aside class="col-12 col-xl-2 p-0 admin-sidebar-col">
+            <div class="h-100"
+                 th:replace="~{fragments/admin-sidebar :: adminSidebar(active='orders')}"></div>
+        </aside>
 
-                <tr th:each="o : ${ordersPage.content}">
-                    <td th:text="${o.orderNumber()}">ORD-...</td>
-                    <td th:text="${o.deliveryName()}">Customer</td>
-                    <td>
-                        <span class="badge text-bg-primary" th:text="${o.status()}">NEW</span>
-                    </td>
-                    <td class="text-end" th:text="${o.totalAmount()}">0.00</td>
-                    <td th:text="${#temporals.format(o.createdAt(), 'dd.MM.yyyy HH:mm')}">date</td>
-                    <td>
-                        <form th:action="@{/admin/orders/{id}/status(id=${o.id()})}" method="post" class="d-flex gap-2">
-                            <select name="status" class="form-select form-select-sm">
-                                <option th:each="s : ${statuses}"
-                                        th:value="${s}"
-                                        th:text="${s}"
-                                        th:selected="${s == o.status()}">
-                                </option>
-                            </select>
-                            <button class="btn btn-sm btn-outline-primary">Save</button>
+        <main class="col-12 col-xl-10 admin-main">
+
+            <div class="page-head">
+                <div>
+                    <div class="eyebrow">
+                        <i class="bi bi-bag-check"></i>
+                        Order management
+                    </div>
+                    <h1 class="page-title">Manage orders</h1>
+                    <div class="page-subtitle">
+                        Review customer orders, track their statuses and update the order workflow from one place.
+                    </div>
+                </div>
+
+                <div>
+                    <a th:href="@{/admin}" class="btn btn-admin-light">
+                        <i class="bi bi-arrow-left me-1"></i>
+                        Back to dashboard
+                    </a>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <div class="card-head">
+                    <div>
+                        <h2 class="card-head-title">Orders overview</h2>
+                        <p class="card-head-text">
+                            Search by order number, customer, status or date range.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card-body-wrap">
+
+                    <div class="filter-card">
+                        <div class="section-title">Search and filters</div>
+
+                        <form th:action="@{/admin/orders}" method="get">
+                            <input type="hidden" name="size" th:value="${size}">
+                            <input type="hidden" name="sort" th:value="${sort}">
+
+                            <div class="row g-3">
+                                <div class="col-12 col-md-3">
+                                    <label class="form-label">Order number</label>
+                                    <input type="text"
+                                           name="orderNumber"
+                                           class="form-control"
+                                           placeholder="ORD-2026..."
+                                           th:value="${orderNumber}">
+                                </div>
+
+                                <div class="col-12 col-md-3">
+                                    <label class="form-label">Customer</label>
+                                    <input type="text"
+                                           name="customerName"
+                                           class="form-control"
+                                           placeholder="Customer name"
+                                           th:value="${customerName}">
+                                </div>
+
+                                <div class="col-12 col-md-2">
+                                    <label class="form-label">Status</label>
+                                    <select name="status" class="form-select">
+                                        <option value="">All</option>
+                                        <option th:each="s : ${statuses}"
+                                                th:value="${s}"
+                                                th:text="${s}"
+                                                th:selected="${selectedStatus == s.toString()}">
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="col-12 col-md-2">
+                                    <label class="form-label">From</label>
+                                    <input type="date"
+                                           name="dateFrom"
+                                           class="form-control"
+                                           th:value="${dateFrom}">
+                                </div>
+
+                                <div class="col-12 col-md-2">
+                                    <label class="form-label">To</label>
+                                    <input type="date"
+                                           name="dateTo"
+                                           class="form-control"
+                                           th:value="${dateTo}">
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2 mt-3 flex-wrap">
+                                <button type="submit" class="btn btn-admin-primary">
+                                    <i class="bi bi-search me-1"></i>
+                                    Search
+                                </button>
+
+                                <a th:href="@{/admin/orders}" class="btn btn-admin-light">
+                                    <i class="bi bi-arrow-counterclockwise me-1"></i>
+                                    Clear
+                                </a>
+                            </div>
                         </form>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+                    </div>
+
+                    <div class="orders-table-wrap" th:if="${ordersPage != null && !#lists.isEmpty(ordersPage.content)}">
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead>
+                                <tr>
+                                    <th>Order number</th>
+                                    <th>Customer</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Total</th>
+                                    <th>Created</th>
+                                    <th class="actions-cell">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="o : ${ordersPage.content}">
+                                    <td>
+                                        <div class="order-number" th:text="${o.orderNumber()}">ORD-...</div>
+                                    </td>
+
+                                    <td>
+                                        <div class="customer-name" th:text="${o.deliveryName()}">Customer</div>
+                                    </td>
+
+                                    <td>
+                                        <span th:class="'status-badge ' +
+                                                (${o.status().toString() == 'NEW'} ? 'status-new' :
+                                                (${o.status().toString() == 'PROCESSING'} ? 'status-processing' :
+                                                (${o.status().toString() == 'COMPLETED' or o.status().toString() == 'DELIVERED'} ? 'status-completed' :
+                                                (${o.status().toString() == 'CANCELLED' or o.status().toString() == 'REJECTED'} ? 'status-cancelled' : 'status-default'))))"
+                                              th:text="${o.status()}">
+                                            NEW
+                                        </span>
+                                    </td>
+
+                                    <td class="text-end">
+                                        <span class="order-total"
+                                              th:text="${#numbers.formatDecimal(o.totalAmount(), 1, 2)} + ' EUR'">
+                                            0.00 EUR
+                                        </span>
+                                    </td>
+
+                                    <td th:text="${#temporals.format(o.createdAt(), 'dd.MM.yyyy HH:mm')}">date</td>
+
+                                    <td class="actions-cell">
+                                        <div class="actions-wrap">
+                                            <form th:action="@{/admin/orders/{id}/status(id=${o.id()})}"
+                                                  method="post"
+                                                  class="status-form">
+                                                <select name="status" class="form-select form-select-sm">
+                                                    <option th:each="s : ${statuses}"
+                                                            th:value="${s}"
+                                                            th:text="${s}"
+                                                            th:selected="${s.toString() == o.status().toString()}">
+                                                    </option>
+                                                </select>
+                                                <button type="submit" class="btn btn-admin-primary btn-sm">
+                                                    <i class="bi bi-check2-circle me-1"></i>
+                                                    Save
+                                                </button>
+                                            </form>
+
+                                            <a th:href="@{/admin/orders/{id}(id=${o.id()})}"
+                                               class="btn btn-admin-light btn-sm details-btn">
+                                                <i class="bi bi-eye me-1"></i>
+                                                Details
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="empty-state"
+                         th:if="${ordersPage == null || #lists.isEmpty(ordersPage.content)}">
+                        <div class="empty-icon">
+                            <i class="bi bi-inbox"></i>
+                        </div>
+                        <h5 class="mb-2">No orders found</h5>
+                        <p class="mb-0">There are currently no orders matching the selected filters.</p>
+                    </div>
+
+                    <div class="pagination-bar" th:if="${ordersPage != null && ordersPage.totalPages > 1}">
+                        <div class="pagination-info">
+                            Showing page
+                            <strong th:text="${ordersPage.number + 1}">1</strong>
+                            of
+                            <strong th:text="${ordersPage.totalPages}">1</strong>
+                        </div>
+
+                        <div class="pagination-actions">
+                            <a class="btn btn-admin-light"
+                               th:if="${ordersPage.hasPrevious()}"
+                               th:href="@{/admin/orders(
+                                   page=${ordersPage.number - 1},
+                                   size=${size},
+                                   sort=${sort},
+                                   status=${selectedStatus},
+                                   orderNumber=${orderNumber},
+                                   customerName=${customerName},
+                                   dateFrom=${dateFrom},
+                                   dateTo=${dateTo}
+                               )}">
+                                <i class="bi bi-arrow-left me-1"></i>
+                                Previous
+                            </a>
+
+                            <a class="btn btn-admin-primary"
+                               th:if="${ordersPage.hasNext()}"
+                               th:href="@{/admin/orders(
+                                   page=${ordersPage.number + 1},
+                                   size=${size},
+                                   sort=${sort},
+                                   status=${selectedStatus},
+                                   orderNumber=${orderNumber},
+                                   customerName=${customerName},
+                                   dateFrom=${dateFrom},
+                                   dateTo=${dateTo}
+                               )}">
+                                Next
+                                <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </main>
     </div>
 </div>
-
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>
