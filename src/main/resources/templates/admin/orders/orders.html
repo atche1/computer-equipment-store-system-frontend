@@ -516,10 +516,6 @@
                 </div>
 
                 <div>
-                    <a th:href="@{/admin}" class="btn btn-admin-light">
-                        <i class="bi bi-arrow-left me-1"></i>
-                        Back to dashboard
-                    </a>
                 </div>
             </div>
 
@@ -631,6 +627,7 @@
                                         <span th:class="'status-badge ' +
                                                 (${o.status().toString() == 'NEW'} ? 'status-new' :
                                                 (${o.status().toString() == 'PROCESSING'} ? 'status-processing' :
+                                                 (${o.status().toString() == 'SHIPPED'} ? 'status-shipped' :
                                                 (${o.status().toString() == 'COMPLETED' or o.status().toString() == 'DELIVERED'} ? 'status-completed' :
                                                 (${o.status().toString() == 'CANCELLED' or o.status().toString() == 'REJECTED'} ? 'status-cancelled' : 'status-default'))))"
                                               th:text="${o.status()}">
