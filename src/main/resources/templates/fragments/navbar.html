@@ -195,6 +195,28 @@
       background:#f3f6fb;
       color:var(--main-blue);
     }
+    .store-menu{
+  background:var(--main-blue);
+}
+
+.store-menu-inner{
+  width:100%;
+  max-width:1600px;
+  margin:0 auto;
+  padding:0 36px;
+}
+
+.store-menu .navbar-nav{
+  gap:6px;
+}
+
+.store-menu .nav-link{
+  color:#fff;
+  font-weight:600;
+  text-transform:uppercase;
+  padding:16px 12px;
+}
+
 
     @media(max-width:991px){
       .store-right-panel{
@@ -311,7 +333,7 @@
   </div>
 
   <nav class="navbar navbar-expand-lg store-menu navbar-dark">
-    <div class="container-fluid px-0">
+    <div class="store-menu-inner">
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
         <span class="navbar-toggler-icon"></span>
@@ -325,8 +347,7 @@
 
           <li class="nav-item dropdown">
             <div class="store-products-dropdown">
-              <a class="nav-link store-products-main-link"
-                 th:href="@{/products}">
+              <a class="nav-link store-products-main-link" th:href="@{/products}">
                 Products
               </a>
 
@@ -358,10 +379,10 @@
           <li class="nav-item">
             <a class="nav-link" th:href="@{/services}">Services</a>
           </li>
+
           <li class="nav-item">
             <a class="nav-link" th:href="@{/about}">About us</a>
           </li>
-
         </ul>
       </div>
     </div>
