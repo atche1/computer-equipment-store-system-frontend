@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <style>
+    :root{
+      --main-blue:#0d4dad;
+      --main-blue-dark:#0a3d8c;
+      --page-bg:#f3f3f3;
+      --text-dark:#1f1f1f;
+      --text-muted:#666;
+      --line:#d9d9d9;
+      --soft:#f8f8f8;
+    }
+
+    body{
+      margin:0;
+      background:var(--page-bg);
+      color:var(--text-dark);
+      font-family:Arial, sans-serif;
+    }
+
+    .account-page{
+      padding:48px 0 70px;
+    }
+
+    .account-header{
+      margin-bottom:32px;
+    }
+
+    .account-title{
+      font-size:42px;
+      font-weight:700;
+      letter-spacing:-0.02em;
+      margin-bottom:10px;
+    }
+
+    .account-subtitle{
+      font-size:16px;
+      color:var(--text-muted);
+      margin:0;
+    }
+
+    .account-section{
+      background:#fff;
+      border:1px solid var(--line);
+      padding:34px;
+      margin-bottom:24px;
+    }
+
+    .section-title{
+      font-size:26px;
+      font-weight:700;
+      margin-bottom:24px;
+      color:var(--text-dark);
+    }
+
+    .form-label{
+      font-size:15px;
+      font-weight:700;
+      margin-bottom:10px;
+      color:var(--text-dark);
+    }
+
+    .form-control{
+      min-height:54px;
+      border:1px solid var(--line);
+      border-radius:0;
+      font-size:16px;
+      color:var(--text-dark);
+      padding:12px 14px;
+      box-shadow:none;
+    }
+
+    .form-control:focus{
+      border-color:var(--main-blue);
+      box-shadow:none;
+    }
+
+    .form-control[disabled]{
+      background:#eef1f4;
+      color:#495057;
+      opacity:1;
+    }
+
+    .field-error{
+      font-size:14px;
+      color:#dc3545;
+      margin-top:6px;
+    }
+
+    .btn-main{
+      background:var(--main-blue);
+      color:#fff;
+      border:none;
+      border-radius:0;
+      padding:13px 24px;
+      font-weight:700;
+      min-width:170px;
+    }
+
+    .btn-main:hover{
+      background:var(--main-blue-dark);
+      color:#fff;
+    }
+
+    .btn-outline-clean{
+      background:#fff;
+      color:var(--text-dark);
+      border:1px solid var(--line);
+      border-radius:0;
+      padding:13px 24px;
+      font-weight:700;
+      min-width:140px;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .btn-outline-clean:hover{
+      background:#f7f7f7;
+      color:var(--text-dark);
+    }
+
+    .form-note{
+      font-size:14px;
+      color:var(--text-muted);
+      margin-top:8px;
+    }
+
+    .top-actions{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      margin-bottom:24px;
+      flex-wrap:wrap;
+    }
+
+    .back-link{
+      color:var(--main-blue);
+      text-decoration:none;
+      font-weight:700;
+    }
+
+    .back-link:hover{
+      color:var(--main-blue-dark);
+      text-decoration:underline;
+    }
+
+    @media (max-width: 768px){
+      .account-title{
+        font-size:34px;
+      }
+
+      .account-section{
+        padding:22px;
+      }
+
+      .btn-main,
+      .btn-outline-clean{
+        width:100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container account-page">
+  <div class="account-header">
+    <div class="top-actions">
+      <div>
+        <p class="account-subtitle">Update your personal account information.</p>
+      </div>
+
+      <a th:href="@{/my-account}" class="back-link">
+        <i class="bi bi-arrow-left me-1"></i> Back to My Account
+      </a>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="account-section">
+        <h2 class="section-title">Profile details</h2>
+
+        <div th:if="${error}" class="alert alert-danger mb-4" th:text="${error}"></div>
+
+        <form th:action="@{/my-account/edit}" th:object="${form}" method="post">
+          <div class="row g-4">
+            <div class="col-md-6">
+              <label class="form-label">First name</label>
+              <input type="text" th:field="*{firstName}" class="form-control">
+              <div class="field-error" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></div>
+              <div class="field-error" th:if="${fieldErrors != null}" th:text="${fieldErrors['firstName']}"></div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Last name</label>
+              <input type="text" th:field="*{lastName}" class="form-control">
+              <div class="field-error" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></div>
+              <div class="field-error" th:if="${fieldErrors != null}" th:text="${fieldErrors['lastName']}"></div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Email address</label>
+              <input type="email" class="form-control" th:value="${account.email()}" disabled>
+              <div class="form-note">Email address cannot be changed from this page.</div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Phone number</label>
+              <input type="text" th:field="*{phone}" class="form-control">
+              <div class="field-error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+              <div class="field-error" th:if="${fieldErrors != null}" th:text="${fieldErrors['phone']}"></div>
+            </div>
+          </div>
+
+          <div class="d-flex gap-3 mt-5 flex-wrap">
+            <button type="submit" class="btn btn-main">
+              <i class="bi bi-check2-circle me-2"></i>Save changes
+            </button>
+
+            <a th:href="@{/my-account}" class="btn-outline-clean">
+              Cancel
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
