@@ -712,6 +712,18 @@
                         </div>
 
                         <div class="col-12 col-md-4 col-lg-2">
+                            <label class="form-label">Brand</label>
+                            <select class="form-select" name="brand">
+                                <option value="" th:selected="${brand == null or #strings.isEmpty(brand)}">All brands</option>
+                                <option th:each="b : ${brands}"
+                                        th:value="${b}"
+                                        th:selected="${brand != null and brand == b}"
+                                        th:text="${b}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-4 col-lg-2">
                             <label class="form-label">Status</label>
                             <select class="form-select" name="isActive">
                                 <option value="" th:selected="${isActive == null}">All</option>

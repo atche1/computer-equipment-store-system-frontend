@@ -32,7 +32,7 @@ public class HomeController {
         var latestProductsPage = productClient.getAll(
                 null, null, true,
                 null, null, null,
-                null, null, null, null,
+                null, null, null, null,null,
                 0, 4, "createdAt,desc"
         );
 

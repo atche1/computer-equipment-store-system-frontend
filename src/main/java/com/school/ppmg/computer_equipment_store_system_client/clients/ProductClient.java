@@ -33,6 +33,7 @@ public interface ProductClient {
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) Boolean inStock,
+            @RequestParam(required = false) String brand,
 
             @RequestParam(required = false) java.util.List<String> attrText,
             @RequestParam(required = false) java.util.List<String> attrNumMin,

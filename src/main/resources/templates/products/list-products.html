@@ -266,7 +266,6 @@
             opacity:.45;
         }
 
-        /* FILTER PANEL */
         .offcanvas.products-filter-panel{
             width:min(430px, 100%);
             background:
@@ -439,15 +438,6 @@
             line-height:1.5;
         }
 
-        .filter-section-title{
-            font-size:13px;
-            font-weight:800;
-            text-transform:uppercase;
-            letter-spacing:.05em;
-            color:#64748b;
-            margin-bottom:12px;
-        }
-
         .filter-subcard{
             background:#fff;
             border:1px solid #e5edf7;
@@ -577,6 +567,7 @@
                 <input type="hidden" name="minPrice" th:value="${minPrice}">
                 <input type="hidden" name="maxPrice" th:value="${maxPrice}">
                 <input type="hidden" name="inStock" th:value="${inStock}">
+                <input type="hidden" name="brand" th:value="${brand}">
                 <input type="hidden" name="size" th:value="${size}">
 
                 <select class="form-select" name="sort" onchange="this.form.submit()">
@@ -706,7 +697,7 @@
 
                     <h5 class="filter-hero-title" id="productsFiltersLabel">Refine your product search</h5>
                     <p class="filter-hero-text">
-                        Narrow the catalog by category, price, availability and product characteristics.
+                        Narrow the catalog by category, brand, price, availability and product characteristics.
                     </p>
                 </div>
 
@@ -736,7 +727,7 @@
                            th:value="${q}">
                 </div>
 
-                <div class="mb-0">
+                <div class="mb-3">
                     <label class="form-label">Category</label>
                     <select class="form-select" name="categoryId">
                         <option value="">All categories</option>
@@ -744,6 +735,18 @@
                                 th:value="${c.id()}"
                                 th:selected="${categoryId != null and categoryId == c.id()}"
                                 th:text="${c.name()}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="mb-0">
+                    <label class="form-label">Brand</label>
+                    <select class="form-select" name="brand">
+                        <option value="">All brands</option>
+                        <option th:each="b : ${brands}"
+                                th:value="${b}"
+                                th:text="${b}"
+                                th:selected="${brand != null and brand == b}">
                         </option>
                     </select>
                 </div>
