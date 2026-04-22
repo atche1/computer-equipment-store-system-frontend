@@ -1,61 +1,791 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>Manage Services</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Admin • Services</title>
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <style>
+        :root{
+            --main-blue:#0d4dad;
+            --main-blue-dark:#0a3d8c;
+            --page-bg:#f4f7fb;
+            --surface:#ffffff;
+            --surface-soft:#f8fbff;
+            --line:#dbe5f0;
+            --line-strong:#c8d7e8;
+            --text:#1f2937;
+            --muted:#6b7280;
+            --sidebar:#0f2747;
+            --sidebar-hover:rgba(255,255,255,.10);
+            --success-bg:#e9f8ef;
+            --success-text:#1f7a45;
+            --danger-text:#be123c;
+            --shadow:0 14px 34px rgba(15, 23, 42, .08);
+        }
+
+        html, body{
+            margin:0;
+            padding:0;
+            background:var(--page-bg);
+            color:var(--text);
+            font-family:Arial, sans-serif;
+        }
+
+        .admin-shell{
+            min-height:100vh;
+            padding-left:0 !important;
+            padding-right:0 !important;
+        }
+
+        .admin-layout-row{
+            min-height:100vh;
+            align-items:stretch;
+            margin-left:0;
+            margin-right:0;
+        }
+
+        .admin-sidebar-col{
+            padding-left:0 !important;
+            padding-right:0 !important;
+            display:flex;
+        }
+
+        .admin-sidebar{
+            width:100%;
+            min-height:100%;
+            background:linear-gradient(180deg, var(--sidebar) 0%, #0b1d36 100%);
+            color:#fff;
+            padding:24px 18px;
+            display:flex;
+            flex-direction:column;
+        }
+
+        .admin-brand{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            margin-bottom:28px;
+        }
+
+        .admin-brand-badge{
+            width:46px;
+            height:46px;
+            border-radius:14px;
+            background:rgba(255,255,255,.12);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:20px;
+            box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+        }
+
+        .admin-brand-title{
+            font-size:1rem;
+            font-weight:700;
+            line-height:1.2;
+        }
+
+        .admin-brand-subtitle{
+            font-size:.82rem;
+            color:rgba(255,255,255,.72);
+        }
+
+        .admin-menu-title{
+            font-size:.78rem;
+            letter-spacing:.08em;
+            text-transform:uppercase;
+            color:rgba(255,255,255,.48);
+            margin:18px 10px 10px;
+        }
+
+        .admin-nav{
+            display:flex;
+            flex-direction:column;
+            gap:6px;
+        }
+
+        .admin-nav .nav-link{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            color:rgba(255,255,255,.82);
+            border-radius:14px;
+            padding:12px 14px;
+            font-weight:600;
+            transition:all .18s ease;
+        }
+
+        .admin-nav .nav-link i{
+            font-size:1rem;
+            opacity:.9;
+        }
+
+        .admin-nav .nav-link:hover{
+            color:#fff;
+            background:var(--sidebar-hover);
+        }
+
+        .admin-nav .nav-link.active{
+            color:#fff;
+            background:linear-gradient(90deg, rgba(13,77,173,.95), rgba(13,77,173,.72));
+            box-shadow:0 10px 22px rgba(13,77,173,.22);
+        }
+
+        .admin-sidebar-footer{
+            margin-top:auto;
+            padding-top:18px;
+            border-top:1px solid rgba(255,255,255,.12);
+            color:rgba(255,255,255,.70);
+            font-size:.92rem;
+        }
+
+        .admin-sidebar-footer strong{
+            color:#fff;
+        }
+
+        .admin-main{
+            padding:28px;
+        }
+
+        .page-head{
+            display:flex;
+            align-items:flex-start;
+            justify-content:space-between;
+            gap:16px;
+            margin-bottom:22px;
+        }
+
+        .eyebrow{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            padding:7px 12px;
+            border-radius:999px;
+            background:#eaf2ff;
+            color:var(--main-blue);
+            font-weight:700;
+            font-size:.82rem;
+            margin-bottom:10px;
+        }
+
+        .page-title{
+            margin:0;
+            font-size:2rem;
+            font-weight:700;
+            line-height:1.15;
+        }
+
+        .page-subtitle{
+            margin-top:8px;
+            color:var(--muted);
+            font-size:1rem;
+        }
+
+        .top-actions{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            flex-wrap:wrap;
+        }
+
+        .btn-admin-primary{
+            background:var(--main-blue);
+            border-color:var(--main-blue);
+            color:#fff;
+            border-radius:12px;
+            padding:11px 18px;
+            font-weight:700;
+        }
+
+        .btn-admin-primary:hover{
+            background:var(--main-blue-dark);
+            border-color:var(--main-blue-dark);
+            color:#fff;
+        }
+
+        .btn-admin-light{
+            background:#fff;
+            border:1px solid var(--line-strong);
+            color:var(--text);
+            border-radius:12px;
+            padding:11px 16px;
+            font-weight:600;
+        }
+
+        .btn-admin-light:hover{
+            background:#f8fbff;
+            border-color:#b9cbdf;
+            color:var(--text);
+        }
+
+        .admin-card{
+            background:var(--surface);
+            border:1px solid rgba(219,229,240,.95);
+            border-radius:22px;
+            box-shadow:var(--shadow);
+        }
+
+        .filters-card{
+            margin-bottom:20px;
+        }
+
+        .filters-card .card-body{
+            padding:22px;
+        }
+
+        .section-title{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            margin-bottom:16px;
+        }
+
+        .section-title h2{
+            margin:0;
+            font-size:1.08rem;
+            font-weight:700;
+        }
+
+        .form-label{
+            font-size:.9rem;
+            font-weight:600;
+            color:#334155;
+            margin-bottom:8px;
+        }
+
+        .form-control,
+        .form-select{
+            min-height:48px;
+            border-radius:14px;
+            border:1px solid var(--line-strong);
+            background:#fff;
+            box-shadow:none;
+        }
+
+        .form-control:focus,
+        .form-select:focus{
+            border-color:#9fc0ef;
+            box-shadow:0 0 0 .2rem rgba(13,77,173,.10);
+        }
+
+        .search-wrap{
+            position:relative;
+        }
+
+        .search-wrap .bi-search{
+            position:absolute;
+            left:16px;
+            top:50%;
+            transform:translateY(-50%);
+            color:#8aa0b8;
+            z-index:2;
+        }
+
+        .search-input{
+            padding-left:44px;
+        }
+
+        .filters-actions{
+            display:flex;
+            align-items:end;
+            gap:10px;
+            height:100%;
+        }
+
+        .table-card{
+            overflow:hidden;
+        }
+
+        .table-card .card-header{
+            background:#fff;
+            border-bottom:1px solid var(--line);
+            padding:18px 22px;
+        }
+
+        .table-card .card-header h2{
+            margin:0;
+            font-size:1.08rem;
+            font-weight:700;
+        }
+
+        .table-card .card-header p{
+            margin:6px 0 0;
+            color:var(--muted);
+            font-size:.92rem;
+        }
+
+        .table-responsive{
+            overflow-x:auto;
+        }
+
+        .table{
+            margin-bottom:0;
+        }
+
+        .table thead th{
+            background:#f6f9fd;
+            color:#3b4a5c;
+            font-size:.88rem;
+            font-weight:700;
+            border-bottom:1px solid var(--line);
+            padding:15px 16px;
+            white-space:nowrap;
+        }
+
+        .table tbody td{
+            padding:16px;
+            vertical-align:middle;
+            border-color:#edf2f7;
+        }
+
+        .table tbody tr:hover{
+            background:#fbfdff;
+        }
+
+        .service-cell{
+            display:flex;
+            align-items:flex-start;
+            gap:14px;
+            min-width:280px;
+        }
+
+        .service-thumb{
+            width:54px;
+            height:54px;
+            border-radius:16px;
+            background:linear-gradient(180deg, #edf4ff, #dfeeff);
+            border:1px solid #d6e6fa;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:var(--main-blue);
+            font-size:1.1rem;
+            flex-shrink:0;
+        }
+
+        .service-name{
+            font-weight:700;
+            color:#1f2937;
+            margin-bottom:4px;
+        }
+
+        .service-desc{
+            color:var(--muted);
+            font-size:.88rem;
+            max-width:460px;
+            display:-webkit-box;
+            -webkit-line-clamp:2;
+            -webkit-box-orient:vertical;
+            overflow:hidden;
+        }
+
+        .id-badge{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            min-width:54px;
+            padding:7px 10px;
+            border-radius:999px;
+            background:#eef4ff;
+            color:var(--main-blue);
+            font-weight:700;
+            font-size:.87rem;
+        }
+
+        .status-badge{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            padding:8px 12px;
+            border-radius:999px;
+            font-weight:700;
+            font-size:.84rem;
+        }
+
+        .status-badge.active{
+            background:var(--success-bg);
+            color:var(--success-text);
+        }
+
+        .status-badge.inactive{
+            background:#eef2f7;
+            color:#607086;
+        }
+
+        .price-text{
+            font-variant-numeric:tabular-nums;
+            font-weight:700;
+            color:#1e293b;
+            white-space:nowrap;
+        }
+
+        .date-text{
+            white-space:nowrap;
+            color:#475569;
+            font-weight:600;
+        }
+
+        .actions-wrap{
+            display:flex;
+            flex-wrap:wrap;
+            justify-content:flex-end;
+            gap:8px;
+            min-width:220px;
+        }
+
+        .btn-table{
+            border-radius:999px;
+            padding:8px 13px;
+            font-size:.86rem;
+            font-weight:600;
+        }
+
+        .btn-table-primary{
+            border:1px solid #bcd2f1;
+            background:#eef5ff;
+            color:var(--main-blue);
+        }
+
+        .btn-table-primary:hover{
+            background:#dfebff;
+            color:var(--main-blue-dark);
+            border-color:#aac5ed;
+        }
+
+        .btn-table-danger{
+            border:1px solid #ffd3db;
+            background:#fff5f6;
+            color:var(--danger-text);
+        }
+
+        .btn-table-danger:hover{
+            background:#ffe9ed;
+            color:#9f1239;
+        }
+
+        .empty-state{
+            padding:56px 20px;
+            text-align:center;
+            color:var(--muted);
+        }
+
+        .empty-state-icon{
+            width:72px;
+            height:72px;
+            margin:0 auto 14px;
+            border-radius:22px;
+            background:#eef5ff;
+            color:var(--main-blue);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:1.5rem;
+        }
+
+        .pagination-bar{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:14px;
+            padding:18px 22px;
+            border-top:1px solid var(--line);
+            background:#fff;
+        }
+
+        .pagination-meta{
+            color:var(--muted);
+            font-size:.93rem;
+        }
+
+        .pagination-actions{
+            display:flex;
+            gap:10px;
+        }
+
+        @media (max-width: 1199px){
+            .admin-layout-row{
+                min-height:auto;
+            }
+
+            .admin-sidebar-col{
+                display:block;
+            }
+
+            .admin-sidebar{
+                min-height:auto;
+            }
+        }
+
+        @media (max-width: 991px){
+            .admin-main{
+                padding:18px;
+            }
+
+            .page-head{
+                flex-direction:column;
+                align-items:stretch;
+            }
+
+            .pagination-bar{
+                flex-direction:column;
+                align-items:flex-start;
+            }
+
+            .filters-actions{
+                flex-direction:column;
+                align-items:stretch;
+            }
+        }
+    </style>
 </head>
 <body>
+
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container py-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Manage Services</h1>
-    <a href="/admin/services/create" class="btn btn-primary">Create Service</a>
-  </div>
+<div class="container-fluid admin-shell px-0">
+  <div class="row g-0 admin-layout-row">
 
-  <div class="card shadow-sm">
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0">
-        <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Price</th>
-          <th>Active</th>
-          <th>Created At</th>
-          <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:if="${servicesPage == null or servicesPage.content == null or #lists.isEmpty(servicesPage.content)}">
-          <td colspan="6" class="text-center text-muted py-4">No services found.</td>
-        </tr>
-        <tr th:each="s : ${servicesPage.content}">
-          <td th:text="${s.id()}"></td>
-          <td th:text="${s.name()}"></td>
-          <td th:text="${s.price()} + ' BGN'"></td>
-          <td th:text="${s.isActive()} ? 'Yes' : 'No'"></td>
-          <td th:text="${#temporals.format(s.createdAt(), 'dd.MM.yyyy HH:mm')}"></td>
-          <td class="text-end">
-            <a class="btn btn-sm btn-outline-primary"
-               th:href="@{/admin/services/edit/{id}(id=${s.id()})}">Edit</a>
+    <aside class="col-12 col-xl-2 p-0 admin-sidebar-col">
+      <div class="h-100"
+           th:replace="~{fragments/admin-sidebar :: adminSidebar(active='services')}"></div>
+    </aside>
 
-            <form th:action="@{/admin/services/delete/{id}(id=${s.id()})}"
-                  method="post"
-                  class="d-inline">
-              <button type="submit" class="btn btn-sm btn-outline-danger"
-                      onclick="return confirm('Are you sure you want to delete this service?')">
-                Delete
-              </button>
-            </form>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
+    <main class="col-12 col-xl-10 admin-main">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">
+            <i class="bi bi-tools"></i>
+            Service management
+          </div>
+          <h1 class="page-title">Services</h1>
+          <div class="page-subtitle">
+            Manage, filter and update available service offers.
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <a class="btn btn-admin-primary" th:href="@{/admin/services/create}">
+            <i class="bi bi-plus-lg me-1"></i>
+            New service
+          </a>
+        </div>
+      </div>
+
+      <div class="admin-card filters-card">
+        <div class="card-body">
+          <div class="section-title">
+            <h2>Filter services</h2>
+          </div>
+
+          <form class="row g-3 align-items-end" method="get" th:action="@{/admin/services}">
+            <div class="col-12 col-lg-4">
+              <label class="form-label">Search</label>
+              <div class="search-wrap">
+                <i class="bi bi-search"></i>
+                <input class="form-control search-input"
+                       type="text"
+                       name="q"
+                       placeholder="Search by name or description..."
+                       th:value="${q}">
+              </div>
+            </div>
+
+            <div class="col-12 col-md-4 col-lg-2">
+              <label class="form-label">Status</label>
+              <select class="form-select" name="isActive">
+                <option value="" th:selected="${isActive == null}">All</option>
+                <option value="true" th:selected="${isActive != null and isActive}">Active</option>
+                <option value="false" th:selected="${isActive != null and !isActive}">Inactive</option>
+              </select>
+            </div>
+
+            <div class="col-12 col-md-4 col-lg-2">
+              <label class="form-label">Min price</label>
+              <input class="form-control"
+                     type="text"
+                     name="minPrice"
+                     placeholder="0.00"
+                     th:value="${minPrice}">
+            </div>
+
+            <div class="col-12 col-md-4 col-lg-2">
+              <label class="form-label">Max price</label>
+              <input class="form-control"
+                     type="text"
+                     name="maxPrice"
+                     placeholder="9999.99"
+                     th:value="${maxPrice}">
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-1">
+              <label class="form-label">Size</label>
+              <select class="form-select" name="size">
+                <option value="10" th:selected="${size == 10}">10</option>
+                <option value="20" th:selected="${size == 20}">20</option>
+                <option value="50" th:selected="${size == 50}">50</option>
+              </select>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-1">
+              <label class="form-label">Sort</label>
+              <select class="form-select" name="sort">
+                <option value="createdAt,desc" th:selected="${sort == 'createdAt,desc'}">Newest</option>
+                <option value="createdAt,asc" th:selected="${sort == 'createdAt,asc'}">Oldest</option>
+                <option value="price,asc" th:selected="${sort == 'price,asc'}">Price ↑</option>
+                <option value="price,desc" th:selected="${sort == 'price,desc'}">Price ↓</option>
+                <option value="name,asc" th:selected="${sort == 'name,asc'}">Name A-Z</option>
+                <option value="name,desc" th:selected="${sort == 'name,desc'}">Name Z-A</option>
+              </select>
+            </div>
+
+            <input type="hidden" name="page" value="0"/>
+
+            <div class="col-12 col-lg-3">
+              <div class="filters-actions">
+                <button type="submit" class="btn btn-admin-primary w-100">
+                  <i class="bi bi-funnel me-1"></i>
+                  Apply
+                </button>
+                <a class="btn btn-admin-light w-100" th:href="@{/admin/services}">
+                  Reset
+                </a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="admin-card table-card">
+        <div class="card-header">
+          <h2>Service list</h2>
+          <p>Quick access to update or remove services from the admin panel.</p>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+            <tr>
+              <th style="width:100px;">ID</th>
+              <th>Service</th>
+              <th class="text-end" style="width:160px;">Price</th>
+              <th style="width:140px;">Status</th>
+              <th style="width:180px;">Created at</th>
+              <th class="text-end" style="width:240px;">Actions</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:if="${servicesPage == null or servicesPage.content == null or #lists.isEmpty(servicesPage.content)}">
+              <td colspan="6">
+                <div class="empty-state">
+                  <div class="empty-state-icon">
+                    <i class="bi bi-inboxes"></i>
+                  </div>
+                  <div class="fw-semibold mb-1">No services found</div>
+                  <div>Try changing the filters or add a new service.</div>
+                </div>
+              </td>
+            </tr>
+
+            <tr th:each="s : ${servicesPage.content}">
+              <td>
+                <span class="id-badge" th:text="${s.id()}">1</span>
+              </td>
+
+              <td>
+                <div class="service-cell">
+                  <div class="service-thumb">
+                    <i class="bi bi-wrench-adjustable-circle"></i>
+                  </div>
+                  <div>
+                    <div class="service-name" th:text="${s.name()}">Service name</div>
+                    <div class="service-desc"
+                         th:text="${s.description() != null and !#strings.isEmpty(s.description()) ? s.description() : 'No description available.'}">
+                      Service description
+                    </div>
+                  </div>
+                </div>
+              </td>
+
+              <td class="text-end">
+                                <span class="price-text"
+                                      th:text="${#numbers.formatDecimal(s.price(), 1, 2)} + ' EUR'">0.00 EUR</span>
+              </td>
+
+              <td>
+                                <span th:if="${s.isActive()}" class="status-badge active">
+                                    <i class="bi bi-check-circle-fill me-1"></i>
+                                    Active
+                                </span>
+                <span th:unless="${s.isActive()}" class="status-badge inactive">
+                                    <i class="bi bi-pause-circle-fill me-1"></i>
+                                    Inactive
+                                </span>
+              </td>
+
+              <td>
+                                <span class="date-text"
+                                      th:text="${#temporals.format(s.createdAt(), 'dd.MM.yyyy HH:mm')}">01.01.2026 10:00</span>
+              </td>
+
+              <td class="text-end">
+                <div class="actions-wrap">
+                  <a class="btn btn-table btn-table-primary"
+                     th:href="@{/admin/services/edit/{id}(id=${s.id()})}">
+                    <i class="bi bi-pencil-square me-1"></i>
+                    Edit
+                  </a>
+
+                  <form th:action="@{/admin/services/delete/{id}(id=${s.id()})}"
+                        method="post"
+                        class="d-inline"
+                        onsubmit="return confirm('Are you sure you want to delete this service?');">
+                    <button type="submit" class="btn btn-table btn-table-danger">
+                      <i class="bi bi-trash3 me-1"></i>
+                      Delete
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pagination-bar" th:if="${servicesPage != null}">
+          <div class="pagination-meta">
+            Page <strong th:text="${servicesPage.number + 1}">1</strong>
+            of <strong th:text="${servicesPage.totalPages == 0 ? 1 : servicesPage.totalPages}">1</strong>
+            • Total services: <strong th:text="${servicesPage.totalElements}">0</strong>
+          </div>
+
+          <div class="pagination-actions">
+            <a class="btn btn-admin-light"
+               th:classappend="${servicesPage.first} ? ' disabled' : ''"
+               th:href="${'/admin/services?page=' + (servicesPage.number - 1) + queryString}">
+              <i class="bi bi-arrow-left me-1"></i>
+              Previous
+            </a>
+
+            <a class="btn btn-admin-light"
+               th:classappend="${servicesPage.last} ? ' disabled' : ''"
+               th:href="${'/admin/services?page=' + (servicesPage.number + 1) + queryString}">
+              Next
+              <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
   </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

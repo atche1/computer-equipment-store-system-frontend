@@ -10,7 +10,6 @@ import com.school.ppmg.computer_equipment_store_system_client.dtos.product.Produ
 import com.school.ppmg.computer_equipment_store_system_client.dtos.product.ProductResponse;
 import com.school.ppmg.computer_equipment_store_system_client.dtos.product_attribute_value.ProductAttributeValueResponse;
 import com.school.ppmg.computer_equipment_store_system_client.dtos.product_image.ProductImageResponse;
-import com.school.ppmg.computer_equipment_store_system_client.exceptions.ApiConflictException;
 import com.school.ppmg.computer_equipment_store_system_client.exceptions.BackendException;
 import com.school.ppmg.computer_equipment_store_system_client.security.AdminGuard;
 import jakarta.servlet.http.HttpSession;
@@ -52,6 +51,7 @@ public class ProductController {
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) Boolean inStock,
+            @RequestParam(required = false) String brand,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size,
             @RequestParam(required = false) String sort,
@@ -120,6 +120,7 @@ public class ProductController {
                 minPrice,
                 maxPrice,
                 inStock,
+                brand,
                 attrText.isEmpty() ? null : attrText,
                 attrNumMin.isEmpty() ? null : attrNumMin,
                 attrNumMax.isEmpty() ? null : attrNumMax,
@@ -131,12 +132,35 @@ public class ProductController {
 
         List<CategoryResponse> categories = categoryClient.listActive();
         List<ProductResponse> products = result.getContent() != null ? result.getContent() : List.of();
+
+        PageResponse<ProductResponse> brandsSourcePage = productClient.getAll(
+                null,
+                null,
+                true,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                0,
+                500,
+                "name,asc"
+        );
+
+        List<ProductResponse> allProductsForBrands =
+                brandsSourcePage.getContent() != null ? brandsSourcePage.getContent() : List.of();
+
+        List<String> brands = buildAvailableBrands(allProductsForBrands);
         Map<Long, String> productImages = buildProductImageMap(products);
 
         model.addAttribute("page", result);
         model.addAttribute("products", products);
         model.addAttribute("productImages", productImages);
         model.addAttribute("categories", categories);
+        model.addAttribute("brands", brands);
 
         model.addAttribute("q", q);
         model.addAttribute("categoryId", categoryId);
@@ -144,6 +168,7 @@ public class ProductController {
         model.addAttribute("minPrice", minPrice);
         model.addAttribute("maxPrice", maxPrice);
         model.addAttribute("inStock", inStock);
+        model.addAttribute("brand", brand);
         model.addAttribute("sort", sort);
         model.addAttribute("size", size);
 
@@ -176,6 +201,7 @@ public class ProductController {
                 null,
                 null,
                 true,
+                null,
                 null,
                 null,
                 null,
@@ -236,9 +262,14 @@ public class ProductController {
             @RequestParam(required = false) String q,
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) Boolean isActive,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) Boolean inStock,
+            @RequestParam(required = false) String brand,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String sort,
+            @RequestParam org.springframework.util.MultiValueMap<String, String> params,
             HttpSession session,
             Model model
     ) {
@@ -249,31 +280,118 @@ public class ProductController {
             sort = "createdAt,desc";
         }
 
+        List<com.school.ppmg.computer_equipment_store_system_client.dtos.attribute.AttributeResponse> filterableAttributes = List.of();
+        if (categoryId != null) {
+            filterableAttributes = categoryAttributeClient.list(categoryId).stream()
+                    .filter(a -> Boolean.TRUE.equals(a.isFilterable()))
+                    .toList();
+        }
+
+        List<String> attrText = new ArrayList<>();
+        List<String> attrNumMin = new ArrayList<>();
+        List<String> attrNumMax = new ArrayList<>();
+        List<String> attrBool = new ArrayList<>();
+
+        Map<Long, String> uiText = new HashMap<>();
+        Map<Long, String> uiNumMin = new HashMap<>();
+        Map<Long, String> uiNumMax = new HashMap<>();
+        Map<Long, String> uiBool = new HashMap<>();
+
+        for (var entry : params.entrySet()) {
+            String key = entry.getKey();
+            if (entry.getValue() == null || entry.getValue().isEmpty()) continue;
+
+            String val = entry.getValue().get(0);
+            if (val == null || val.isBlank()) continue;
+
+            if (key.startsWith("attrText_")) {
+                Long id = tryParseIdSuffix(key, "attrText_");
+                if (id != null) {
+                    attrText.add(id + ":" + val.trim());
+                    uiText.put(id, val.trim());
+                }
+            } else if (key.startsWith("attrNumMin_")) {
+                Long id = tryParseIdSuffix(key, "attrNumMin_");
+                if (id != null) {
+                    attrNumMin.add(id + ":" + val.trim());
+                    uiNumMin.put(id, val.trim());
+                }
+            } else if (key.startsWith("attrNumMax_")) {
+                Long id = tryParseIdSuffix(key, "attrNumMax_");
+                if (id != null) {
+                    attrNumMax.add(id + ":" + val.trim());
+                    uiNumMax.put(id, val.trim());
+                }
+            } else if (key.startsWith("attrBool_")) {
+                Long id = tryParseIdSuffix(key, "attrBool_");
+                if (id != null) {
+                    attrBool.add(id + ":" + val.trim());
+                    uiBool.put(id, val.trim());
+                }
+            }
+        }
+
         PageResponse<ProductResponse> result = productClient.getAll(
                 q,
                 categoryId,
                 isActive,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
+                minPrice,
+                maxPrice,
+                inStock,
+                brand,
+                attrText.isEmpty() ? null : attrText,
+                attrNumMin.isEmpty() ? null : attrNumMin,
+                attrNumMax.isEmpty() ? null : attrNumMax,
+                attrBool.isEmpty() ? null : attrBool,
                 page,
                 size,
                 sort
         );
 
+        PageResponse<ProductResponse> brandsSourcePage = productClient.getAll(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                0,
+                500,
+                "name,asc"
+        );
+
+        List<ProductResponse> allProductsForBrands =
+                brandsSourcePage.getContent() != null ? brandsSourcePage.getContent() : List.of();
+
+        List<String> brands = buildAvailableBrands(allProductsForBrands);
+
         model.addAttribute("page", result);
         model.addAttribute("products", result.getContent());
         model.addAttribute("categories", categoryClient.listActive());
+        model.addAttribute("brands", brands);
 
         model.addAttribute("q", q);
         model.addAttribute("categoryId", categoryId);
         model.addAttribute("isActive", isActive);
+        model.addAttribute("minPrice", minPrice);
+        model.addAttribute("maxPrice", maxPrice);
+        model.addAttribute("inStock", inStock);
+        model.addAttribute("brand", brand);
         model.addAttribute("sort", sort);
         model.addAttribute("size", size);
+
+        model.addAttribute("filterableAttributes", filterableAttributes);
+        model.addAttribute("uiText", uiText);
+        model.addAttribute("uiNumMin", uiNumMin);
+        model.addAttribute("uiNumMax", uiNumMax);
+        model.addAttribute("uiBool", uiBool);
+
+        model.addAttribute("queryString", buildQueryString(params, sort, size));
 
         return "admin/products/list-products-admin";
     }
@@ -418,6 +536,7 @@ public class ProductController {
             return s;
         }
     }
+
     private String extractBrandName(String productName) {
         if (productName == null || productName.isBlank()) {
             return "";
@@ -451,5 +570,15 @@ public class ProductController {
         }
 
         return imageMap;
+    }
+
+    private List<String> buildAvailableBrands(List<ProductResponse> products) {
+        return products.stream()
+                .map(ProductResponse::name)
+                .map(this::extractBrandName)
+                .filter(b -> b != null && !b.isBlank())
+                .distinct()
+                .sorted(String.CASE_INSENSITIVE_ORDER)
+                .toList();
     }
 }

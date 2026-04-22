@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -64,16 +66,44 @@ public class StoreServiceController {
     }
 
     @GetMapping("/admin/services")
-    public String adminServices(@RequestParam(defaultValue = "0") int page,
+    public String adminServices(@RequestParam(required = false) String q,
                                 @RequestParam(required = false) Boolean isActive,
+                                @RequestParam(required = false) BigDecimal minPrice,
+                                @RequestParam(required = false) BigDecimal maxPrice,
+                                @RequestParam(defaultValue = "0") int page,
+                                @RequestParam(defaultValue = "10") int size,
+                                @RequestParam(required = false) String sort,
+                                @RequestParam MultiValueMap<String, String> params,
                                 HttpSession session,
                                 Model model) {
         String redirect = adminGuard.check(session);
         if (redirect != null) return redirect;
 
-        var servicesPage = storeServiceClient.getAllForAdmin(isActive, page, 20, "createdAt,desc");
+        if (sort == null || sort.isBlank()) {
+            sort = "createdAt,desc";
+        }
+
+        var servicesPage = storeServiceClient.getAllForAdmin(
+                q,
+                isActive,
+                minPrice,
+                maxPrice,
+                page,
+                size,
+                sort
+        );
+
         model.addAttribute("servicesPage", servicesPage);
+        model.addAttribute("services", servicesPage.getContent() != null ? servicesPage.getContent() : List.of());
+
+        model.addAttribute("q", q);
         model.addAttribute("isActive", isActive);
+        model.addAttribute("minPrice", minPrice);
+        model.addAttribute("maxPrice", maxPrice);
+        model.addAttribute("size", size);
+        model.addAttribute("sort", sort);
+
+        model.addAttribute("queryString", buildQueryString(params, sort, size));
 
         return "admin/services/services";
     }
@@ -152,33 +182,45 @@ public class StoreServiceController {
         storeServiceClient.delete(id);
         return "redirect:/admin/services";
     }
-    private String buildQueryString(MultiValueMap<String, String> params,
-                                    String sort,
-                                    int size) {
-        StringBuilder sb = new StringBuilder();
 
-        params.forEach((key, values) -> {
-            if ("page".equals(key)) return;
-            if (values == null) return;
+    private String buildQueryString(MultiValueMap<String, String> params, String sort, int size) {
+        Map<String, String> flat = new LinkedHashMap<>();
 
-            for (String value : values) {
-                if (value != null && !value.isBlank()) {
-                    sb.append("&")
-                            .append(URLEncoder.encode(key, StandardCharsets.UTF_8))
-                            .append("=")
-                            .append(URLEncoder.encode(value, StandardCharsets.UTF_8));
-                }
-            }
-        });
+        for (var e : params.entrySet()) {
+            String key = e.getKey();
+            if ("page".equals(key)) continue;
+            if (e.getValue() == null || e.getValue().isEmpty()) continue;
 
-        if (!params.containsKey("sort") && sort != null && !sort.isBlank()) {
-            sb.append("&sort=").append(URLEncoder.encode(sort, StandardCharsets.UTF_8));
+            String value = e.getValue().get(0);
+            if (value == null || value.isBlank()) continue;
+
+            flat.put(key, value);
         }
 
-        if (!params.containsKey("size")) {
-            sb.append("&size=").append(size);
+        if (!flat.containsKey("sort") && sort != null && !sort.isBlank()) {
+            flat.put("sort", sort);
+        }
+
+        if (!flat.containsKey("size")) {
+            flat.put("size", String.valueOf(size));
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (var e : flat.entrySet()) {
+            sb.append("&")
+                    .append(urlEnc(e.getKey()))
+                    .append("=")
+                    .append(urlEnc(e.getValue()));
         }
 
         return sb.toString();
+    }
+
+    private String urlEnc(String s) {
+        try {
+            return URLEncoder.encode(s, StandardCharsets.UTF_8);
+        } catch (Exception ex) {
+            return s;
+        }
     }
 }

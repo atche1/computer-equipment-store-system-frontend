@@ -5,178 +5,598 @@
     <title>Category Attributes</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
-        body {
-            background: linear-gradient(180deg, #eef2ff 0%, #f6f7fb 100%);
+        :root{
+            --main-blue:#0d4dad;
+            --main-blue-dark:#0a3d8c;
+            --page-bg:#f4f7fb;
+            --surface:#ffffff;
+            --surface-soft:#f8fbff;
+            --line:#dbe5f0;
+            --line-strong:#c8d7e8;
+            --text:#1f2937;
+            --muted:#6b7280;
+            --sidebar:#0f2747;
+            --sidebar-hover:rgba(255,255,255,.10);
+            --success-bg:#e9f8ef;
+            --success-text:#1f7a45;
+            --danger-text:#be123c;
+            --shadow:0 14px 34px rgba(15, 23, 42, .08);
         }
-        .card {
-            border: 0;
-            border-radius: 1rem;
-            box-shadow: 0 12px 28px rgba(10,20,40,.08);
+
+        html, body{
+            margin:0;
+            padding:0;
+            background:var(--page-bg);
+            color:var(--text);
+            font-family:Arial, sans-serif;
         }
-        .page-title {
-            font-weight: 600;
+
+        .admin-shell{
+            min-height:100vh;
+            padding-left:0 !important;
+            padding-right:0 !important;
+        }
+
+        .admin-layout-row{
+            min-height:100vh;
+            align-items:stretch;
+            margin-left:0;
+            margin-right:0;
+        }
+
+        .admin-sidebar-col{
+            padding-left:0 !important;
+            padding-right:0 !important;
+            display:flex;
+        }
+
+        .admin-sidebar{
+            width:100%;
+            min-height:100%;
+            background:linear-gradient(180deg, var(--sidebar) 0%, #0b1d36 100%);
+            color:#fff;
+            padding:24px 18px;
+            display:flex;
+            flex-direction:column;
+        }
+
+        .admin-brand{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            margin-bottom:28px;
+        }
+
+        .admin-brand-badge{
+            width:46px;
+            height:46px;
+            border-radius:14px;
+            background:rgba(255,255,255,.12);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:20px;
+            box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+        }
+
+        .admin-brand-title{
+            font-size:1rem;
+            font-weight:700;
+            line-height:1.2;
+        }
+
+        .admin-brand-subtitle{
+            font-size:.82rem;
+            color:rgba(255,255,255,.72);
+        }
+
+        .admin-menu-title{
+            font-size:.78rem;
+            letter-spacing:.08em;
+            text-transform:uppercase;
+            color:rgba(255,255,255,.48);
+            margin:18px 10px 10px;
+        }
+
+        .admin-nav{
+            display:flex;
+            flex-direction:column;
+            gap:6px;
+        }
+
+        .admin-nav .nav-link{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            color:rgba(255,255,255,.82);
+            border-radius:14px;
+            padding:12px 14px;
+            font-weight:600;
+            transition:all .18s ease;
+        }
+
+        .admin-nav .nav-link i{
+            font-size:1rem;
+            opacity:.9;
+        }
+
+        .admin-nav .nav-link:hover{
+            color:#fff;
+            background:var(--sidebar-hover);
+        }
+
+        .admin-nav .nav-link.active{
+            color:#fff;
+            background:linear-gradient(90deg, rgba(13,77,173,.95), rgba(13,77,173,.72));
+            box-shadow:0 10px 22px rgba(13,77,173,.22);
+        }
+
+        .admin-sidebar-footer{
+            margin-top:auto;
+            padding-top:18px;
+            border-top:1px solid rgba(255,255,255,.12);
+            color:rgba(255,255,255,.70);
+            font-size:.92rem;
+        }
+
+        .admin-sidebar-footer strong{
+            color:#fff;
+        }
+
+        .admin-main{
+            padding:28px;
+        }
+
+        .page-head{
+            display:flex;
+            align-items:flex-start;
+            justify-content:space-between;
+            gap:16px;
+            margin-bottom:22px;
+            flex-wrap:wrap;
+        }
+
+        .eyebrow{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            padding:7px 12px;
+            border-radius:999px;
+            background:#eaf2ff;
+            color:var(--main-blue);
+            font-weight:700;
+            font-size:.82rem;
+            margin-bottom:10px;
+        }
+
+        .page-title{
+            margin:0;
+            font-size:2rem;
+            font-weight:700;
+            line-height:1.15;
+        }
+
+        .page-subtitle{
+            margin-top:8px;
+            color:var(--muted);
+            font-size:1rem;
+        }
+
+        .meta-row{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            flex-wrap:wrap;
+            margin-top:12px;
+        }
+
+        .meta-badge{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            padding:8px 12px;
+            border-radius:999px;
+            background:#eef5ff;
+            border:1px solid #d7e6fb;
+            color:var(--main-blue);
+            font-weight:600;
+            font-size:.87rem;
+        }
+
+        .btn-admin-primary{
+            background:var(--main-blue);
+            border-color:var(--main-blue);
+            color:#fff;
+            border-radius:12px;
+            padding:11px 18px;
+            font-weight:700;
+        }
+
+        .btn-admin-primary:hover{
+            background:var(--main-blue-dark);
+            border-color:var(--main-blue-dark);
+            color:#fff;
+        }
+
+        .btn-admin-light{
+            background:#fff;
+            border:1px solid var(--line-strong);
+            color:var(--text);
+            border-radius:12px;
+            padding:11px 16px;
+            font-weight:600;
+        }
+
+        .btn-admin-light:hover{
+            background:#f8fbff;
+            border-color:#b9cbdf;
+            color:var(--text);
+        }
+
+        .btn-table-danger{
+            border:1px solid #ffd3db;
+            background:#fff5f6;
+            color:var(--danger-text);
+            border-radius:999px;
+            padding:8px 13px;
+            font-size:.86rem;
+            font-weight:600;
+        }
+
+        .btn-table-danger:hover{
+            background:#ffe9ed;
+            color:#9f1239;
+        }
+
+        .admin-card{
+            background:var(--surface);
+            border:1px solid rgba(219,229,240,.95);
+            border-radius:22px;
+            box-shadow:var(--shadow);
+            overflow:hidden;
+        }
+
+        .form-card-header{
+            padding:22px 24px;
+            border-bottom:1px solid var(--line);
+            background:linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+        }
+
+        .form-card-title{
+            margin:0;
+            font-size:1.14rem;
+            font-weight:700;
+        }
+
+        .form-card-text{
+            margin:6px 0 0;
+            color:var(--muted);
+            font-size:.94rem;
+        }
+
+        .form-card-body{
+            padding:24px;
+        }
+
+        .form-label{
+            font-size:.92rem;
+            font-weight:700;
+            color:#334155;
+            margin-bottom:8px;
+        }
+
+        .form-control,
+        .form-select{
+            min-height:50px;
+            border-radius:14px;
+            border:1px solid var(--line-strong);
+            background:#fff;
+            box-shadow:none;
+        }
+
+        .form-control:focus,
+        .form-select:focus{
+            border-color:#9fc0ef;
+            box-shadow:0 0 0 .2rem rgba(13,77,173,.10);
+        }
+
+        .field-hint{
+            margin-top:8px;
+            color:var(--muted);
+            font-size:.84rem;
+        }
+
+        .table{
+            margin-bottom:0;
+        }
+
+        .table thead th{
+            background:#f6f9fd;
+            color:#3b4a5c;
+            font-size:.88rem;
+            font-weight:700;
+            border-bottom:1px solid var(--line);
+            padding:15px 16px;
+            white-space:nowrap;
+        }
+
+        .table tbody td{
+            padding:16px;
+            vertical-align:middle;
+            border-color:#edf2f7;
+        }
+
+        .table tbody tr:hover{
+            background:#fbfdff;
+        }
+
+        .id-badge{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            min-width:54px;
+            padding:7px 10px;
+            border-radius:999px;
+            background:#eef4ff;
+            color:var(--main-blue);
+            font-weight:700;
+            font-size:.87rem;
+        }
+
+        .attribute-name{
+            font-weight:700;
+            color:#1f2937;
+            margin-bottom:4px;
+        }
+
+        .type-badge{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            padding:8px 12px;
+            border-radius:999px;
+            background:#eef5ff;
+            border:1px solid #d7e6fb;
+            color:var(--main-blue);
+            font-weight:600;
+            font-size:.87rem;
+        }
+
+        .status-badge{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            padding:8px 12px;
+            border-radius:999px;
+            font-weight:700;
+            font-size:.84rem;
+        }
+
+        .status-badge.active{
+            background:var(--success-bg);
+            color:var(--success-text);
+        }
+
+        .status-badge.inactive{
+            background:#eef2f7;
+            color:#607086;
+        }
+
+        .empty-state{
+            padding:56px 20px;
+            text-align:center;
+            color:var(--muted);
+        }
+
+        .empty-state-icon{
+            width:72px;
+            height:72px;
+            margin:0 auto 14px;
+            border-radius:22px;
+            background:#eef5ff;
+            color:var(--main-blue);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:1.5rem;
+        }
+
+        .alert{
+            border-radius:16px;
+        }
+
+        @media (max-width: 1199px){
+            .admin-layout-row{
+                min-height:auto;
+            }
+
+            .admin-sidebar-col{
+                display:block;
+            }
+
+            .admin-sidebar{
+                min-height:auto;
+            }
+        }
+
+        @media (max-width: 991px){
+            .admin-main{
+                padding:18px;
+            }
+
+            .page-head{
+                flex-direction:column;
+                align-items:stretch;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="container py-5">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 
-    <!-- HEADER -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h4 page-title mb-1">Manage Category Attributes</h1>
-            <p class="text-secondary mb-0">
-                Category:
-                <strong th:text="${category.name()}">Category Name</strong>
-            </p>
-        </div>
+<div class="container-fluid admin-shell px-0">
+    <div class="row g-0 admin-layout-row">
 
-        <a th:href="@{/categories}" class="btn btn-outline-secondary">
-            ← Back to Categories
-        </a>
-    </div>
+        <aside class="col-12 col-xl-2 p-0 admin-sidebar-col">
+            <div class="h-100"
+                 th:replace="~{fragments/admin-sidebar :: adminSidebar(active='categories')}"></div>
+        </aside>
 
-    <!-- SUCCESS / ERROR -->
-    <div th:if="${successMessage}" class="alert alert-success"
-         th:text="${successMessage}"></div>
+        <main class="col-12 col-xl-10 admin-main">
+            <div class="page-head">
+                <div>
+                    <div class="eyebrow">
+                        <i class="bi bi-sliders"></i>
+                        Category management
+                    </div>
+                    <h1 class="page-title">Category attributes</h1>
+                    <div class="page-subtitle">
+                        Manage which attributes are assigned to this category.
+                    </div>
 
-    <div th:if="${errorMessage}" class="alert alert-danger"
-         th:text="${errorMessage}"></div>
-
-    <!-- ADD ATTRIBUTE CARD -->
-    <div class="card mb-4">
-        <div class="card-body">
-
-            <h5 class="mb-3">Add Attribute</h5>
-
-            <form th:action="@{/categories/{id}/attributes/add(id=${categoryId})}"
-                  method="post"
-                  class="row g-3 align-items-end">
-
-                <div class="col-md-8">
-                    <label class="form-label">Select Attribute</label>
-
-                    <select class="form-select"
-                            name="attributeId"
-                            required>
-
-                        <option value="" disabled selected>
-                            Choose attribute...
-                        </option>
-
-                        <option th:each="a : ${availableAttributes}"
-                                th:value="${a.id}"
-                                th:text="${a.name}">
-                            Attribute Name
-                        </option>
-
-                    </select>
-
-                    <div class="form-text">
-                        Only attributes not yet assigned are shown.
+                    <div class="meta-row">
+                        <span class="meta-badge">
+                            <i class="bi bi-diagram-3"></i>
+                            <span th:text="${category.name()}">Category Name</span>
+                        </span>
                     </div>
                 </div>
 
-                <div class="col-md-4">
-                    <div class="d-grid">
-                        <button type="submit"
-                                class="btn btn-primary">
-                            Add
-                        </button>
-                    </div>
-                </div>
-
-            </form>
-
-        </div>
-    </div>
-
-    <!-- ASSIGNED ATTRIBUTES TABLE -->
-    <div class="card">
-        <div class="card-body p-0">
-
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-
-                    <thead class="table-light">
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Unit</th>
-                        <th>Filterable</th>
-                        <th class="text-end">Actions</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-
-                    <!-- EMPTY STATE -->
-                    <tr th:if="${#lists.isEmpty(assignedAttributes)}">
-                        <td colspan="6" class="text-center py-4 text-secondary">
-                            No attributes assigned to this category.
-                        </td>
-                    </tr>
-
-                    <!-- ROWS -->
-                    <tr th:each="a : ${assignedAttributes}">
-                        <td th:text="${a.id}">1</td>
-
-                        <td th:text="${a.name}">RAM</td>
-
-                        <td>
-                            <span class="badge bg-info text-dark"
-                                  th:text="${a.dataType}">
-                                NUMBER
-                            </span>
-                        </td>
-
-                        <td th:text="${a.unit != null ? a.unit : '-'}">
-                            GB
-                        </td>
-
-                        <td>
-                            <span th:if="${a.filterable}"
-                                  class="badge bg-success">
-                                Yes
-                            </span>
-                            <span th:unless="${a.filterable}"
-                                  class="badge bg-secondary">
-                                No
-                            </span>
-                        </td>
-
-                        <td class="text-end">
-
-                            <form th:action="@{/categories/{cid}/attributes/remove/{aid}(cid=${categoryId}, aid=${a.id})}"
-                                  method="post"
-                                  class="d-inline"
-                                  onsubmit="return confirm('Remove this attribute?');">
-
-                                <button type="submit"
-                                        class="btn btn-sm btn-outline-danger">
-                                    Remove
-                                </button>
-
-                            </form>
-
-                        </td>
-                    </tr>
-
-                    </tbody>
-                </table>
+                <a th:href="@{/edit-category/{id}(id=${categoryId})}" class="btn btn-admin-light">
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Back to category
+                </a>
             </div>
 
-        </div>
-    </div>
+            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
 
+            <div class="admin-card mb-4">
+                <div class="form-card-header">
+                    <h2 class="form-card-title">Add attribute</h2>
+                    <p class="form-card-text">Assign a new attribute to this category from the list of available attributes.</p>
+                </div>
+
+                <div class="form-card-body">
+                    <form th:action="@{/categories/{id}/attributes/add(id=${categoryId})}"
+                          method="post"
+                          class="row g-3 align-items-end">
+
+                        <div class="col-12 col-lg-9">
+                            <label class="form-label">Select attribute</label>
+
+                            <select class="form-select"
+                                    name="attributeId"
+                                    required>
+                                <option value="" disabled selected>Choose attribute...</option>
+
+                                <option th:each="a : ${availableAttributes}"
+                                        th:value="${a.id}"
+                                        th:text="${a.name}">
+                                    Attribute name
+                                </option>
+                            </select>
+
+                            <div class="field-hint">
+                                Only attributes that are not already assigned to this category are shown here.
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-3 d-grid">
+                            <button type="submit" class="btn btn-admin-primary">
+                                <i class="bi bi-plus-lg me-1"></i>
+                                Add attribute
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <div class="form-card-header">
+                    <h2 class="form-card-title">Assigned attributes</h2>
+                    <p class="form-card-text">Review and remove attributes currently linked to this category.</p>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                        <tr>
+                            <th style="width:90px;">ID</th>
+                            <th>Name</th>
+                            <th style="width:160px;">Type</th>
+                            <th style="width:120px;">Unit</th>
+                            <th style="width:140px;">Filterable</th>
+                            <th class="text-end" style="width:160px;">Actions</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr th:if="${#lists.isEmpty(assignedAttributes)}">
+                            <td colspan="6">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">
+                                        <i class="bi bi-sliders2-vertical"></i>
+                                    </div>
+                                    <div class="fw-semibold mb-1">No attributes assigned</div>
+                                    <div>Add the first attribute to start building this category’s filter and specification structure.</div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr th:each="a : ${assignedAttributes}">
+                            <td>
+                                <span class="id-badge" th:text="${a.id}">1</span>
+                            </td>
+
+                            <td>
+                                <div class="attribute-name" th:text="${a.name}">RAM</div>
+                            </td>
+
+                            <td>
+                                <span class="type-badge" th:text="${a.dataType}">NUMBER</span>
+                            </td>
+
+                            <td th:text="${a.unit != null ? a.unit : '-'}">GB</td>
+
+                            <td>
+                                <span th:if="${a.filterable}" class="status-badge active">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    Yes
+                                </span>
+                                <span th:unless="${a.filterable}" class="status-badge inactive">
+                                    <i class="bi bi-pause-circle-fill"></i>
+                                    No
+                                </span>
+                            </td>
+
+                            <td class="text-end">
+                                <form th:action="@{/categories/{cid}/attributes/remove/{aid}(cid=${categoryId}, aid=${a.id})}"
+                                      method="post"
+                                      class="d-inline"
+                                      onsubmit="return confirm('Remove this attribute?');">
+                                    <button type="submit" class="btn btn-table-danger">
+                                        <i class="bi bi-trash3 me-1"></i>
+                                        Remove
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

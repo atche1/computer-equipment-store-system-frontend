@@ -6,41 +6,88 @@
   <style>
     :root{
       --main-blue:#0d4dad;
+      --main-blue-dark:#0a3d8c;
       --footer-bg:#f3f4f6;
+      --footer-surface:#ffffff;
       --text:#374151;
+      --muted:#6b7280;
+      --line:#e5e7eb;
     }
 
     .store-footer{
       margin-top:60px;
     }
 
-    /* TOP BLUE STRIP */
-    .footer-top{
-      background:var(--main-blue);
-      color:#fff;
-      padding:22px 0;
-      text-align:center;
-      font-size:1.2rem;
-      font-weight:500;
+    .footer-features{
+      background:#f9fafb;
+      padding:26px 0;
+      border-top:1px solid var(--line);
+      border-bottom:1px solid var(--line);
     }
 
-    /* MAIN FOOTER */
+    .feature-box{
+      display:flex;
+      align-items:flex-start;
+      gap:14px;
+      padding:18px;
+      border:1px solid var(--line);
+      border-radius:.85rem;
+      background:var(--footer-surface);
+      height:100%;
+      transition:.2s ease;
+    }
+
+    .feature-box:hover{
+      transform:translateY(-2px);
+      box-shadow:0 8px 18px rgba(0,0,0,.05);
+    }
+
+    .feature-box i{
+      font-size:26px;
+      color:var(--main-blue);
+      line-height:1;
+      margin-top:2px;
+    }
+
+    .feature-title{
+      font-weight:700;
+      font-size:1rem;
+      color:#111827;
+      margin-bottom:4px;
+    }
+
+    .feature-text{
+      font-size:.92rem;
+      color:var(--muted);
+      line-height:1.5;
+    }
+
+    .footer-top{
+      background:linear-gradient(90deg, var(--main-blue) 0%, var(--main-blue-dark) 100%);
+      color:#fff;
+      padding:20px 0;
+      text-align:center;
+      font-size:1.08rem;
+      font-weight:600;
+    }
+
     .footer-main{
       background:var(--footer-bg);
       padding:55px 0 40px;
     }
 
     .footer-title{
-      font-size:1.3rem;
+      font-size:1.15rem;
       font-weight:700;
-      margin-bottom:1.2rem;
+      margin-bottom:1rem;
       color:#111827;
     }
 
     .footer-text{
-      font-size:1rem;
+      font-size:.98rem;
       line-height:1.7;
       color:var(--text);
+      margin-bottom:0;
     }
 
     .footer-links{
@@ -50,14 +97,14 @@
     }
 
     .footer-links li{
-      margin-bottom:.6rem;
+      margin-bottom:.7rem;
     }
 
     .footer-links a{
       text-decoration:none;
       color:var(--text);
-      transition:.2s;
-      font-size:1rem;
+      transition:.2s ease;
+      font-size:.97rem;
     }
 
     .footer-links a:hover{
@@ -65,8 +112,8 @@
     }
 
     .footer-contact{
-      font-size:1rem;
-      line-height:1.8;
+      font-size:.97rem;
+      line-height:1.9;
       color:var(--text);
     }
 
@@ -78,45 +125,7 @@
     .footer-contact a:hover{
       color:var(--main-blue);
     }
-    .footer-features{
-  background:#f9fafb;
-  padding:25px 0;
-  border-top:1px solid #e5e7eb;
-}
 
-.feature-box{
-  display:flex;
-  align-items:flex-start;
-  gap:14px;
-  padding:18px;
-  border:1px solid #e5e7eb;
-  border-radius:.6rem;
-  background:#fff;
-  height:100%;
-  transition:.2s ease;
-}
-
-.feature-box:hover{
-  box-shadow:0 4px 12px rgba(0,0,0,.05);
-}
-
-.feature-box i{
-  font-size:28px;
-  color:#0d4dad;
-}
-
-.feature-title{
-  font-weight:600;
-  font-size:1rem;
-  color:#111827;
-}
-
-.feature-text{
-  font-size:.9rem;
-  color:#6b7280;
-}
-
-    /* BOTTOM */
     .footer-bottom{
       background:#e5e7eb;
       padding:16px 0;
@@ -132,12 +141,18 @@
       }
 
       .footer-title{
-        font-size:1.1rem;
+        font-size:1.05rem;
+      }
+
+      .footer-top{
+        font-size:.98rem;
+        padding:16px 0;
       }
     }
   </style>
 
   <footer class="store-footer">
+
     <!-- FEATURES BAR -->
     <div class="footer-features">
       <div class="container">
@@ -145,41 +160,40 @@
 
           <div class="col-md-6 col-lg-3">
             <div class="feature-box">
-              <i class="bi bi-camera-video"></i>
+              <i class="bi bi-pc-display"></i>
               <div>
-                <div class="feature-title">Smart CCTV</div>
-                <div class="feature-text">AI-powered surveillance systems</div>
+                <div class="feature-title">Computer Equipment</div>
+                <div class="feature-text">Browse laptops, components, accessories and more.</div>
               </div>
             </div>
           </div>
 
           <div class="col-md-6 col-lg-3">
             <div class="feature-box">
-              <i class="bi bi-shield-check"></i>
+              <i class="bi bi-tools"></i>
               <div>
-                <div class="feature-title">2 Years Warranty</div>
-                <div class="feature-text">Manufacturer warranty included</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- ТУК е заместителят -->
-          <div class="col-md-6 col-lg-3">
-            <div class="feature-box">
-              <i class="bi bi-headset"></i>
-              <div>
-                <div class="feature-title">24/7 Support</div>
-                <div class="feature-text">We are here to help anytime</div>
+                <div class="feature-title">Service Requests</div>
+                <div class="feature-text">Request repairs and track the status of your devices.</div>
               </div>
             </div>
           </div>
 
           <div class="col-md-6 col-lg-3">
             <div class="feature-box">
-              <i class="bi bi-sliders"></i>
+              <i class="bi bi-bag-check"></i>
               <div>
-                <div class="feature-title">Easy Setup</div>
-                <div class="feature-text">Quick and simple installation</div>
+                <div class="feature-title">Orders & Cart</div>
+                <div class="feature-text">Place orders easily and review your purchase history.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <div class="feature-box">
+              <i class="bi bi-person-circle"></i>
+              <div>
+                <div class="feature-title">My Account</div>
+                <div class="feature-text">Manage your profile, orders and service activity in one place.</div>
               </div>
             </div>
           </div>
@@ -190,10 +204,10 @@
 
     <!-- BLUE STRIP -->
     <div class="footer-top">
-      Fast delivery • Quality products • Trusted service
+      Products • Services • Orders • Service requests
     </div>
 
-    <!-- MAIN -->
+    <!-- MAIN FOOTER -->
     <div class="footer-main">
       <div class="container">
         <div class="row g-4">
@@ -202,40 +216,40 @@
           <div class="col-md-6 col-lg-4">
             <h5 class="footer-title">EchtaTech</h5>
             <p class="footer-text">
-              We provide high-quality computer equipment, accessories and tech solutions
-              for home users, gamers and businesses.
+              EchtaTech is an online computer equipment store system where customers can browse products,
+              place orders, request services and track their activity through a personal account.
             </p>
           </div>
 
-          <!-- LINKS -->
+          <!-- SHOP -->
           <div class="col-md-6 col-lg-2">
             <h5 class="footer-title">Shop</h5>
             <ul class="footer-links">
-              <li><a th:href="@{/products}">Products</a></li>
+              <li><a th:href="@{/products}">All products</a></li>
+              <li><a th:href="@{/products(inStock=true)}">In stock products</a></li>
               <li><a th:href="@{/services}">Services</a></li>
-              <li><a th:href="@{/products(inStock=true)}">In stock</a></li>
+              <li><a th:href="@{/cart}">Shopping cart</a></li>
             </ul>
           </div>
 
           <!-- ACCOUNT -->
           <div class="col-md-6 col-lg-2">
-            <h5 class="footer-title">Account</h5>
+            <h5 class="footer-title">My account</h5>
             <ul class="footer-links">
               <li><a th:href="@{/login}">Login</a></li>
               <li><a th:href="@{/register}">Register</a></li>
               <li><a th:href="@{/my-account}">My account</a></li>
+              <li><a th:href="@{/orders}">My orders</a></li>
             </ul>
           </div>
 
-          <!-- SUPPORT -->
+          <!-- SUPPORT / SERVICES -->
           <div class="col-md-6 col-lg-2">
             <h5 class="footer-title">Support</h5>
             <ul class="footer-links">
-              <li><a href="#">Shipping</a></li>
-              <li><a href="#">Returns</a></li>
-              <li><a href="#">Privacy</a></li>
-              <li><a href="#">Terms</a></li>
+              <li><a th:href="@{/my-service-requests}">My service requests</a></li>
               <li><a th:href="@{/about}">About us</a></li>
+              <li><a th:href="@{/services}">Service catalog</a></li>
             </ul>
           </div>
 
@@ -259,7 +273,7 @@
 
     <!-- BOTTOM -->
     <div class="footer-bottom">
-      © 2026 EchtaTech • All rights reserved
+      © 2026 EchtaTech • Computer Equipment Store System
     </div>
 
   </footer>

@@ -25,12 +25,19 @@ public interface OrderClient {
 
     @GetMapping("/my/{id}")
     OrderResponse getMyOrderById(@PathVariable Long id);
+    @GetMapping("/{id}")
+    OrderResponse getOrderById(@PathVariable Long id);
 
     @GetMapping
     PageResponse<OrderResponse> getAllOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String sort
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String orderNumber,
+            @RequestParam(required = false) String customerName,
+            @RequestParam(required = false) String dateFrom,
+            @RequestParam(required = false) String dateTo
     );
 
     @PutMapping("/{id}/status")

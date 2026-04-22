@@ -20,6 +20,7 @@ public interface StoreServiceClient {
 
     @GetMapping("/{id}")
     ServiceResponse getById(@PathVariable Long id);
+
     @GetMapping("/active-list")
     List<ServiceResponse> getAllActiveList();
 
@@ -33,10 +34,12 @@ public interface StoreServiceClient {
             @RequestParam(required = false) String sort
     );
 
-
     @GetMapping
     PageResponse<ServiceResponse> getAllForAdmin(
+            @RequestParam(required = false) String q,
             @RequestParam(required = false) Boolean isActive,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String sort

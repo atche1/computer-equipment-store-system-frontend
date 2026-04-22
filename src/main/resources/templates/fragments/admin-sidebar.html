@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="adminSidebar(active)" class="admin-sidebar">
+
+    <div class="admin-brand">
+        <div class="admin-brand-badge">
+            <i class="bi bi-grid-1x2-fill"></i>
+        </div>
+        <div>
+            <div class="admin-brand-title">Admin Panel</div>
+        </div>
+    </div>
+
+    <div class="admin-menu-title">Catalog</div>
+    <nav class="admin-nav">
+        <a class="nav-link"
+           th:classappend="${active == 'categories'} ? ' active' : ''"
+           th:href="@{/categories}">
+            <i class="bi bi-diagram-3"></i>
+            <span>Categories</span>
+        </a>
+
+        <a class="nav-link"
+           th:classappend="${active == 'attributes'} ? ' active' : ''"
+           th:href="@{/attributes}">
+            <i class="bi bi-sliders"></i>
+            <span>Attributes</span>
+        </a>
+
+        <a class="nav-link"
+           th:classappend="${active == 'products'} ? ' active' : ''"
+           th:href="@{/admin/products}">
+            <i class="bi bi-laptop"></i>
+            <span>Products</span>
+        </a>
+
+        <a class="nav-link"
+           th:classappend="${active == 'services'} ? ' active' : ''"
+           th:href="@{/admin/services}">
+            <i class="bi bi-tools"></i>
+            <span>Services</span>
+        </a>
+    </nav>
+
+    <div class="admin-menu-title">Sales</div>
+    <nav class="admin-nav">
+        <a class="nav-link"
+           th:classappend="${active == 'orders'} ? ' active' : ''"
+           th:href="@{/admin/orders}">
+            <i class="bi bi-bag-check"></i>
+            <span>Orders</span>
+        </a>
+
+        <a class="nav-link"
+           th:classappend="${active == 'service-requests'} ? ' active' : ''"
+           th:href="@{/admin/service-requests}">
+            <i class="bi bi-wrench-adjustable-circle"></i>
+            <span>Service Requests</span>
+        </a>
+    </nav>
+
+</div>
+</html>
