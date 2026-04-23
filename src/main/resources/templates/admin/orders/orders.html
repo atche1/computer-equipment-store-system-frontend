@@ -296,6 +296,11 @@
             color:var(--warn-text);
         }
 
+        .status-shipped{
+            background:#e0f2fe;
+            color:#0369a1;
+        }
+
         .status-completed,
         .status-delivered{
             background:var(--success-bg);
@@ -514,9 +519,6 @@
                         Review customer orders, track their statuses and update the order workflow from one place.
                     </div>
                 </div>
-
-                <div>
-                </div>
             </div>
 
             <div class="admin-card">
@@ -600,7 +602,7 @@
                         </form>
                     </div>
 
-                    <div class="orders-table-wrap" th:if="${ordersPage != null && !#lists.isEmpty(ordersPage.content)}">
+                    <div class="orders-table-wrap" th:if="${ordersPage != null and !#lists.isEmpty(ordersPage.content)}">
                         <div class="table-responsive">
                             <table class="table align-middle">
                                 <thead>
@@ -624,15 +626,18 @@
                                     </td>
 
                                     <td>
-                                        <span th:class="'status-badge ' +
-                                                (${o.status().toString() == 'NEW'} ? 'status-new' :
-                                                (${o.status().toString() == 'PROCESSING'} ? 'status-processing' :
-                                                 (${o.status().toString() == 'SHIPPED'} ? 'status-shipped' :
-                                                (${o.status().toString() == 'COMPLETED' or o.status().toString() == 'DELIVERED'} ? 'status-completed' :
-                                                (${o.status().toString() == 'CANCELLED' or o.status().toString() == 'REJECTED'} ? 'status-cancelled' : 'status-default'))))"
-                                              th:text="${o.status()}">
-                                            NEW
-                                        </span>
+    <span class="status-badge"
+          th:classappend="${
+              o.status().toString() == 'NEW' ? ' status-new' :
+              o.status().toString() == 'PROCESSING' ? ' status-processing' :
+              o.status().toString() == 'SHIPPED' ? ' status-shipped' :
+              (o.status().toString() == 'COMPLETED' or o.status().toString() == 'DELIVERED') ? ' status-completed' :
+              (o.status().toString() == 'CANCELLED' or o.status().toString() == 'REJECTED') ? ' status-cancelled' :
+              ' status-default'
+          }"
+          th:text="${o.status()}">
+        STATUS
+    </span>
                                     </td>
 
                                     <td class="text-end">
@@ -676,7 +681,7 @@
                     </div>
 
                     <div class="empty-state"
-                         th:if="${ordersPage == null || #lists.isEmpty(ordersPage.content)}">
+                         th:if="${ordersPage == null or #lists.isEmpty(ordersPage.content)}">
                         <div class="empty-icon">
                             <i class="bi bi-inbox"></i>
                         </div>
@@ -684,7 +689,7 @@
                         <p class="mb-0">There are currently no orders matching the selected filters.</p>
                     </div>
 
-                    <div class="pagination-bar" th:if="${ordersPage != null && ordersPage.totalPages > 1}">
+                    <div class="pagination-bar" th:if="${ordersPage != null and ordersPage.totalPages > 1}">
                         <div class="pagination-info">
                             Showing page
                             <strong th:text="${ordersPage.number + 1}">1</strong>
@@ -733,6 +738,7 @@
         </main>
     </div>
 </div>
+
 <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Admin • Dashboard</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root{
+      --main-blue:#0d4dad;
+      --page-bg:#f4f7fb;
+      --surface:#ffffff;
+      --line:#dbe5f0;
+      --text:#1f2937;
+      --muted:#6b7280;
+    }
+
+    body{
+      background:linear-gradient(180deg, #f4f7fb 0%, #eef4fb 100%);
+      font-family:Arial, sans-serif;
+      color:var(--text);
+    }
+
+    .page-header{
+      margin-bottom:30px;
+    }
+
+    .page-title{
+      font-size:30px;
+      font-weight:700;
+      margin-bottom:6px;
+    }
+
+    .page-subtitle{
+      color:var(--muted);
+      margin:0;
+    }
+
+    .stat-card{
+      border-radius:18px;
+      padding:20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      height:100%;
+      border:1px solid rgba(255,255,255,0.55);
+      box-shadow:0 14px 30px rgba(31,41,55,0.08);
+      transition:transform .2s ease, box-shadow .2s ease;
+      color:#fff;
+      overflow:hidden;
+      position:relative;
+    }
+
+    .stat-card:hover{
+      transform:translateY(-4px);
+      box-shadow:0 18px 38px rgba(31,41,55,0.14);
+    }
+
+    .stat-card::after{
+      content:"";
+      position:absolute;
+      right:-20px;
+      top:-20px;
+      width:100px;
+      height:100px;
+      background:rgba(255,255,255,0.12);
+      border-radius:50%;
+    }
+
+    .stat-orders{
+      background:linear-gradient(135deg, #2563eb, #1d4ed8);
+    }
+
+    .stat-services-req{
+      background:linear-gradient(135deg, #8b5cf6, #6d28d9);
+    }
+
+    .stat-users{
+      background:linear-gradient(135deg, #10b981, #059669);
+    }
+
+    .stat-products{
+      background:linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    .stat-services{
+      background:linear-gradient(135deg, #ec4899, #db2777);
+    }
+
+    .stat-icon{
+      width:58px;
+      height:58px;
+      border-radius:16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:24px;
+      background:rgba(255,255,255,0.18);
+      color:#fff;
+      flex-shrink:0;
+      position:relative;
+      z-index:1;
+    }
+
+    .stat-title{
+      font-size:14px;
+      color:rgba(255,255,255,0.85);
+      margin-bottom:6px;
+      position:relative;
+      z-index:1;
+    }
+
+    .stat-value{
+      font-size:30px;
+      font-weight:700;
+      line-height:1;
+      position:relative;
+      z-index:1;
+    }
+
+    .card-box{
+      background:var(--surface);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:22px;
+      height:100%;
+      box-shadow:0 12px 28px rgba(15,39,71,0.06);
+    }
+
+    .orders-box{
+      border-top:5px solid #2563eb;
+    }
+
+    .service-box{
+      border-top:5px solid #8b5cf6;
+    }
+
+    .summary-orders-box{
+      border-top:5px solid #10b981;
+    }
+
+    .summary-service-box{
+      border-top:5px solid #f59e0b;
+    }
+
+    .section-title{
+      font-size:18px;
+      font-weight:700;
+      margin-bottom:18px;
+    }
+
+    .chart-wrap{
+      position:relative;
+      height:320px;
+    }
+
+    .status-list{
+      list-style:none;
+      padding:0;
+      margin:0;
+    }
+
+    .status-item{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:10px 0;
+      border-bottom:1px solid #eef2f7;
+    }
+
+    .status-item:last-child{
+      border-bottom:none;
+    }
+
+    .status-name{
+      font-weight:600;
+      letter-spacing:.01em;
+    }
+
+    .badge-status{
+      padding:6px 12px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:700;
+      min-width:42px;
+      text-align:center;
+      color:#fff;
+    }
+
+    .small-note{
+      color:var(--muted);
+      font-size:13px;
+      margin-top:14px;
+    }
+
+    .empty-box{
+      color:var(--muted);
+      font-size:15px;
+      padding:18px 0;
+    }
+  </style>
+</head>
+
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container py-4">
+
+  <div class="page-header">
+    <h1 class="page-title">Dashboard</h1>
+    <p class="page-subtitle">Overview of orders, users, products, services, and support activity.</p>
+  </div>
+
+  <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+  <div th:if="${data != null}">
+    <div class="row g-4 mb-4">
+
+      <div class="col-md-6 col-xl-3">
+        <div class="stat-card stat-orders">
+          <div>
+            <div class="stat-title">Orders</div>
+            <div class="stat-value" th:text="${data.totalOrders}">0</div>
+          </div>
+          <div class="stat-icon"><i class="bi bi-bag"></i></div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-xl-3">
+        <div class="stat-card stat-services-req">
+          <div>
+            <div class="stat-title">Service Requests</div>
+            <div class="stat-value" th:text="${data.totalServiceRequests}">0</div>
+          </div>
+          <div class="stat-icon"><i class="bi bi-tools"></i></div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-xl-3">
+        <div class="stat-card stat-users">
+          <div>
+            <div class="stat-title">Users</div>
+            <div class="stat-value" th:text="${data.totalUsers}">0</div>
+          </div>
+          <div class="stat-icon"><i class="bi bi-people"></i></div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-xl-3">
+        <div class="stat-card stat-products">
+          <div>
+            <div class="stat-title">Products</div>
+            <div class="stat-value" th:text="${data.totalProducts}">0</div>
+          </div>
+          <div class="stat-icon"><i class="bi bi-box-seam"></i></div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-xl-3">
+        <div class="stat-card stat-services">
+          <div>
+            <div class="stat-title">Services</div>
+            <div class="stat-value" th:text="${data.totalServices}">0</div>
+          </div>
+          <div class="stat-icon"><i class="bi bi-wrench-adjustable"></i></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row g-4 mb-4">
+      <div class="col-lg-6">
+        <div class="card-box orders-box">
+          <div class="section-title">Orders by Status</div>
+          <div class="chart-wrap" th:if="${data.ordersByStatus != null and !#maps.isEmpty(data.ordersByStatus)}">
+            <canvas id="ordersChart"></canvas>
+          </div>
+          <div class="empty-box" th:if="${data.ordersByStatus == null or #maps.isEmpty(data.ordersByStatus)}">
+            No order data available yet.
+          </div>
+          <div class="small-note">Distribution of all orders grouped by current status.</div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card-box service-box">
+          <div class="section-title">Service Requests by Status</div>
+          <div class="chart-wrap" th:if="${data.serviceRequestsByStatus != null and !#maps.isEmpty(data.serviceRequestsByStatus)}">
+            <canvas id="serviceRequestsChart"></canvas>
+          </div>
+          <div class="empty-box" th:if="${data.serviceRequestsByStatus == null or #maps.isEmpty(data.serviceRequestsByStatus)}">
+            No service request data available yet.
+          </div>
+          <div class="small-note">Distribution of all service requests grouped by current status.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="card-box summary-orders-box">
+          <div class="section-title">Orders by Status</div>
+          <ul class="status-list" th:if="${data.ordersByStatus != null and !#maps.isEmpty(data.ordersByStatus)}">
+            <li class="status-item" th:each="entry : ${data.ordersByStatus}">
+              <span class="status-name" th:text="${entry.key}">PENDING</span>
+              <span class="badge-status"
+                    th:style="${entry.key == 'NEW' ? 'background:#3b82f6;' :
+                               entry.key == 'PROCESSING' ? 'background:#f59e0b;' :
+                               entry.key == 'SHIPPED' ? 'background:#0ea5e9;' :
+                               entry.key == 'DELIVERED' ? 'background:#10b981;' :
+                               entry.key == 'CANCELLED' ? 'background:#ef4444;' :
+                               'background:#6b7280;'}"
+                    th:text="${entry.value}">0</span>
+            </li>
+          </ul>
+          <div class="empty-box" th:if="${data.ordersByStatus == null or #maps.isEmpty(data.ordersByStatus)}">
+            No order status summary yet.
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card-box summary-service-box">
+          <div class="section-title">Service Requests by Status</div>
+          <ul class="status-list" th:if="${data.serviceRequestsByStatus != null and !#maps.isEmpty(data.serviceRequestsByStatus)}">
+            <li class="status-item" th:each="entry : ${data.serviceRequestsByStatus}">
+              <span class="status-name" th:text="${entry.key}">NEW</span>
+              <span class="badge-status"
+                    th:style="${entry.key == 'NEW' ? 'background:#3b82f6;' :
+                               entry.key == 'IN_PROGRESS' ? 'background:#f59e0b;' :
+                               entry.key == 'DONE' ? 'background:#10b981;' :
+                               entry.key == 'CANCELLED' ? 'background:#ef4444;' :
+                               'background:#6b7280;'}"
+                    th:text="${entry.value}">0</span>
+            </li>
+          </ul>
+          <div class="empty-box" th:if="${data.serviceRequestsByStatus == null or #maps.isEmpty(data.serviceRequestsByStatus)}">
+            No service request status summary yet.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script th:inline="javascript" th:if="${data != null}">
+  const orderLabels = /*[[${data.ordersByStatus != null ? data.ordersByStatus.keySet() : T(java.util.Collections).emptyList()}]]*/ [];
+  const orderValues = /*[[${data.ordersByStatus != null ? data.ordersByStatus.values() : T(java.util.Collections).emptyList()}]]*/ [];
+
+  const serviceLabels = /*[[${data.serviceRequestsByStatus != null ? data.serviceRequestsByStatus.keySet() : T(java.util.Collections).emptyList()}]]*/ [];
+  const serviceValues = /*[[${data.serviceRequestsByStatus != null ? data.serviceRequestsByStatus.values() : T(java.util.Collections).emptyList()}]]*/ [];
+
+  const getStatusColor = (status) => {
+    switch(status){
+      case 'NEW': return '#3b82f6';
+      case 'PROCESSING': return '#f59e0b';
+      case 'SHIPPED': return '#0ea5e9';
+      case 'DELIVERED': return '#10b981';
+      case 'CANCELLED': return '#ef4444';
+      case 'IN_PROGRESS': return '#8b5cf6';
+      case 'DONE': return '#14b8a6';
+      default: return '#6b7280';
+    }
+  };
+
+  if (document.getElementById('ordersChart') && orderLabels.length > 0) {
+    new Chart(document.getElementById('ordersChart'), {
+      type: 'doughnut',
+      data: {
+        labels: orderLabels,
+        datasets: [{
+          data: orderValues,
+          backgroundColor: orderLabels.map(getStatusColor),
+          borderColor: '#ffffff',
+          borderWidth: 4,
+          hoverOffset: 12
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              usePointStyle: true,
+              padding: 18
+            }
+          }
+        }
+      }
+    });
+  }
+
+  if (document.getElementById('serviceRequestsChart') && serviceLabels.length > 0) {
+    new Chart(document.getElementById('serviceRequestsChart'), {
+      type: 'bar',
+      data: {
+        labels: serviceLabels,
+        datasets: [{
+          label: 'Requests',
+          data: serviceValues,
+          backgroundColor: serviceLabels.map(getStatusColor),
+          borderRadius: 10,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              precision: 0
+            },
+            grid: {
+              color: '#e5edf6'
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          }
+        }
+      }
+    });
+  }
+</script>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
