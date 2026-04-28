@@ -289,7 +289,7 @@
 
       <!-- UNIT PRICE -->
       <div class="col-lg-2 text-lg-end">
-        <div class="price-text" th:text="${#numbers.formatDecimal(i.unitPrice(), 1, 2)}">0.00</div>
+        <div class="price-text" th:text="${#numbers.formatDecimal(i.unitPrice(), 1, 2) + ' EUR'}">0.00 EUR</div>
       </div>
 
       <!-- QUANTITY -->
@@ -330,8 +330,8 @@
       <!-- TOTAL -->
       <div class="col-lg-1 text-lg-end">
         <div class="line-total-text"
-             th:text="${#numbers.formatDecimal(i.unitPrice() * i.quantity(), 1, 2)}">
-          0.00
+             th:text="${#numbers.formatDecimal(i.unitPrice() * i.quantity(), 1, 2) + ' EUR'}">
+          0.00 EUR
         </div>
       </div>
     </div>
@@ -344,7 +344,7 @@
           <div class="summary-line">
             <span>Subtotal</span>
             <span class="summary-total"
-                  th:text="${dbCart != null ? #numbers.formatDecimal(dbCart.total(), 1, 2) : '0.00'}">0.00</span>
+                  th:text="${dbCart != null ? #numbers.formatDecimal(dbCart.total(), 1, 2) + ' EUR' : '0.00 EUR'}">0.00 EUR</span>
           </div>
 
           <div class="summary-subtext">
@@ -402,7 +402,7 @@
 
       <!-- PRICE -->
       <div class="col-lg-2 text-lg-end">
-        <div class="price-text" th:text="${#numbers.formatDecimal(line.product().price(), 1, 2)}">0.00</div>
+        <div class="price-text" th:text="${#numbers.formatDecimal(line.product().price(), 1, 2) + ' EUR'}">0.00 EUR</div>
       </div>
 
       <!-- QUANTITY -->
@@ -432,7 +432,7 @@
 
       <!-- LINE TOTAL -->
       <div class="col-lg-2 text-lg-end">
-        <div class="line-total-text" th:text="${#numbers.formatDecimal(line.lineTotal(), 1, 2)}">0.00</div>
+        <div class="line-total-text" th:text="${#numbers.formatDecimal(line.lineTotal(), 1, 2) + ' EUR'}">0.00 EUR</div>
       </div>
 
       <!-- REMOVE -->
@@ -454,7 +454,7 @@
           <div class="summary-line">
             <span>Subtotal</span>
             <span class="summary-total"
-                  th:text="${guestTotal != null ? #numbers.formatDecimal(guestTotal, 1, 2) : '0.00'}">0.00</span>
+                  th:text="${guestTotal != null ? #numbers.formatDecimal(guestTotal, 1, 2) + ' EUR' : '0.00 EUR'}">0.00 EUR</span>
           </div>
 
           <div class="summary-subtext">
